@@ -11,7 +11,7 @@ enum AnalyticsCatalog {
 
     /// Properties attached to every event via PostHog `register`.
     static let commonProperties: [(name: String, summary: String)] = [
-        ("app_name / $app_name", "Always \"Paste It\""),
+        ("app_name / $app_name", "Always \"Pastel it！\""),
         ("app_version / $app_version", "CFBundleShortVersionString"),
         ("app_build", "CFBundleVersion"),
         ("platform", "\"macos\""),
@@ -50,5 +50,5 @@ enum AnalyticsCatalog {
     ]
 
     static let documentationPath = "docs/analytics.md"
-    static let documentationURL = URL(string: "https://github.com/yipeng-git/paste-it/blob/main/docs/analytics.md")
+    static let documentationURL = URL(string: "https://github.com/Haookun/pastel-it/blob/main/docs/analytics.md")
 }

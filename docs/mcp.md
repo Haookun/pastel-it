@@ -78,7 +78,7 @@ Arguments:
 Result (JSON text content):
 
 ```json
-{ "path": "/Users/…/AgentScreenshots/render-….png", "width": 1120, "height": 320 }
+{ "path": "/Users/…/AgentScreenshots/render-….png", "width": 1120, "height": 380 }
 ```
 
 To inspect the native removal toast, add `"removalPreviewFolder": "Work"` to `ui`. The renderer adds the selected synthetic clip to a temporary folder, removes that membership through the normal app action, and captures the toast above the panel. The PNG includes the toast and its surrounding margin, so its height is larger than the default timeline screenshot. Toast previews use a separate synthetic backdrop window with dark, white, and colored regions to check transparency and contrast without exposing other apps in the expanded capture area. All preview windows ignore input and are removed after capture. Main history, real folders, and system clipboard content remain untouched.
@@ -93,6 +93,8 @@ Card fields (all optional except enough content to render):
 | `ocrText`, `linkTitle`, `fileURLString` | Extra metadata |
 | `imageBase64` / `imagePath` | Image cards (`imagePath` max 25MB; loaded off the UI thread) |
 | `linkImageBase64` | Optional link preview image (skips network fetch when provided) |
+
+Image `ocrText` can include Markdown tables on macOS 26 or later when Vision detects a table. Text outside the table is retained. Ordinary images, older systems, and table-detection failures use the existing plain-text OCR output; no DTO fields or tool schemas change.
 
 For `type: link`/`url` without `linkImageBase64`, render waits for OG image / favicon fetch before capturing. Concurrent renders return a tool error while one is in progress. If the listener ever dies, toggle **MCP** off/on to rebind `:17321`.
 

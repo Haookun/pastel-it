@@ -30,7 +30,7 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
             NSApp.setActivationPolicy(.regular)
         }
 
-        let title = "Paste It"
+        let title = "Pastel it！"
         if let existing = window {
             existing.title = title
             existing.setContentSize(NSSize(width: 640, height: 500))
@@ -70,7 +70,7 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "Paste It"
+        window.title = "Pastel it！"
         window.contentViewController = hosting
         window.isReleasedWhenClosed = false
         window.delegate = self

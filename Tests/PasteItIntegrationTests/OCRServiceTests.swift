@@ -1,6 +1,7 @@
 import AppKit
 import Foundation
 import Testing
+import PasteItCore
 @testable import PasteIt
 
 private struct OCRSample: Sendable {
@@ -16,6 +17,22 @@ private struct OCRSample: Sendable {
         OCRSample(text: "クリップボード 履歴検索 4821", keywords: ["クリップボード", "履歴検索"], fontName: "HiraginoSans-W3"),
         OCRSample(text: "클립보드 기록 검색 4821", keywords: ["클립보드", "검색"], fontName: "AppleSDGothicNeo-Regular"),
         OCRSample(text: "Clipboard クリップボード 4821", keywords: ["Clipboard", "クリップボード"], fontName: "HiraginoSans-W3")
+    ]
+}
+
+private struct OCRTableSample: Sendable {
+    let rows: [[String]]
+    let title: String
+    let footer: String
+    let fontName: String
+
+    static let multilingual = [
+        OCRTableSample(rows: [["Item", "Quantity", "Price"], ["Apples", "12", "30"], ["Tea", "80", "48"]],
+                       title: "Inventory Report", footer: "End of report", fontName: "Helvetica"),
+        OCRTableSample(rows: [["商品名称", "采购数量", "总金额"], ["苹果", "12", "30"], ["茶叶", "80", "48"]],
+                       title: "商品库存清单", footer: "库存统计完成", fontName: "PingFangSC-Regular"),
+        OCRTableSample(rows: [["商品名", "注文数量", "販売価格"], ["りんご", "12", "30"], ["お茶", "80", "48"]],
+                       title: "商品の在庫一覧", footer: "在庫の集計完了", fontName: "HiraginoSans-W3")
     ]
 }
 
@@ -51,11 +68,73 @@ struct OCRServiceTests {
         text.components(separatedBy: .whitespacesAndNewlines).joined()
     }
 
+    private func tablePNG(_ sample: OCRTableSample) throws -> Data {
+        let rows = sample.rows
+        let size = NSSize(width: 1400, height: 700)
+        let bitmap = try #require(NSBitmapImageRep(
+            bitmapDataPlanes: nil, pixelsWide: Int(size.width), pixelsHigh: Int(size.height),
+            bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true,
+            isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0
+        ))
+        let context = try #require(NSGraphicsContext(bitmapImageRep: bitmap))
+        NSGraphicsContext.saveGraphicsState()
+        defer { NSGraphicsContext.restoreGraphicsState() }
+        NSGraphicsContext.current = context
+        NSColor.white.setFill()
+        NSRect(origin: .zero, size: size).fill()
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: NSFont(name: sample.fontName, size: 38) ?? NSFont.systemFont(ofSize: 38),
+            .foregroundColor: NSColor.black
+        ]
+        (sample.title as NSString).draw(at: NSPoint(x: 70, y: 610), withAttributes: attributes)
+        (sample.footer as NSString).draw(at: NSPoint(x: 70, y: 50), withAttributes: attributes)
+        let left: CGFloat = 70, top: CGFloat = 550, cellWidth: CGFloat = 420, cellHeight: CGFloat = 140
+        let grid = NSBezierPath()
+        grid.lineWidth = 3
+        for row in 0...rows.count {
+            let y = top - CGFloat(row) * cellHeight
+            grid.move(to: NSPoint(x: left, y: y))
+            grid.line(to: NSPoint(x: left + CGFloat(rows[0].count) * cellWidth, y: y))
+        }
+        for column in 0...rows[0].count {
+            let x = left + CGFloat(column) * cellWidth
+            grid.move(to: NSPoint(x: x, y: top))
+            grid.line(to: NSPoint(x: x, y: top - CGFloat(rows.count) * cellHeight))
+        }
+        NSColor.black.setStroke()
+        grid.stroke()
+        for (row, cells) in rows.enumerated() {
+            for (column, text) in cells.enumerated() {
+                (text as NSString).draw(at: NSPoint(
+                    x: left + CGFloat(column) * cellWidth + 24,
+                    y: top - CGFloat(row + 1) * cellHeight + 50
+                ), withAttributes: attributes)
+            }
+        }
+        context.flushGraphics()
+        return try #require(bitmap.representation(using: .png, properties: [:]))
+    }
+
+    @available(macOS 26.0, *)
+    @Test(arguments: OCRTableSample.multilingual)
+    fileprivate func detectsTablesAndKeepsSurroundingText(_ sample: OCRTableSample) async throws {
+        let data = try tablePNG(sample)
+        let text = try #require(await OCRService.recognizeText(in: data))
+        #expect(text.contains("| --- | --- | --- |"))
+        let recognized = compact(text)
+        #expect(recognized.hasPrefix(compact(sample.title)))
+        #expect(recognized.hasSuffix(compact(sample.footer)))
+        for row in sample.rows {
+            #expect(recognized.contains("|" + row.joined(separator: "|") + "|"))
+        }
+    }
+
     @Test(arguments: OCRSample.multilingual)
     fileprivate func automaticallyRecognizesMultipleLanguages(_ sample: OCRSample) async throws {
         let data = try png(text: sample.text, fontName: sample.fontName)
         let text = try #require(await OCRService.recognizeText(in: data))
         let recognized = compact(text)
+        #expect(!text.contains("| ---"))
         // Vision may insert spaces around CJK characters; those are not search regressions.
         #expect(recognized.contains("4821"))
         for keyword in sample.keywords {
@@ -83,6 +162,45 @@ struct OCRServiceTests {
         #expect(await OCRService.recognizeText(in: Data("not an image".utf8)) == nil)
         let valid = try png(text: "Synthetic 4821")
         #expect(await OCRService.recognizeText(in: Data(valid.prefix(24))) == nil)
+    }
+
+    @available(macOS 26.0, *)
+    @Test func configurationControlsOCRAndTableDetection() async throws {
+        let data = try tablePNG(OCRTableSample.multilingual[0])
+        var configuration = OCRConfiguration()
+        configuration.enabled = false
+        #expect(await OCRService.recognizeText(in: data, configuration: configuration) == nil)
+        configuration.enabled = true
+        configuration.detectsTables = false
+        configuration.languages = ["en-US"]
+        let text = try #require(await OCRService.recognizeText(in: data, configuration: configuration))
+        #expect(text.contains("Apples"))
+        #expect(!text.contains("| ---"))
+        configuration.accuracy = .fast
+        let fast = try #require(await OCRService.recognizeText(in: png(text: "Synthetic 4821", fontName: "Helvetica"), configuration: configuration))
+        #expect(fast.contains("4821"))
+        configuration.languages = ["ja-JP"]
+        let japanese = try #require(await OCRService.recognizeText(
+            in: png(text: "クリップボード 履歴検索 4821", fontName: "HiraginoSans-W3"), configuration: configuration))
+        #expect(compact(japanese).contains("履歴検索"))
+    }
+
+    @Test func quickPasteConvertsImageOnlyWhenScopeAndOCRAllowIt() async throws {
+        let board = NSPasteboard.withUniqueName()
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("PasteIt-Quick-Image-\(UUID())")
+        defer { board.releaseGlobally(); try? FileManager.default.removeItem(at: root) }
+        let paste = PasteController(blobStore: BlobStore(rootURL: root), pasteboard: board)
+        board.setData(try png(text: "Synthetic 4821", fontName: "Helvetica"), forType: .png)
+        let count = board.changeCount
+        let text = try #require(await paste.quickPasteText(scope: .init(), configuration: .init(), ignoredTypes: []))
+        #expect(text.contains("4821"))
+        #expect(board.changeCount == count)
+        var scope = QuickPasteScope()
+        scope.images = false
+        #expect(await paste.quickPasteText(scope: scope, configuration: .init(), ignoredTypes: []) == nil)
+        var configuration = OCRConfiguration()
+        configuration.enabled = false
+        #expect(await paste.quickPasteText(scope: .init(), configuration: configuration, ignoredTypes: []) == nil)
     }
 
     @Test func concurrentRequestsKeepTheirOwnImageResults() async throws {
@@ -146,5 +264,36 @@ struct OCRServiceTests {
         #expect(compact(recognized).contains("星河"))
         #expect(store.searchDocuments(for: [item]).first?.searchText.contains("星河") == true)
         #expect(state.visibleClips.map(\.id) == [item.id])
+    }
+
+    @available(macOS 26.0, *)
+    @Test func rerunReplacesCachedPlainTextWithSearchableTable() async throws {
+        let suite = "PasteIt-Table-OCR-Tests-\(UUID())"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        let settings = AppSettings(defaults: defaults)
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PasteItEphemeral-Table-OCR-\(UUID())")
+        let store = HistoryStore(ephemeralBlobRoot: root, settings: settings)
+        defer {
+            store.destroyEphemeralFiles()
+            defaults.removePersistentDomain(forName: suite)
+        }
+        let sample = OCRTableSample.multilingual[1]
+        let item = ClipItem(title: "Synthetic table", primaryType: .image,
+                            pasteboardTypes: [], contentHash: "synthetic-ocr-table")
+        item.ocrText = "Old plain text result"
+        item.blobRelativePath = try store.blobStore.store(data: tablePNG(sample), preferredExtension: "png")
+        store.context.insert(item)
+        try store.context.save()
+        store.refresh()
+        #expect(store.searchDocuments(for: [item]).first?.searchText.contains("苹果") == false)
+
+        await store.rerunOCR(for: item)
+
+        let recognized = try #require(item.ocrText)
+        #expect(recognized.contains("| --- | --- | --- |"))
+        #expect(compact(recognized).contains("|苹果|12|30|"))
+        #expect(!recognized.contains("Old plain text result"))
+        #expect(store.searchDocuments(for: [item]).first?.searchText.contains("苹果") == true)
     }
 }

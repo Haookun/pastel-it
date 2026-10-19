@@ -21,7 +21,7 @@ enum RemovalToastPlacement {
     }
 }
 
-/// A non-key child panel: Undo clicks belong to the timeline and never activate Paste It.
+/// A non-key child panel: Undo clicks belong to the timeline and never activate Pastel it！.
 @MainActor
 final class RemovalToastPanelController {
     private let appState: AppState
@@ -137,7 +137,7 @@ final class RemovalToastPanelController {
     private func makePanel(hosting: NSHostingController<RemovalToastView>) -> RemovalToastPanel {
         let panel = RemovalToastPanel(contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel],
                                       backing: .buffered, defer: false)
-        panel.title = "Paste It"
+        panel.title = "Pastel it！"
         panel.isReleasedWhenClosed = false
         panel.isFloatingPanel = true
         panel.hidesOnDeactivate = false

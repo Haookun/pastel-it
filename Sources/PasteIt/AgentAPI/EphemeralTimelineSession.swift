@@ -62,7 +62,7 @@ final class EphemeralTimelineSession {
             backing: .buffered,
             defer: false
         )
-        panel.title = "Paste It (Agent)"
+        panel.title = "Pastel it！ (Agent)"
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
         panel.isFloatingPanel = true

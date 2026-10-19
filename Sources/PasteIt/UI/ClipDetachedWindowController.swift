@@ -116,7 +116,7 @@ final class ClipDetachedWindowController: NSObject, NSWindowDelegate {
         let timeline = timelinePanelController?.panelFrame
         let midX = timeline?.midX ?? visible.midX
         // Panel top in AppKit coords; bubble minY anchors here and grows upward.
-        let panelTop = timeline?.maxY ?? (visible.minY + 332)
+        let panelTop = timeline?.maxY ?? (visible.minY + TimelinePanelController.panelHeight + 12)
         let availableAbove = max(160, visible.maxY - margin - (panelTop + bubbleGap))
 
         let size = PreviewBubbleMetrics.size(

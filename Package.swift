@@ -1,6 +1,20 @@
 // swift-tools-version: 6.2
 
 import PackageDescription
+import Foundation
+
+// Fresh clones resolve the original dependency versions from their public repos.
+// Opt in to the existing local repair copies for offline development on this Mac.
+let usesLocalDependencies = ProcessInfo.processInfo.environment["PASTEL_USE_LOCAL_DEPENDENCIES"] == "1"
+let appDependencies: [Package.Dependency] = usesLocalDependencies ? [
+    .package(path: "work/dependencies/Sparkle"),
+    .package(path: "work/dependencies/swift-sdk"),
+    .package(path: "work/dependencies/posthog-ios")
+] : [
+    .package(url: "https://github.com/sparkle-project/Sparkle", exact: "2.9.4"),
+    .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", exact: "0.12.1"),
+    .package(url: "https://github.com/PostHog/posthog-ios.git", exact: "3.59.3")
+]
 
 let package = Package(
     name: "PasteIt",
@@ -12,11 +26,7 @@ let package = Package(
         .executable(name: "PasteIt", targets: ["PasteIt"]),
         .library(name: "PasteItCore", targets: ["PasteItCore"])
     ],
-    dependencies: [
-        .package(path: "work/dependencies/Sparkle"),
-        .package(path: "work/dependencies/swift-sdk"),
-        .package(path: "work/dependencies/posthog-ios")
-    ],
+    dependencies: appDependencies,
     targets: [
         .target(
             name: "PasteItCore",

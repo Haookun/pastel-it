@@ -1,3 +1,4 @@
+import PasteItCore
 import SwiftUI
 
 // MARK: - Shared demo chrome (props only — driven by hero beats)
@@ -348,7 +349,7 @@ struct DemoStackRail: View {
                 Text("Stack")
                     .font(.system(size: 12, weight: .semibold))
                 Spacer(minLength: 4)
-                Text("⇧⌘C")
+                Text(ShortcutConfiguration.load(from: .standard).stack?.display ?? "")
                     .font(.system(size: 10, weight: .medium).monospaced())
                     .foregroundStyle(.secondary)
             }

@@ -42,11 +42,15 @@ enum OnboardingPageID: Int, CaseIterable, Identifiable {
 
     var caption: String {
         switch self {
-        case .capture: return L10n.tr("onboarding.capture.caption", default: "Copy anything — Paste It saves it and flashes ⌘C in the menu bar.")
+        case .capture: return L10n.tr("onboarding.capture.caption", default: "Copy anything — Pastel it！ saves it and flashes ⌘C in the menu bar.")
         case .paste: return L10n.tr("action.tutorial", default: "Select a clip, ⌘C to copy, then ⌘V in your app. Choose Direct Paste in Settings for one-step reuse.")
         case .browse: return L10n.tr("onboarding.browse.caption", default: "Press Space to preview above the timeline. Click the text to edit.")
         case .organize: return L10n.tr("onboarding.organize.caption", default: "⌘-click several clips, then press Return to paste them in order.")
-        case .stack: return L10n.tr("onboarding.stack.caption", default: "⇧⌘C opens a queue on the right. Copy several things, then ⌘V in the target app to paste them one by one.")
+        case .stack:
+            guard let binding = ShortcutConfiguration.load(from: .standard).stack else {
+                return L10n.tr("shortcuts.stackTutorialWithoutBinding", default: "Open Paste Stack from the menu. Copy several things, then ⌘V in the target app to paste them one by one.")
+            }
+            return L10n.tr("shortcuts.stackTutorial", default: "%@ opens a queue on the right. Copy several things, then ⌘V in the target app to paste them one by one.", binding.display)
         }
     }
 
@@ -72,7 +76,7 @@ enum OnboardingPageID: Int, CaseIterable, Identifiable {
             L10n.tr("onboarding.step.order", default: "Order"),
             L10n.tr("onboarding.step.return", default: "Return"),
         ]
-        case .stack: return ["⇧⌘C", L10n.tr("onboarding.step.copy", default: "Copy"), "⌘V"]
+        case .stack: return [ShortcutConfiguration.load(from: .standard).stack?.display ?? L10n.tr("stack.open", default: "Open Paste Stack"), L10n.tr("onboarding.step.copy", default: "Copy"), "⌘V"]
         }
     }
 

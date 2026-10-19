@@ -1,6 +1,6 @@
 # Mac packaging (Developer ID + notarization)
 
-Direct distribution (GitHub Releases + Sparkle)，**不是** Mac App Store。产物：签名并公证的 `Paste It.app`，再打成 `PasteIt-{version}.dmg`。
+Direct distribution (GitHub Releases + Sparkle)，**不是** Mac App Store。产物：签名并公证的 `Pastel it！.app`，再打成 `PasteIt-{version}.dmg`。
 
 一键脚本：[`scripts/package-release.sh`](../scripts/package-release.sh)  
 更新发版：[`mac-updates.md`](mac-updates.md)
@@ -83,8 +83,8 @@ DMG 使用紧凑的左右拖拽安装布局：应用在左、Applications 快捷
 
 ```sh
 security find-identity -v -p codesigning
-codesign -dv --verbose=4 "dist/Paste It.app"
-codesign --verify --deep --strict --verbose=2 "dist/Paste It.app"
-xcrun stapler validate "dist/Paste It.app"
-spctl -a -vv "dist/Paste It.app"
+codesign -dv --verbose=4 "dist/Pastel it！.app"
+codesign --verify --deep --strict --verbose=2 "dist/Pastel it！.app"
+xcrun stapler validate "dist/Pastel it！.app"
+spctl -a -vv "dist/Pastel it！.app"
 ```

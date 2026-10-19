@@ -88,7 +88,7 @@ private struct PasteHero: View {
     let isActive: Bool
     /// Second card in the demo strip (Link).
     private let targetIndex = 1
-    private let pasteResult = "Paste It Docs\nexample.com/docs"
+    private let pasteResult = "Pastel it！ Docs\nexample.com/docs"
 
     var body: some View {
         OnboardingBeatLoop(isActive: isActive, delays: [1.1, 1.5, 1.7, 2.2]) { beat in

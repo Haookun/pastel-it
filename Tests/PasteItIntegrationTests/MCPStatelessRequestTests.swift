@@ -10,7 +10,7 @@ struct MCPStatelessRequestTests {
             for client in ["client-a", "client-b", "client-a"] {
                 let initialized = try Self.result(await host.handle(Self.initialize(client: client)))
                 #expect(initialized["protocolVersion"]?.stringValue == "2025-11-25")
-                #expect(initialized["serverInfo"]?.objectValue?["name"]?.stringValue == "Paste It")
+            #expect(initialized["serverInfo"]?.objectValue?["name"]?.stringValue == AppBrand.displayName)
                 let notification = await host.handle(try Self.request("notifications/initialized", id: nil))
                 #expect(notification.statusCode == 202)
                 let tools = try Self.result(await host.handle(Self.request("tools/list")))

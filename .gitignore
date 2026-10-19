@@ -42,3 +42,11 @@ Secrets/posthog.env
 
 # Local repair dependencies, evidence and backups
 work/
+
+__pycache__/
+
+# Optional artwork tooling
+.venv-artwork/
+
+# Intermediate raster inputs; SVG and formal icon resources are committed
+design/layers/*-trace-input.png

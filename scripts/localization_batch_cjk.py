@@ -67,11 +67,11 @@ BATCH_CJK: dict[str, dict[str, str]] = {
     "menu.copyMcpURL": {"zh-Hant": "複製 MCP 網址", "ko": "MCP URL 복사"},
     "menu.preferences": {"zh-Hant": "設定…", "ko": "환경설정…"},
     "menu.checkUpdates": {"zh-Hant": "檢查更新項目…", "ko": "업데이트 확인…"},
-    "menu.quit": {"zh-Hant": "結束 Paste It", "ko": "Paste It 종료"},
+    "menu.quit": {"zh-Hant": "結束 Pastel it！", "ko": "Pastel it！ 종료"},
     "menu.more": {"zh-Hant": "更多", "ko": "더 보기"},
     "menu.statusTooltip": {
-        "zh-Hant": "Paste It — 按住 ⌘C / ⌘V 可預覽按鍵",
-        "ko": "Paste It — ⌘C / ⌘V를 누르고 있으면 키가 표시됩니다",
+        "zh-Hant": "Pastel it！ — 按住 ⌘C / ⌘V 可預覽按鍵",
+        "ko": "Pastel it！ — ⌘C / ⌘V를 누르고 있으면 키가 표시됩니다",
     },
     "menu.statusClickHint": {
         "zh-Hant": "左鍵：時間軸 · 右鍵：選單",
@@ -128,10 +128,10 @@ BATCH_CJK: dict[str, dict[str, str]] = {
     "settings.tab.folders": {"zh-Hant": "檔案夾", "ko": "폴더"},
     "settings.tab.stack": {"zh-Hant": "貼上堆疊", "ko": "붙여넣기 스택"},
     "settings.tab.storage": {"zh-Hant": "儲存空間", "ko": "저장 공간"},
-    "settings.version": {"zh-Hant": "Paste It %@ (%@)", "ko": "Paste It %@ (%@)"},
+    "settings.version": {"zh-Hant": "Pastel it！ %@ (%@)", "ko": "Pastel it！ %@ (%@)"},
     "settings.aboutBlurb": {
-        "zh-Hant": "Paste It 是本地優先的剪貼簿管理工具，歷史記錄僅保存在這台 Mac。",
-        "ko": "Paste It은 로컬 우선 클립보드 관리 앱입니다. 기록은 이 Mac에만 저장됩니다.",
+        "zh-Hant": "Pastel it！ 是本地優先的剪貼簿管理工具，歷史記錄僅保存在這台 Mac。",
+        "ko": "Pastel it！은 로컬 우선 클립보드 관리 앱입니다. 기록은 이 Mac에만 저장됩니다.",
     },
     "settings.versionLabel": {"zh-Hant": "版本", "ko": "버전"},
     "settings.showTutorial": {"zh-Hant": "顯示教學課程…", "ko": "튜토리얼 보기…"},
@@ -189,8 +189,8 @@ BATCH_CJK: dict[str, dict[str, str]] = {
     },
     "privacy.whatWeCollect": {"zh-Hant": "我們收集的資料", "ko": "수집하는 데이터"},
     "privacy.eventsBlurb": {
-        "zh-Hant": "事件資料有助於改進 Paste It（啟用、面板使用、更新等）。啟用後會以匿名方式傳送至 PostHog。",
-        "ko": "이벤트는 Paste It 개선(활성화, 패널 사용, 업데이트 등)에 도움이 됩니다. 켜면 익명으로 PostHog에 전송됩니다.",
+        "zh-Hant": "事件資料有助於改進 Pastel it！（啟用、面板使用、更新等）。啟用後會以匿名方式傳送至 PostHog。",
+        "ko": "이벤트는 Pastel it！ 개선(활성화, 패널 사용, 업데이트 등)에 도움이 됩니다. 켜면 익명으로 PostHog에 전송됩니다.",
     },
     "privacy.neverCollected": {"zh-Hant": "絕不收集", "ko": "수집하지 않는 항목"},
     "privacy.productEvents": {"zh-Hant": "產品事件", "ko": "제품 이벤트"},
@@ -227,8 +227,8 @@ BATCH_CJK: dict[str, dict[str, str]] = {
     "onboarding.organize.title": {"zh-Hant": "多選貼上", "ko": "여러 항목 붙여넣기"},
     "onboarding.stack.title": {"zh-Hant": "貼上堆疊", "ko": "붙여넣기 스택"},
     "onboarding.capture.caption": {
-        "zh-Hant": "複製任何內容 — Paste It 會保存，並在選單列閃爍 ⌘C。",
-        "ko": "무엇이든 복사하세요. Paste It이 저장하고 메뉴 막대에서 ⌘C를 깜빡입니다.",
+        "zh-Hant": "複製任何內容 — Pastel it！ 會保存，並在選單列閃爍 ⌘C。",
+        "ko": "무엇이든 복사하세요. Pastel it！이 저장하고 메뉴 막대에서 ⌘C를 깜빡입니다.",
     },
     "onboarding.paste.caption": {
         "zh-Hant": "⇧⌘V 打開歷史記錄。在項目上按兩下，再按 ⌘V — 或按 ⌃⌘V 以純文字貼上。",
@@ -430,8 +430,8 @@ BATCH_CJK.update({
         "ko": "바로 붙여넣기에 손쉬운 사용 권한이 필요합니다"
     },
     "action.permissionDetail": {
-        "zh-Hant": "輔助使用允許 Paste It 向目標應用程式傳送 ⌘V。未授權也可以複製內容後手動貼上。",
-        "ko": "손쉬운 사용을 허용하면 Paste It이 대상 앱에 ⌘V를 보낼 수 있습니다. 허용하지 않아도 복사 후 수동으로 붙여넣을 수 있습니다."
+        "zh-Hant": "輔助使用允許 Pastel it！ 向目標應用程式傳送 ⌘V。未授權也可以複製內容後手動貼上。",
+        "ko": "손쉬운 사용을 허용하면 Pastel it！이 대상 앱에 ⌘V를 보낼 수 있습니다. 허용하지 않아도 복사 후 수동으로 붙여넣을 수 있습니다."
     },
     "removal.saveFailed": {
         "zh-Hant": "無法儲存變更，已復原歷史記錄，請重試。",
@@ -447,8 +447,8 @@ BATCH_CJK.update({
 # Native settings navigation and grouped forms.
 BATCH_CJK.update({
     "settings.windowTitle": {
-        "zh-Hant": "Paste It 設定",
-        "ko": "Paste It 설정"
+        "zh-Hant": "Pastel it！ 設定",
+        "ko": "Pastel it！ 설정"
     },
     "settings.sidebar.clipboard": {"zh-Hant": "剪貼簿", "ko": "클립보드"},
     "settings.tab.clipboard": {
@@ -500,8 +500,8 @@ BATCH_CJK.update({
         "ko": "업데이트 자동 다운로드"
     },
     "settings.automaticUpdatesHelp": {
-        "zh-Hant": "更新會在背景下載，準備就緒後提示重新啟動 Paste It。你也可以選擇結束應用程式時安裝。",
-        "ko": "업데이트는 백그라운드에서 다운로드됩니다. 업데이트가 준비되면 Paste It을 다시 시작하라는 알림이 표시됩니다. 앱을 종료할 때 설치하도록 선택할 수도 있습니다."
+        "zh-Hant": "更新會在背景下載，準備就緒後提示重新啟動 Pastel it！。你也可以選擇結束應用程式時安裝。",
+        "ko": "업데이트는 백그라운드에서 다운로드됩니다. 업데이트가 준비되면 Pastel it！을 다시 시작하라는 알림이 표시됩니다. 앱을 종료할 때 설치하도록 선택할 수도 있습니다."
     },
     "settings.group.help": {
         "zh-Hant": "輔助說明",
@@ -509,6 +509,71 @@ BATCH_CJK.update({
     }
 })
 
+
+# Local repair additions use the generator's English fallback where untranslated.
+BATCH_CJK.update({
+    "shortcuts.invalid": {},
+    "shortcuts.duplicate": {},
+    "shortcuts.unavailable": {},
+    "shortcuts.registrationFailed": {},
+    "shortcuts.edit": {},
+    "shortcuts.reset": {},
+    "shortcuts.help": {},
+    "shortcuts.recordTitle": {},
+    "shortcuts.recordHelp": {},
+    "shortcuts.listening": {},
+    "shortcuts.plainFootnote": {},
+    "shortcuts.stackFootnote": {},
+    "shortcuts.stackTutorial": {},
+    "permissions.restartTitle": {},
+    "permissions.restartDetail": {},
+    "permissions.restartHint": {},
+    "permissions.understood": {}
+})
+
+
+BATCH_CJK.update({
+    "shortcuts.unassigned": {},
+    "shortcuts.stackTutorialWithoutBinding": {}
+})
+
+
+# OCR and timeline additions use English where not translated yet.
+BATCH_CJK.update({
+    "settings.tab.ocr": {},
+    "ocr.recognition": {},
+    "ocr.enabled": {},
+    "ocr.enabledHelp": {},
+    "ocr.tables": {},
+    "ocr.tablesHelp": {},
+    "ocr.automaticLanguage": {},
+    "ocr.accuracy": {},
+    "ocr.accurate": {},
+    "ocr.fast": {},
+    "ocr.correction": {},
+    "ocr.minimumHeight": {},
+    "ocr.parametersHelp": {},
+    "ocr.reset": {},
+    "quickPaste.title": {},
+    "quickPaste.enabled": {},
+    "quickPaste.help": {},
+    "quickPaste.text": {},
+    "quickPaste.images": {},
+    "quickPaste.files": {},
+    "quickPaste.scopeHelp": {},
+    "quickPaste.emptyScope": {},
+    "quickPaste.noContent": {},
+    "quickPaste.changed": {},
+    "quickPaste.manual": {},
+    "quickPaste.done": {},
+    "timeline.timeRuler": {},
+    "timeline.timeRulerHelp": {}
+})
+
+
+BATCH_CJK.update({"settings.privateUpdates": {}})
+
+BATCH_CJK["menu.statusTooltip"].update({"zh-Hant": "Pastel it！ — 剪貼簿記錄", "ko": "Pastel it！ — 클립보드 기록"})
 
 def merge_batch_cjk(strings: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
     merged = {key: dict(locs) for key, locs in strings.items()}

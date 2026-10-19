@@ -15,6 +15,7 @@ final class AppRuntime: NSObject {
     let pasteStackController: PasteStackController
     let pasteboardMonitor: PasteboardMonitor
     let hotkeyManager: HotkeyManager
+    let quickPasteController: QuickPasteController
     let panelController: TimelinePanelController
     let detachedWindowController: ClipDetachedWindowController
     let pasteStackPanelController: PasteStackPanelController
@@ -22,7 +23,7 @@ final class AppRuntime: NSObject {
     var state: AppState { appState }
 
     private var statusItem: NSStatusItem?
-    private var keycapsIcon: MenuBarKeycapsIcon?
+    private var keycapsIcon: MenuBarTartIcon?
     private var cmdCVFlashMonitor: CmdCVKeyFlashMonitor?
     private var didStart = false
 
@@ -57,6 +58,8 @@ final class AppRuntime: NSObject {
             stack: pasteStackController,
             historyStore: historyStore
         )
+        quickPasteController = QuickPasteController(settings: settings, pasteController: pasteController,
+            stack: pasteStackController, panel: panelController, state: appState)
         hotkeyManager = HotkeyManager(
             showTimeline: { [panelController] in panelController.toggle(source: .hotkey) },
             togglePasteStack: { [pasteStackController, appState] in
@@ -78,7 +81,8 @@ final class AppRuntime: NSObject {
             editSelected: { [appState, panelController] in
                 guard panelController.isVisible else { return false }
                 return appState.beginEditingSelectedClip()
-            }
+            },
+            quickPaste: { [quickPasteController] in quickPasteController.perform() }
         )
         appState.pasteStackController = pasteStackController
         appState.panelController = panelController
@@ -108,6 +112,7 @@ final class AppRuntime: NSObject {
         historyStore.load()
         pasteboardMonitor.start()
         hotkeyManager.start()
+        PermissionRestartMonitor.shared.start()
         detachedWindowController.start()
         configureStatusItem()
         startCmdCVFlashMonitor()
@@ -148,6 +153,8 @@ final class AppRuntime: NSObject {
         AgentAPIServer.shared.stop()
         pasteboardMonitor.stop()
         hotkeyManager.stop()
+        quickPasteController.stop()
+        PermissionRestartMonitor.shared.stop()
         cmdCVFlashMonitor?.stop()
         cmdCVFlashMonitor = nil
         pasteStackController.close()
@@ -163,7 +170,7 @@ final class AppRuntime: NSObject {
     }
 
     private func configureStatusItem() {
-        let size = MenuBarKeycapsIcon.preferredSize
+        let size = MenuBarTartIcon.preferredSize
         let item = NSStatusBar.system.statusItem(withLength: size.width)
         guard let button = item.button else {
             statusItem = item
@@ -173,7 +180,7 @@ final class AppRuntime: NSObject {
         button.title = ""
         button.imagePosition = .imageOnly
         button.imageScaling = .scaleProportionallyDown
-        button.toolTip = "Paste It"
+        button.toolTip = "Pastel it！"
         button.target = self
         button.action = #selector(statusItemClicked)
         button.sendAction(on: [.leftMouseUp, .rightMouseUp])
@@ -182,7 +189,7 @@ final class AppRuntime: NSObject {
         // Drop any legacy keycaps subview from older builds / reconfigure.
         button.subviews.forEach { $0.removeFromSuperview() }
 
-        let keycaps = MenuBarKeycapsIcon()
+        let keycaps = MenuBarTartIcon()
         keycaps.onImageChange = { [weak button] image in
             button?.image = image
         }
@@ -205,7 +212,7 @@ final class AppRuntime: NSObject {
     private func refreshStatusItem() {
         let stack = pasteStackController.statusTitle
         let stackLine = stack == L10n.tr("stack.paste", default: "Paste") ? nil : stack
-        var tip = L10n.tr("menu.statusTooltip", default: "Paste It — hold ⌘C / ⌘V to press the keys")
+        var tip = L10n.tr("menu.statusTooltip", default: "Pastel it！ — Clipboard history")
         if let stackLine {
             tip += "\n\(stackLine)"
         }
@@ -216,12 +223,10 @@ final class AppRuntime: NSObject {
     /// Shared app menu used by the timeline's "…" button.
     func makeAppMenu() -> NSMenu {
         let menu = NSMenu()
-        menu.addItem(makeMenuItem(title: L10n.tr("menu.openPaste", default: "Open Paste"), action: #selector(openTimeline), keyEquivalent: "v", shiftCommand: true))
-        menu.addItem(makeMenuItem(
+        menu.addItem(makeShortcutMenuItem(title: L10n.tr("menu.openPaste", default: "Open Paste"), action: #selector(openTimeline), shortcut: .timeline))
+        menu.addItem(makeShortcutMenuItem(
             title: pasteStackController.toggleMenuTitle,
-            action: #selector(togglePasteStack),
-            keyEquivalent: "c",
-            shiftCommand: true
+            action: #selector(togglePasteStack), shortcut: .stack
         ))
         if !pasteStackController.items.isEmpty {
             menu.addItem(makeMenuItem(
@@ -230,12 +235,16 @@ final class AppRuntime: NSObject {
                 keyEquivalent: ""
             ))
         }
-        menu.addItem(makeMenuItem(
+        menu.addItem(makeShortcutMenuItem(
             title: L10n.tr("menu.pastePlain", default: "Paste Without Formatting"),
-            action: #selector(pasteWithoutFormattingMenu),
-            keyEquivalent: "v",
-            controlCommand: true
+            action: #selector(pasteWithoutFormattingMenu), shortcut: .plainPaste
         ))
+        if settings.quickPasteEnabled {
+            menu.addItem(makeShortcutMenuItem(
+                title: L10n.tr("quickPaste.title", default: "Quick Paste"),
+                action: #selector(quickPasteMenu), shortcut: .quickPaste
+            ))
+        }
         menu.addItem(NSMenuItem.separator())
         if historyStore.canUndoRemoval {
             let undoItem = makeMenuItem(
@@ -257,13 +266,15 @@ final class AppRuntime: NSObject {
             menu.addItem(makeMenuItem(title: L10n.tr("menu.copyMcpURL", default: "Copy MCP URL"), action: #selector(copyAgentAPIURL), keyEquivalent: ""))
         }
         menu.addItem(makeMenuItem(title: L10n.tr("menu.preferences", default: "Preferences…"), action: #selector(openSettings), keyEquivalent: ","))
-        menu.addItem(makeMenuItem(
-            title: L10n.tr("menu.checkUpdates", default: "Check for Updates…"),
-            action: #selector(checkForUpdates),
-            keyEquivalent: ""
-        ))
+        if AppBrand.updatesEnabled {
+            menu.addItem(makeMenuItem(
+                title: L10n.tr("menu.checkUpdates", default: "Check for Updates…"),
+                action: #selector(checkForUpdates),
+                keyEquivalent: ""
+            ))
+        }
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(makeMenuItem(title: L10n.tr("menu.quit", default: "Quit Paste It"), action: #selector(quit), keyEquivalent: "q"))
+        menu.addItem(makeMenuItem(title: L10n.tr("menu.quit", default: "Quit Pastel it！"), action: #selector(quit), keyEquivalent: "q"))
         return menu
     }
 
@@ -287,6 +298,26 @@ final class AppRuntime: NSObject {
     var pasteStackToggleTitle: String { pasteStackController.toggleMenuTitle }
     var pasteStackItemCount: Int { pasteStackController.items.count }
     var isPasteStackCollecting: Bool { pasteStackController.isCollecting }
+
+    private func makeShortcutMenuItem(title: String, action: Selector, shortcut: ShortcutAction) -> NSMenuItem {
+        guard let binding = hotkeyManager.shortcuts[shortcut] else {
+            let item = makeMenuItem(title: title, action: action, keyEquivalent: "")
+            item.keyEquivalentModifierMask = []
+            return item
+        }
+        let specials: [UInt32: String] = [36: "\r", 48: "\t", 49: " ", 51: "\u{8}",
+            123: "\u{F702}", 124: "\u{F703}", 125: "\u{F701}", 126: "\u{F700}"]
+        let functionEquivalent: String
+        if binding.key.hasPrefix("F"), let number = Int(binding.key.dropFirst()), (1...20).contains(number),
+           let scalar = UnicodeScalar(0xF704 + number - 1) {
+            functionEquivalent = String(scalar)
+        } else { functionEquivalent = "" }
+        let equivalent = specials[binding.keyCode] ?? (binding.key.count == 1 ? binding.key.lowercased() : functionEquivalent)
+        let item = makeMenuItem(title: title, action: action, keyEquivalent: equivalent)
+        item.keyEquivalentModifierMask = binding.eventModifiers
+        item.toolTip = binding.display
+        return item
+    }
 
     private func makeMenuItem(
         title: String,
@@ -348,6 +379,8 @@ final class AppRuntime: NSObject {
     @objc private func pasteWithoutFormattingMenu() {
         _ = pasteWithoutFormatting()
     }
+
+    @objc private func quickPasteMenu() { quickPasteController.perform() }
 
     @objc private func clearPasteStack() {
         pasteStackController.close()

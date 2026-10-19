@@ -53,6 +53,9 @@ final class AppSettings: ObservableObject {
     @AppStorage("maxBlobMegabytes") var maxBlobMegabytes: Int = 1024
     @AppStorage("launchAtLogin") var launchAtLogin: Bool = true
     @AppStorage("pasteAsPlainTextByDefault") var pasteAsPlainTextByDefault: Bool = false
+    @AppStorage("ocrConfiguration") private var ocrConfigurationData = Data()
+    @AppStorage("quickPasteEnabled") var quickPasteEnabled = false
+    @AppStorage("quickPasteScope") private var quickPasteScopeData = Data()
     @AppStorage("hasCompletedOnboarding") var hasCompletedOnboarding: Bool = false
     /// Bump when shipping a What's New feature pack (not every semver).
     static let currentWhatsNewContentVersion = 3
@@ -75,6 +78,9 @@ final class AppSettings: ObservableObject {
         _maxBlobMegabytes = AppStorage(wrappedValue: 1024, "maxBlobMegabytes", store: defaults)
         _launchAtLogin = AppStorage(wrappedValue: true, "launchAtLogin", store: defaults)
         _pasteAsPlainTextByDefault = AppStorage(wrappedValue: false, "pasteAsPlainTextByDefault", store: defaults)
+        _ocrConfigurationData = AppStorage(wrappedValue: Data(), "ocrConfiguration", store: defaults)
+        _quickPasteEnabled = AppStorage(wrappedValue: false, "quickPasteEnabled", store: defaults)
+        _quickPasteScopeData = AppStorage(wrappedValue: Data(), "quickPasteScope", store: defaults)
         _hasCompletedOnboarding = AppStorage(wrappedValue: false, "hasCompletedOnboarding", store: defaults)
         _seenWhatsNewContentVersion = AppStorage(wrappedValue: 0, "seenWhatsNewContentVersion", store: defaults)
         _agentAPIEnabled = AppStorage(wrappedValue: false, "agentAPIEnabled", store: defaults)
@@ -87,6 +93,22 @@ final class AppSettings: ObservableObject {
     var keepHistory: KeepHistory {
         get { KeepHistory(rawValue: keepHistoryRaw) ?? .forever }
         set { keepHistoryRaw = newValue.rawValue }
+    }
+
+    var ocrConfiguration: OCRConfiguration {
+        get { ((try? JSONDecoder().decode(OCRConfiguration.self, from: ocrConfigurationData)) ?? .init()).normalized }
+        set {
+            objectWillChange.send()
+            if let data = try? JSONEncoder().encode(newValue.normalized) { ocrConfigurationData = data }
+        }
+    }
+
+    var quickPasteScope: QuickPasteScope {
+        get { (try? JSONDecoder().decode(QuickPasteScope.self, from: quickPasteScopeData)) ?? .init() }
+        set {
+            objectWillChange.send()
+            if let data = try? JSONEncoder().encode(newValue) { quickPasteScopeData = data }
+        }
     }
 
     var pasteStackDefaultDirection: PasteStackController.Direction {

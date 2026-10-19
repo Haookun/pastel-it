@@ -91,12 +91,12 @@ STRINGS: dict[str, dict[str, str]] = {
     "menu.copyMcpURL": {"en": "Copy MCP URL", "zh-Hans": "复制 MCP 地址", "ja": "MCP URL をコピー"},
     "menu.preferences": {"en": "Preferences…", "zh-Hans": "偏好设置…", "ja": "環境設定…"},
     "menu.checkUpdates": {"en": "Check for Updates…", "zh-Hans": "检查更新…", "ja": "アップデートを確認…"},
-    "menu.quit": {"en": "Quit Paste It", "zh-Hans": "退出 Paste It", "ja": "Paste It を終了"},
+    "menu.quit": {"en": "Quit Pastel it！", "zh-Hans": "退出 Pastel it！", "ja": "Pastel it！ を終了"},
     "menu.more": {"en": "More", "zh-Hans": "更多", "ja": "その他"},
     "menu.statusTooltip": {
-        "en": "Paste It — hold ⌘C / ⌘V to press the keys",
-        "zh-Hans": "Paste It — 按住 ⌘C / ⌘V 查看按键",
-        "ja": "Paste It — ⌘C / ⌘V を押し続けてキーを表示",
+        "en": "Pastel it！ — hold ⌘C / ⌘V to press the keys",
+        "zh-Hans": "Pastel it！ — 按住 ⌘C / ⌘V 查看按键",
+        "ja": "Pastel it！ — ⌘C / ⌘V を押し続けてキーを表示",
     },
     "menu.statusClickHint": {
         "en": "Left-click: timeline · Right-click: menu",
@@ -163,11 +163,11 @@ STRINGS: dict[str, dict[str, str]] = {
     "settings.tab.folders": {"en": "Folders", "zh-Hans": "文件夹", "ja": "フォルダ"},
     "settings.tab.stack": {"en": "Stack", "zh-Hans": "粘贴堆栈", "ja": "スタック"},
     "settings.tab.storage": {"en": "Storage", "zh-Hans": "存储", "ja": "ストレージ"},
-    "settings.version": {"en": "Paste It %@ (%@)", "zh-Hans": "Paste It %@ (%@)", "ja": "Paste It %@ (%@)"},
+    "settings.version": {"en": "Pastel it！ %@ (%@)", "zh-Hans": "Pastel it！ %@ (%@)", "ja": "Pastel it！ %@ (%@)"},
     "settings.aboutBlurb": {
-        "en": "Paste It is a local-first clipboard manager. History stays on this Mac.",
-        "zh-Hans": "Paste It 是一款本地优先的剪贴板管理器。历史记录仅保存在本 Mac。",
-        "ja": "Paste It はローカル優先のクリップボードマネージャーです。履歴はこの Mac にのみ保存されます。",
+        "en": "Pastel it！ is a local-first clipboard manager. History stays on this Mac.",
+        "zh-Hans": "Pastel it！ 是一款本地优先的剪贴板管理器。历史记录仅保存在本 Mac。",
+        "ja": "Pastel it！ はローカル優先のクリップボードマネージャーです。履歴はこの Mac にのみ保存されます。",
     },
     "settings.versionLabel": {"en": "Version", "zh-Hans": "版本", "ja": "バージョン"},
     "settings.showTutorial": {"en": "Show Tutorial…", "zh-Hans": "显示教程…", "ja": "チュートリアルを表示…"},
@@ -235,9 +235,9 @@ STRINGS: dict[str, dict[str, str]] = {
     },
     "privacy.whatWeCollect": {"en": "What we collect", "zh-Hans": "我们收集的内容", "ja": "収集するデータ"},
     "privacy.eventsBlurb": {
-        "en": "Events help improve Paste It (activation, panel use, updates). Data is anonymous and sent to PostHog when enabled.",
-        "zh-Hans": "事件数据有助于改进 Paste It（激活、面板使用、更新等）。启用后匿名发送至 PostHog。",
-        "ja": "イベントは Paste It の改善に役立ちます（有効化、パネル利用、アップデートなど）。有効時は匿名で PostHog に送信されます。",
+        "en": "Events help improve Pastel it！ (activation, panel use, updates). Data is anonymous and sent to PostHog when enabled.",
+        "zh-Hans": "事件数据有助于改进 Pastel it！（激活、面板使用、更新等）。启用后匿名发送至 PostHog。",
+        "ja": "イベントは Pastel it！ の改善に役立ちます（有効化、パネル利用、アップデートなど）。有効時は匿名で PostHog に送信されます。",
     },
     "privacy.neverCollected": {"en": "Never collected", "zh-Hans": "永不收集", "ja": "収集しないもの"},
     "privacy.productEvents": {"en": "Product events", "zh-Hans": "产品事件", "ja": "プロダクトイベント"},
@@ -279,9 +279,9 @@ STRINGS: dict[str, dict[str, str]] = {
     "onboarding.organize.title": {"en": "Multi-select paste", "zh-Hans": "多选粘贴", "ja": "複数選択してペースト"},
     "onboarding.stack.title": {"en": "Paste Stack", "zh-Hans": "粘贴堆栈", "ja": "ペーストスタック"},
     "onboarding.capture.caption": {
-        "en": "Copy anything — Paste It saves it and flashes ⌘C in the menu bar.",
-        "zh-Hans": "复制任意内容 — Paste It 会保存并在菜单栏闪烁 ⌘C。",
-        "ja": "何でもコピー — Paste It が保存し、メニューバーで ⌘C を点滅させます。",
+        "en": "Copy anything — Pastel it！ saves it and flashes ⌘C in the menu bar.",
+        "zh-Hans": "复制任意内容 — Pastel it！ 会保存并在菜单栏闪烁 ⌘C。",
+        "ja": "何でもコピー — Pastel it！ が保存し、メニューバーで ⌘C を点滅させます。",
     },
     "onboarding.paste.caption": {
         "en": "⇧⌘V opens history. Double-click a clip, then ⌘V — or ⌃⌘V to paste without formatting.",
@@ -527,8 +527,8 @@ STRINGS.update({
         "ja": "直接ペーストにはアクセシビリティが必要です"
     },
     "action.permissionDetail": {
-        "en": "Accessibility lets Paste It send ⌘V to your destination app. You can still copy clips and paste them manually without granting access.",
-        "zh-Hans": "辅助功能允许 Paste It 向目标应用发送 ⌘V。未授权也可以复制内容后手动粘贴。",
+        "en": "Accessibility lets Pastel it！ send ⌘V to your destination app. You can still copy clips and paste them manually without granting access.",
+        "zh-Hans": "辅助功能允许 Pastel it！ 向目标应用发送 ⌘V。未授权也可以复制内容后手动粘贴。",
         "ja": "アクセシビリティを許可すると対象アプリに ⌘V を送信できます。許可しなくてもコピーして手動でペーストできます。"
     },
     "removal.saveFailed": {
@@ -584,9 +584,9 @@ def build_catalog(strings: dict[str, dict[str, str]]) -> dict:
 # Native settings navigation and grouped forms.
 STRINGS.update({
     "settings.windowTitle": {
-        "en": "Paste It Settings",
-        "zh-Hans": "Paste It 设置",
-        "ja": "Paste It 設定"
+        "en": "Pastel it！ Settings",
+        "zh-Hans": "Pastel it！ 设置",
+        "ja": "Pastel it！ 設定"
     },
     "settings.sidebar.clipboard": {"en": "Clipboard", "zh-Hans": "剪贴板", "ja": "クリップボード"},
     "settings.tab.clipboard": {
@@ -650,9 +650,9 @@ STRINGS.update({
         "ja": "アップデートを自動的にダウンロード"
     },
     "settings.automaticUpdatesHelp": {
-        "en": "Updates download in the background. When an update is ready, you’ll be asked to restart Paste It. You can also install when you quit.",
-        "zh-Hans": "更新会在后台下载，准备就绪后提示重启 Paste It。你也可以选择退出时安装。",
-        "ja": "アップデートはバックグラウンドでダウンロードされ、準備ができると Paste It の再起動を求める通知が表示されます。アプリの終了時にインストールすることもできます。"
+        "en": "Updates download in the background. When an update is ready, you’ll be asked to restart Pastel it！. You can also install when you quit.",
+        "zh-Hans": "更新会在后台下载，准备就绪后提示重启 Pastel it！。你也可以选择退出时安装。",
+        "ja": "アップデートはバックグラウンドでダウンロードされ、準備ができると Pastel it！ の再起動を求める通知が表示されます。アプリの終了時にインストールすることもできます。"
     },
     "settings.group.help": {
         "en": "Help",
@@ -661,6 +661,212 @@ STRINGS.update({
     }
 })
 
+
+# Local settings and permission improvements.
+STRINGS.update({
+    "shortcuts.invalid": {
+        "en": "Use a key with Command, Control, or Option. Standard editing and app commands are reserved.",
+        "zh-Hans": "请使用 Command、Control 或 Option 加其他按键；常用编辑与应用快捷键不能覆盖。"
+    },
+    "shortcuts.duplicate": {
+        "en": "This shortcut is already assigned to another action.",
+        "zh-Hans": "此快捷键已用于其他操作，请换一个组合。"
+    },
+    "shortcuts.unavailable": {
+        "en": "macOS could not register this shortcut. It may be in use. Your previous shortcuts were kept.",
+        "zh-Hans": "macOS 无法注册此快捷键，可能已被占用。已保留原快捷键。"
+    },
+    "shortcuts.registrationFailed": {
+        "en": "Some shortcuts could not be registered. Choose another combination; all actions remain available from the menu.",
+        "zh-Hans": "部分快捷键注册失败，请更换组合。仍可从菜单使用所有功能。"
+    },
+    "shortcuts.edit": {
+        "en": "Click to change this shortcut",
+        "zh-Hans": "点击修改快捷键"
+    },
+    "shortcuts.reset": {
+        "en": "Reset All Shortcuts to Defaults",
+        "zh-Hans": "恢复所有默认快捷键"
+    },
+    "shortcuts.help": {
+        "en": "Click a shortcut, then press a new combination. Changes take effect immediately and are saved on this Mac.",
+        "zh-Hans": "点击快捷键后按下新的组合，修改立即生效，并会在重启后保留。"
+    },
+    "shortcuts.recordTitle": {
+        "en": "Change Shortcut",
+        "zh-Hans": "修改快捷键"
+    },
+    "shortcuts.recordHelp": {
+        "en": "Press a key with Command, Control, or Option. Press Backspace to clear, or Escape to cancel.",
+        "zh-Hans": "按下 Command、Control 或 Option 加其他按键。按退格键清除，按 Esc 取消。"
+    },
+    "shortcuts.listening": {
+        "en": "Waiting for shortcut…",
+        "zh-Hans": "请按下新的快捷键…"
+    },
+    "shortcuts.plainFootnote": {
+        "en": "The plain-text shortcut pastes once without formatting, then restores the original clipboard (Accessibility required). In the timeline, ⇧↩ pastes the selection as plain text.",
+        "zh-Hans": "纯文本快捷键会按无格式文本粘贴一次，再还原原始剪贴板（需要辅助功能权限）。时间线中按 ⇧↩ 可粘贴所选纯文本。"
+    },
+    "shortcuts.stackFootnote": {
+        "en": "The Paste Stack shortcut opens or closes the queue. While it has items, ⌘V in any app pastes the next one (Accessibility required).",
+        "zh-Hans": "队列快捷键用于打开或关闭粘贴队列。有待粘贴内容时，在目标应用按 ⌘V 可依次粘贴（需要辅助功能权限）。"
+    },
+    "shortcuts.stackTutorial": {
+        "en": "%@ opens a queue on the right. Copy several things, then ⌘V in the target app to paste them one by one.",
+        "zh-Hans": "%@ 打开右侧队列。连续复制多项后，在目标应用按 ⌘V 逐个粘贴。"
+    },
+    "permissions.restartTitle": {
+        "en": "Restart Pastel it！ After Granting Access",
+        "zh-Hans": "授权完成，请重启 Pastel it！"
+    },
+    "permissions.restartDetail": {
+        "en": "Accessibility permission is now enabled. Please quit and reopen Pastel it！ so automatic pasting and Paste Stack can use the updated permission. Your clipboard history will be kept.",
+        "zh-Hans": "辅助功能权限已开启。请退出并重新打开 Pastel it！，让自动粘贴和队列监听使用新权限。剪贴板历史会保留。"
+    },
+    "permissions.restartHint": {
+        "en": "Permission updated. Quit and reopen Pastel it！ to finish applying it.",
+        "zh-Hans": "权限已更新，请退出并重新打开 Pastel it！，使新权限完整生效。"
+    },
+    "permissions.understood": {
+        "en": "Got It",
+        "zh-Hans": "知道了"
+    }
+})
+
+
+STRINGS.update({
+    "shortcuts.unassigned": {
+        "en": "Not assigned",
+        "zh-Hans": "未设置"
+    },
+    "shortcuts.stackTutorialWithoutBinding": {
+        "en": "Open Paste Stack from the menu. Copy several things, then ⌘V in the target app to paste them one by one.",
+        "zh-Hans": "从菜单打开粘贴队列。连续复制多项后，在目标应用按 ⌘V 逐个粘贴。"
+    }
+})
+
+
+# OCR preferences, quick paste, and copy-time navigation.
+STRINGS.update({
+    "settings.tab.ocr": {
+        "en": "OCR",
+        "zh-Hans": "OCR 与快捷粘贴"
+    },
+    "ocr.recognition": {
+        "en": "Image Recognition",
+        "zh-Hans": "图片文字识别"
+    },
+    "ocr.enabled": {
+        "en": "Enable OCR",
+        "zh-Hans": "启用 OCR"
+    },
+    "ocr.enabledHelp": {
+        "en": "Recognize new images in the background. Existing results are kept when OCR is off. Re-run an image to apply changed settings.",
+        "zh-Hans": "在后台识别新图片。关闭 OCR 不会删除已有结果；修改参数后，可对图片点击 Re-run 重新识别。"
+    },
+    "ocr.tables": {
+        "en": "Recognize tables",
+        "zh-Hans": "识别表格"
+    },
+    "ocr.tablesHelp": {
+        "en": "On macOS 26 or later, output detected tables as Markdown and keep surrounding text.",
+        "zh-Hans": "macOS 26 及以上可将检测到的表格输出为 Markdown，并保留表格前后的文字。"
+    },
+    "ocr.automaticLanguage": {
+        "en": "Detect languages automatically",
+        "zh-Hans": "自动检测语言"
+    },
+    "ocr.accuracy": {
+        "en": "Recognition mode",
+        "zh-Hans": "识别模式"
+    },
+    "ocr.accurate": {
+        "en": "Accurate",
+        "zh-Hans": "精确"
+    },
+    "ocr.fast": {
+        "en": "Fast",
+        "zh-Hans": "快速"
+    },
+    "ocr.correction": {
+        "en": "Language correction",
+        "zh-Hans": "语言纠错"
+    },
+    "ocr.minimumHeight": {
+        "en": "Minimum text height",
+        "zh-Hans": "最小文字高度"
+    },
+    "ocr.parametersHelp": {
+        "en": "Text height is a fraction of image height; 0% keeps small text. Fast mode supports fewer languages; selected languages use accurate mode when needed. Document table detection uses its own system model.",
+        "zh-Hans": "按图片高度的比例过滤文字；0% 保留小字。快速模式支持的语言较少，必要时为指定语言使用精确模式；表格检测使用独立的系统模型。"
+    },
+    "ocr.reset": {
+        "en": "Reset OCR Settings",
+        "zh-Hans": "恢复 OCR 默认设置"
+    },
+    "quickPaste.title": {
+        "en": "Quick Paste",
+        "zh-Hans": "快捷粘贴"
+    },
+    "quickPaste.enabled": {
+        "en": "Enable quick paste",
+        "zh-Hans": "启用快捷粘贴"
+    },
+    "quickPaste.help": {
+        "en": "Convert the current system clipboard to plain text and paste it. This shortcut is separate from Open Paste. The default is ⇧⌘V; change either shortcut if they conflict.",
+        "zh-Hans": "将当前系统剪贴板内容转为纯文本并粘贴。与打开剪贴板使用独立快捷键，默认 ⇧⌘V；如有冲突，请修改其中一个快捷键。"
+    },
+    "quickPaste.text": {
+        "en": "Text → plain text",
+        "zh-Hans": "文字 → 纯文本"
+    },
+    "quickPaste.images": {
+        "en": "Images → OCR text",
+        "zh-Hans": "图片 → OCR 文字"
+    },
+    "quickPaste.files": {
+        "en": "Files → file names",
+        "zh-Hans": "文件 → 文件名"
+    },
+    "quickPaste.scopeHelp": {
+        "en": "Only selected types are converted. Images follow the OCR settings above. Without Accessibility, plain text is prepared for manual ⌘V. Automatic pasting restores the original clipboard unless you copy something newer.",
+        "zh-Hans": "仅转换勾选的类型。图片遵循上方 OCR 设置；无辅助功能权限时，先准备纯文本，再手动按 ⌘V。自动粘贴后恢复原剪贴板；期间复制了新内容则保留新内容。"
+    },
+    "quickPaste.emptyScope": {
+        "en": "Select at least one content type to use quick paste.",
+        "zh-Hans": "请至少选择一种需要转换的类型。"
+    },
+    "quickPaste.noContent": {
+        "en": "No enabled content to convert; clipboard unchanged",
+        "zh-Hans": "没有可转换的已选类型，剪贴板保持不变"
+    },
+    "quickPaste.changed": {
+        "en": "Clipboard or destination changed; quick paste cancelled",
+        "zh-Hans": "剪贴板或目标应用已变化，已取消快捷粘贴"
+    },
+    "quickPaste.manual": {
+        "en": "Plain text ready. Press ⌘V, or enable Accessibility for automatic pasting.",
+        "zh-Hans": "纯文本已准备好。请按 ⌘V，或开启辅助功能以自动粘贴。"
+    },
+    "quickPaste.done": {
+        "en": "Pasted as plain text",
+        "zh-Hans": "已粘贴为纯文本"
+    },
+    "timeline.timeRuler": {
+        "en": "Copy time navigation",
+        "zh-Hans": "复制时间轴"
+    },
+    "timeline.timeRulerHelp": {
+        "en": "Hover to magnify copy time. Click or drag to jump to the nearest visible clip.",
+        "zh-Hans": "悬停放大查看复制时间；点击或拖动，跳转到当前筛选结果中最接近该时间的记录。"
+    }
+})
+
+
+STRINGS.update({"settings.privateUpdates": {"en": "Automatic updates are not configured for this private derivative. Get builds from your own repository.", "zh-Hans": "此私人派生版尚未配置自动更新，请从自己的项目仓库获取构建。"}})
+
+STRINGS["menu.statusTooltip"].update({"en": "Pastel it！ — Clipboard history", "zh-Hans": "Pastel it！ — 剪贴板历史", "ja": "Pastel it！ — クリップボード履歴"})
 
 def main() -> None:
     strings = merge_batch_cjk(merge_batch2(STRINGS))

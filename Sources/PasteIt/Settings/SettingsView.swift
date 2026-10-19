@@ -6,12 +6,13 @@ struct SettingsView: View {
     static let sidebarWidth: CGFloat = 223
 
     private enum Page: Hashable {
-        case general, clipboard, stack, folders, privacy, storage, about
+        case general, clipboard, ocr, stack, folders, privacy, storage, about
 
         var title: String {
             switch self {
             case .general: L10n.tr("settings.tab.general", default: "General")
             case .clipboard: L10n.tr("settings.tab.clipboard", default: "Clipboard & History")
+            case .ocr: L10n.tr("settings.tab.ocr", default: "OCR")
             case .stack: L10n.tr("settings.tab.stack", default: "Stack")
             case .folders: L10n.tr("settings.tab.folders", default: "Folders")
             case .privacy: L10n.tr("settings.tab.privacy", default: "Privacy")
@@ -24,6 +25,7 @@ struct SettingsView: View {
             switch self {
             case .general: "gearshape.fill"
             case .clipboard: "clipboard.fill"
+            case .ocr: "text.viewfinder"
             case .stack: "square.3.layers.3d"
             case .folders: "folder.fill"
             case .privacy: "hand.raised.fill"
@@ -41,7 +43,7 @@ struct SettingsView: View {
         var tint: Color {
             switch self {
             case .general, .storage: .gray
-            case .clipboard, .privacy, .about: .blue
+            case .clipboard, .privacy, .about, .ocr: .blue
             case .stack: .indigo
             case .folders: .orange
             }
@@ -80,6 +82,7 @@ struct SettingsView: View {
                 Section {
                     navigationRow(.general)
                     navigationRow(.clipboard)
+                    navigationRow(.ocr)
                     navigationRow(.stack)
                     navigationRow(.folders)
                 }
@@ -106,7 +109,7 @@ struct SettingsView: View {
         }
         .navigationSplitViewStyle(.balanced)
         .toggleStyle(.switch)
-        .frame(minWidth: 760, minHeight: 580)
+        .frame(minWidth: 680, minHeight: 460)
         .onAppear {
             accessibilityTrusted = SystemPasteSynthesizer.isAccessibilityTrusted
         }
@@ -160,7 +163,9 @@ struct SettingsView: View {
                     .lineLimit(2)
             } icon: {
                 Image(systemName: page.symbol)
-                    .font(.system(size: 13, weight: .semibold))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 12, height: 12)
                     .foregroundStyle(.white)
                     .frame(width: 20, height: 20)
                     .background(page.tint.gradient, in: RoundedRectangle(cornerRadius: 5))
@@ -175,6 +180,7 @@ struct SettingsView: View {
         switch selectedPage ?? .general {
         case .general: general
         case .clipboard: clipboard
+        case .ocr: OCRSettingsView(settings: settings, manager: AppRuntime.shared.hotkeyManager)
         case .stack: stack
         case .folders: FoldersSettingsView(historyStore: historyStore)
         case .privacy: PrivacySettingsView(settings: settings)
@@ -186,7 +192,7 @@ struct SettingsView: View {
     private var versionLabel: String {
         let short = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
-        return L10n.tr("settings.version", default: "Paste It %@ (%@)", short, build)
+        return L10n.tr("settings.version", default: "Pastel it！ %@ (%@)", short, build)
     }
 
     private var about: some View {
@@ -198,7 +204,7 @@ struct SettingsView: View {
                         .frame(width: 56, height: 56)
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Paste It")
+                        Text("Pastel it！")
                             .font(.title2.bold())
                         Text(versionLabel)
                             .font(.caption)
@@ -206,7 +212,7 @@ struct SettingsView: View {
                     }
                 }
                 .padding(.vertical, 8)
-                Text(L10n.tr("settings.aboutBlurb", default: "Paste It is a local-first clipboard manager. History stays on this Mac."))
+                Text(L10n.tr("settings.aboutBlurb", default: "Pastel it！ is a local-first clipboard manager. History stays on this Mac."))
                     .foregroundStyle(.secondary)
             }
 
@@ -227,27 +233,35 @@ struct SettingsView: View {
                 }
             }
 
-            Section(L10n.tr("settings.group.updates", default: "Updates")) {
-                Toggle(
-                    L10n.tr("settings.automaticallyCheckUpdates", default: "Automatically check for updates"),
-                    isOn: $updateChecker.automaticallyChecksForUpdates
-                )
-                Toggle(
-                    L10n.tr("settings.automaticallyDownloadUpdates", default: "Automatically download updates"),
-                    isOn: $updateChecker.automaticallyDownloadsUpdates
-                )
-                .disabled(!updateChecker.automaticallyChecksForUpdates)
-                Text(L10n.tr(
-                    "settings.automaticUpdatesHelp",
-                    default: "Updates download in the background. When an update is ready, you’ll be asked to restart Paste It. You can also install when you quit."
-                ))
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            if AppBrand.updatesEnabled {
+                Section(L10n.tr("settings.group.updates", default: "Updates")) {
+                    Toggle(
+                        L10n.tr("settings.automaticallyCheckUpdates", default: "Automatically check for updates"),
+                        isOn: $updateChecker.automaticallyChecksForUpdates
+                    )
+                    Toggle(
+                        L10n.tr("settings.automaticallyDownloadUpdates", default: "Automatically download updates"),
+                        isOn: $updateChecker.automaticallyDownloadsUpdates
+                    )
+                    .disabled(!updateChecker.automaticallyChecksForUpdates)
+                    Text(L10n.tr(
+                        "settings.automaticUpdatesHelp",
+                        default: "Updates download in the background. When an update is ready, you’ll be asked to restart Pastel it！. You can also install when you quit."
+                    ))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
 
-                Button(L10n.tr("menu.checkUpdates", default: "Check for Updates…")) {
-                    updateChecker.checkForUpdates(source: "settings")
+                    Button(L10n.tr("menu.checkUpdates", default: "Check for Updates…")) {
+                        updateChecker.checkForUpdates(source: "settings")
+                    }
+                    .disabled(!updateChecker.canCheckForUpdates)
                 }
-                .disabled(!updateChecker.canCheckForUpdates)
+            } else {
+                Section(L10n.tr("settings.group.updates", default: "Updates")) {
+                    Text(L10n.tr("settings.privateUpdates", default: "Automatic updates are not configured for this private derivative. Get builds from your own repository."))
+                        .foregroundStyle(.secondary)
+                    Link("GitHub", destination: AppBrand.repositoryURL)
+                }
             }
         }
         .formStyle(.grouped)
@@ -300,27 +314,16 @@ struct SettingsView: View {
             }
 
             Section {
-                shortcutRow(L10n.tr("menu.openPaste", default: "Open Paste"), keys: "⇧⌘V")
-                shortcutRow(L10n.tr("stack.open", default: "Open Paste Stack"), keys: "⇧⌘C")
-                shortcutRow(L10n.tr("menu.pastePlain", default: "Paste Without Formatting"), keys: "⌃⌘V")
+                ShortcutSettingsView(manager: AppRuntime.shared.hotkeyManager, actions: [.timeline, .stack, .plainPaste])
             } header: {
                 Text(L10n.tr("settings.group.shortcuts", default: "Keyboard Shortcuts"))
             } footer: {
-                Text(L10n.tr("settings.plainTextFootnote", default: "⌃⌘V pastes once as plain text, then restores the original clipboard (Accessibility required to auto-paste). In the timeline, ⇧↩ pastes the selection as plain text."))
+                Text(L10n.tr("shortcuts.plainFootnote", default: "The plain-text shortcut pastes once without formatting, then restores the original clipboard (Accessibility required). In the timeline, ⇧↩ pastes the selection as plain text."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
-    }
-
-    private func shortcutRow(_ title: String, keys: String) -> some View {
-        LabeledContent(title) {
-            Text(keys)
-                .font(.system(.body, design: .monospaced))
-                .foregroundStyle(.secondary)
-                .accessibilityLabel(keys)
-        }
     }
 
     private var clipboard: some View {
@@ -428,11 +431,11 @@ struct SettingsView: View {
                     }
                 }
             } footer: {
-                Text(L10n.tr("settings.stackFootnote", default: "⇧⌘C opens or closes Paste Stack. While the stack has items, ⌘V in any app pastes the next one (Accessibility required). Runtime controls live in the Stack panel and the ⋯ menu."))
+                Text(L10n.tr("shortcuts.stackFootnote", default: "The Paste Stack shortcut opens or closes the queue. While it has items, ⌘V in any app pastes the next one (Accessibility required)."))
             }
 
             Section(L10n.tr("settings.group.shortcuts", default: "Keyboard Shortcuts")) {
-                shortcutRow(L10n.tr("stack.open", default: "Open Paste Stack"), keys: "⇧⌘C")
+                ShortcutSettingsView(manager: AppRuntime.shared.hotkeyManager, actions: [.stack])
             }
         }
         .formStyle(.grouped)

@@ -48,7 +48,7 @@ struct TimelineView: View {
             } message: { _ in
                 Text(L10n.tr("removal.everywhereDetail", default: "Delete this clip from history, Pinned, and all folders? This cannot be undone."))
             }
-            .alert("Paste It", isPresented: Binding(
+            .alert("Pastel it！", isPresented: Binding(
                 get: { actionIssue != nil },
                 set: { if !$0 { actionIssue = nil } }
             )) {
@@ -120,7 +120,8 @@ struct TimelineView: View {
                     clips: clips, version: appState.visibleClipsVersion,
                     selectedIDs: selectedIDs, query: appState.searchHighlight,
                     scrollRequest: appState.scrollToStartRequest,
-                    historyRevision: historyStore.revision, tab: appState.selectedTab
+                    historyRevision: historyStore.revision, tab: appState.selectedTab,
+                    onTimeSelection: { appState.selectOnly($0) }
                 ) { item in
                     card(item, quickIndex: quickIndexes[item.id], isSelected: selectedIDs.contains(item.id))
                 }
@@ -735,6 +736,7 @@ private struct TimelineSearchField: View {
 
 /// A dependency boundary: status/focus/toolbar changes do not reevaluate the lazy strip.
 private struct TimelineCardStrip<Card: View>: View, Equatable {
+    @State private var browsedClipID: UUID?
     let clips: [ClipItem]
     let version: UInt64
     let selectedIDs: Set<UUID>
@@ -742,6 +744,7 @@ private struct TimelineCardStrip<Card: View>: View, Equatable {
     let scrollRequest: Int
     let historyRevision: UInt64
     let tab: TimelineTab
+    var onTimeSelection: (UUID) -> Void
     @ViewBuilder let card: (ClipItem) -> Card
 
     nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
@@ -751,14 +754,34 @@ private struct TimelineCardStrip<Card: View>: View, Equatable {
     }
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: 14) {
-                ForEach(clips) { item in card(item) }
+        ScrollViewReader { proxy in
+            VStack(spacing: 0) {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: 14) {
+                        ForEach(clips) { item in card(item).id(item.id) }
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.bottom, 18)
+                    .padding(.top, 8)
+                    .background(TimelineScrollReset(request: scrollRequest))
+                    .background(TimelineWheelScrolling { offset in
+                        guard !clips.isEmpty else { return }
+                        let index = min(clips.count - 1, max(0, Int((offset / 252).rounded())))
+                        browsedClipID = clips[index].id
+                    })
+                }
+                if !clips.isEmpty {
+                    TimelineTimeRuler(
+                        scale: TimelineTimeScale(entries: clips.map { .init(id: $0.id, date: $0.createdAt) }),
+                        selectedID: browsedClipID ?? clips.first(where: { selectedIDs.contains($0.id) })?.id
+                    ) { id in
+                        onTimeSelection(id)
+                        withAnimation(.easeOut(duration: 0.18)) { proxy.scrollTo(id, anchor: .leading) }
+                    }
+                }
             }
-            .padding(.horizontal, 18)
-            .padding(.bottom, 18)
-            .padding(.top, 8)
-            .background(TimelineScrollReset(request: scrollRequest))
+            .onChange(of: tab) { _, _ in browsedClipID = nil }
+            .onChange(of: scrollRequest) { _, _ in browsedClipID = clips.first?.id }
         }
     }
 }

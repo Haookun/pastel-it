@@ -375,7 +375,7 @@ enum Analytics {
         let osVersion = "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
 
         return [
-            "app_name": "Paste It",
+            "app_name": "Pastel it！",
             "app_version": shortVersion,
             "app_build": buildVersion,
             "platform": "macos",
@@ -384,7 +384,7 @@ enum Analytics {
             "first_open_utc": firstOpenUTC(),
             "preferred_language": Locale.preferredLanguages.first ?? Locale.current.identifier,
             "system_locale": Locale.current.identifier,
-            "$app_name": "Paste It",
+            "$app_name": "Pastel it！",
             "$app_version": shortVersion,
             "$os": "macOS",
             "$os_version": "macOS \(os.majorVersion)"

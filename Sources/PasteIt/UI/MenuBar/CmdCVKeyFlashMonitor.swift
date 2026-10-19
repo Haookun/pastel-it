@@ -4,7 +4,7 @@ import Foundation
 
 /// Watches ⌘C / ⌘V press & release for the menu-bar keycaps.
 /// Hold → solid keycap; release (key or ⌘) → hollow again.
-/// Uses global + local monitors so it works in other apps and while Paste It is focused.
+/// Uses global + local monitors so it works in other apps and while Pastel it！ is focused.
 /// Requires Accessibility for the global monitor (same permission Paste Stack already needs).
 @MainActor
 final class CmdCVKeyFlashMonitor {
@@ -62,7 +62,7 @@ final class CmdCVKeyFlashMonitor {
     }
 
     private func handleKeyDown(_ event: NSEvent) {
-        // Exact ⌘C / ⌘V — ignore ⇧⌘C / ⇧⌘V (those are Paste It hotkeys).
+        // Exact ⌘C / ⌘V — ignore ⇧⌘C / ⇧⌘V (those are Pastel it！ hotkeys).
         guard isCommandOnly(event.modifierFlags) else { return }
         // Key-repeat would otherwise re-publish the same pressed image every tick.
         guard !event.isARepeat else { return }

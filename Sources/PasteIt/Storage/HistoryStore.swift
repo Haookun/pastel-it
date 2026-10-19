@@ -407,12 +407,15 @@ final class HistoryStore: ObservableObject {
     /// Re-runs Vision OCR on the clip's image blob and writes the result back.
     func rerunOCR(for item: ClipItem) async {
         guard let blobPath = item.blobRelativePath, !blobPath.isEmpty else { return }
+        let configuration = settings.ocrConfiguration
+        guard configuration.enabled else { return }
         let store = blobStore
         let id = item.id
         let text = await Task.detached(priority: .utility) { () -> String? in
             guard let data = store.data(for: blobPath) else { return nil }
-            return await OCRService.recognizeText(in: data)
+            return await OCRService.recognizeText(in: data, configuration: configuration)
         }.value
+        guard settings.ocrConfiguration == configuration else { return }
         updateOCRText(for: id, text: text)
     }
 
@@ -917,11 +920,14 @@ final class HistoryStore: ObservableObject {
     // MARK: - Private
 
     private func scheduleOCR(for id: UUID, blobRelativePath: String) {
+        let configuration = settings.ocrConfiguration
+        guard configuration.enabled else { return }
         let store = blobStore
         Task.detached(priority: .utility) {
             guard let data = store.data(for: blobRelativePath) else { return }
-            let text = await OCRService.recognizeText(in: data)
+            let text = await OCRService.recognizeText(in: data, configuration: configuration)
             await MainActor.run {
+                guard self.settings.ocrConfiguration == configuration else { return }
                 self.updateOCRText(for: id, text: text)
             }
         }
@@ -1003,40 +1009,40 @@ final class HistoryStore: ObservableObject {
 
         let welcome = ClipItem(
             createdAt: now,
-            title: "Welcome to Paste It",
-            plainText: "Welcome to Paste It",
+            title: "Welcome to Pastel it！",
+            plainText: "Welcome to Pastel it！",
             primaryType: .text,
             pasteboardTypes: ["public.utf8-plain-text"],
-            sourceAppName: "Paste It",
+            sourceAppName: "Pastel it！",
             sourceBundleIdentifier: bundleID,
             contentHash: DataHashing.sha256("welcome-to-paste-it-seed-v1")
         )
 
-        let websiteURL = "https://paste-it.app"
+        let websiteURL = "https://github.com/Haookun/pastel-it"
         let website = ClipItem(
             createdAt: now.addingTimeInterval(-1),
-            title: "paste-it.app",
+            title: "Pastel it！",
             plainText: websiteURL,
             primaryType: .url,
             pasteboardTypes: ["public.url", "public.utf8-plain-text"],
-            sourceAppName: "Paste It",
+            sourceAppName: "Pastel it！",
             sourceBundleIdentifier: bundleID,
             fileURLString: websiteURL,
-            linkTitle: "Paste It",
+            linkTitle: "Pastel it！",
             contentHash: DataHashing.sha256(websiteURL)
         )
 
-        let githubURL = "https://github.com/yipeng-git/paste-it"
+        let githubURL = "https://github.com/Haookun/pastel-it"
         let github = ClipItem(
             createdAt: now.addingTimeInterval(-2),
             title: "GitHub",
             plainText: githubURL,
             primaryType: .url,
             pasteboardTypes: ["public.url", "public.utf8-plain-text"],
-            sourceAppName: "Paste It",
+            sourceAppName: "Pastel it！",
             sourceBundleIdentifier: bundleID,
             fileURLString: githubURL,
-            linkTitle: "yipeng-git/paste-it",
+            linkTitle: "Haookun/pastel-it",
             contentHash: DataHashing.sha256(githubURL)
         )
 

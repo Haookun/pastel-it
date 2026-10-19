@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build, Developer ID–sign, notarize, and package Paste It! as DMGs.
+# Build, Developer ID–sign, notarize, and package Pastel it！ as DMGs.
 # Produces two artifacts:
 #   PasteIt-{ver}-arm64.dmg      — Apple Silicon only
 #   PasteIt-{ver}-universal.dmg  — arm64 + x86_64 (Intel + Apple Silicon)
@@ -63,7 +63,7 @@ done
 
 ENTITLEMENTS="$ROOT/PasteIt.entitlements"
 DIST="$ROOT/dist"
-APP_NAME="Paste It.app"
+APP_NAME="Pastel it！.app"
 ICON="$ROOT/Resources/AppIcon.icns"
 ASSETS_CAR="$ROOT/Resources/Assets.car"
 NOTARY_PROFILE="${PASTEIT_NOTARY_PROFILE:-paste-it-notary}"
@@ -196,7 +196,7 @@ create_dmg() {
   # while omitting background artwork and live Finder automation.
   rm -f "$dmg_path"
   "$dmg_tools/bin/dmgbuild" -s "$ROOT/scripts/dmg-settings.py" \
-    -D app="$app" "Paste It" "$dmg_path"
+    -D app="$app" "Pastel it！" "$dmg_path"
   sign "$dmg_path"
 }
 

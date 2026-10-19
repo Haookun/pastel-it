@@ -14,7 +14,7 @@ BIN_DIR="$(swift build -c debug --show-bin-path)"
 rm -rf "$BIN_DIR/PasteIt_PasteIt.bundle"
 swift build -c debug
 BIN="$BIN_DIR/PasteIt"
-APP="$ROOT/.build/PasteIt.app"
+APP="$ROOT/.build/Pastel it！.app"
 ICON="$ROOT/Resources/AppIcon.icns"
 ASSETS_CAR="$ROOT/Resources/Assets.car"
 

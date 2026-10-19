@@ -1,92 +1,62 @@
-# Paste It
+# Pastel it！
 
-**English** | [中文](README.zh-CN.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
+<img src="Resources/AppIcon.png" width="144" alt="Pastel it！奶油蛋挞图标">
 
-A local clipboard manager for macOS — visual timeline, searchable history (including text inside screenshots), and a native feel that stays out of your way.
+一个原生 macOS 菜单栏剪贴板工具：保存文字与图片，用多语言 OCR 找回截图里的信息，通过横向卡片和复制时间轴查看历史，把当前剪贴板快速转换为纯文本。
 
-**Website:** [paste-it.app](https://paste-it.app)
+**状态：私人开发版本。** 本仓库为 [Paste It](https://github.com/yipeng-git/paste-it) 的 MIT 派生项目，保留原作者署名和上游历史；应用显示名为 **Pastel it！**。尚未发布安装包，也没有启用原项目的自动更新。源码已验证与安装后真实操作验收的范围见 [验证记录](docs/validation.md)。
 
-![Paste It timeline panel](docs/screenshots/paste-it-history-panel.png)
+[功能说明](docs/features.md) · [图标与交互设计](docs/design.md) · [来源与兼容性](docs/origin.md) · [English](README.en.md) · [日本語](README.ja.md) · [한국어](README.ko.md)
 
-## Features
+## 功能
 
-- Visual timeline of everything you copy
-- Search text — including words inside screenshots and images
-- Preview a clip, edit it, then paste
-- Pin important items (and keep them in folders)
-- Paste Stack for pasting several clips in order
+| 功能 | 行为 |
+| --- | --- |
+| 剪贴板历史 | 保存文字、富文本、链接、图片及文件引用，支持搜索、固定、文件夹和忽略应用/类型 |
+| 图片 OCR | 自动识别常见语言，也可指定中文、英文、日文等语言；设置精确/快速模式、语言纠错、最小文字高度 |
+| 表格 OCR | macOS 26+ 检测表格后输出 Markdown，保留表格前后文字；检测失败回退文字 OCR |
+| 横向浏览 | 卡片区域内纵向鼠标滚轮转为横向浏览，保留横向手势与内部纵向滚动区域 |
+| 复制时间轴 | 底部时间刻度悬停放大，点击/拖动跳到当前筛选结果中最接近时间的记录 |
+| 快捷粘贴 | 可勾选文字去格式、图片转 OCR、文件转文件名；读取当前系统剪贴板 |
+| 粘贴队列 | Paste Stack 支持顺序粘贴，保留原有的 FIFO/LIFO 操作 |
+| 本地 MCP | 默认关闭，仅绑定 `127.0.0.1:17321`；接口说明见 [MCP 文档](docs/mcp.md) |
 
-## Install
+**快捷键：** 打开历史默认 `⇧⌘V`，粘贴队列默认 `⇧⌘C`，原有纯文本粘贴默认 `⌃⌘V`。三个组合可在“通用”中录入、清空和恢复默认。新增“快捷粘贴”默认关闭，首次开启尝试 `⇧⌘V`；它与打开历史独立设置，冲突时会提示，**不会覆盖现有快捷键**。可在“通用”修改打开历史的组合，或在“OCR 与快捷粘贴”给快捷粘贴录入另一个组合。
 
-1. Download the latest build from [paste-it.app](https://paste-it.app) or [GitHub Releases](https://github.com/yipeng-git/paste-it/releases/latest).
-2. Open the `.dmg` (or unzip) and drag **Paste It** into **Applications**.
-3. Launch it from Applications. It lives in the menu bar.
-4. For one-key paste into other apps, allow **Accessibility** when prompted (System Settings → Privacy & Security → Accessibility).
+OCR 关闭后保留已有文字；旧图片需点击 **Re-run** 才应用新参数。表格首行作为 Markdown 表头，合并单元格仅保留左上角内容。时间轴使用记录的**首次复制时间**，不新增逐次重复复制的时间日志。细节见 [功能说明](docs/features.md)。
 
-macOS 14 or later. Official builds check for updates every six hours and download them in the background by default, then immediately prompt you to install and relaunch or install when you quit. Automatic checks and downloads can be changed in **Settings → About**; existing explicit preferences are preserved.
+## 系统与构建
 
-## Usage
-
-1. Copy as usual — Paste It keeps a local history.
-2. Press **⇧⌘V** (or click the menu bar icon) to open the timeline.
-3. Click Search (or **⌘F**) to search, or filter by type. Select a card, then use **Return**, double-click, or **⌘1…9** for your primary action (see below).
-4. Press **Space** to preview above the timeline. Click the text to edit; for images you can review OCR, for links you get a page preview.
-5. Pin clips you want to keep, or put them in a custom folder (up to three folders).
-
-Image OCR runs in the background and automatically detects the language using macOS Vision. Available languages depend on the system’s recognition models; no language selection is needed. Existing images keep their saved OCR text; open an image preview and click **Re-run** to recognize it again. Automatic detection can misclassify short or mixed-language text; small text and symbols may also need manual correction.
-
-### More shortcuts
-
-| Shortcut | Action |
-|----------|--------|
-| **⇧⌘V** | Open / close timeline |
-| **⌘1…9** | Primary action on that card |
-| **Return** | Primary action on selection |
-| **⇧Return** | Paste as plain text |
-| **Space** | Preview |
-| **⌘E** | Edit selected clip |
-| **⇧⌘C** | Open Paste Stack |
-| **⌃⌘V** | Paste current clipboard as plain text once |
-| **⇧⌘T** | Pause / resume capture (from the menu) |
-
-**Paste Stack:** press **⇧⌘C**, copy several things into the queue, then **⌘V** in the target app to paste them one by one. Direction (oldest / newest first) is in Settings → Stack.
-
-**Multi-select:** **⌘**-click several cards, then **Return** in Direct Paste mode to paste in displayed order. **⇧Return** pastes them as plain text in any mode.
-
-Single-click selects without changing the clipboard. **⌘C** or the Copy button copies one clip and keeps the panel open. **Settings → General → Timeline primary action** offers **Direct Paste** and **Copy Only**: double-click, **Return**, and **⌘1…9** all use that action. Direct Paste is the default for both new and existing installs. An explicitly selected Copy Only preference is preserved. **⇧Return** always requests plain-text paste.
-
-Direct paste needs Accessibility. Without it, a single clip is copied and a recovery dialog explains how to return to your app and press **⌘V**. Failed writes keep your selection and show Retry. **⌘C** with multiple clips asks you to select one, rather than silently copying only the first.
-
-**Removal:** Remove from History leaves clips saved in Pinned or folders there. Unpin and Remove from Folder affect that location only. **Menu → Undo Removal / ⌘Z** restores recent removals for **30 seconds**, up to 20 actions in the current app session. Attachments are protected while undo is available. **Delete Everywhere** is confirmed and cannot be undone. Bulk cleanup and shorter retention show the affected count before applying; saved clips are explicitly included or excluded. Confirming bulk cleanup ends removal undo.
-
-Ordinary removal shows a **3-second toast with Undo**; hovering pauses its dismissal, then the remaining display time resumes when the pointer leaves. The toast floats centered 12 points above the panel without changing its layout or taking keyboard focus. It uses native Liquid Glass on macOS 26+ and standard material on older macOS versions; short messages fit a capsule and long messages wrap into a rounded rectangle. Undo highlights on hover and responds visually when pressed; the toast adds no extra window shadow. After it disappears, the menu and **⌘Z** still work within the original 30-second undo window. Folder actions name their destination, such as **Remove from “Work”**. **Delete Everywhere…** opens the permanent-deletion confirmation.
-
-Settings use an always-visible native sidebar without a collapse button, opening on **General**. Like System Settings, the sidebar extends through the titlebar and uses compact rows with colored icons; version information lives under **About**. General only shows an Accessibility prompt when Direct Paste is selected and permission is missing; full permission status remains under **Privacy**. **Clipboard** contains capture, retention, and history limits; clipboard polling is under **Advanced**. Permissions are also available under **Privacy**, and cleanup stays under **Storage**. The sidebar adopts native Liquid Glass on macOS 26, with standard system styling on earlier releases. Window size and position are remembered.
-
-## Privacy
-
-History stays on this Mac — no account, no cloud sync. Password managers and other protected pasteboard types are skipped by default. You can pause capture, ignore apps, and limit how long history is kept in Settings.
-
-Optional anonymous analytics (on in official builds) never includes clipboard contents, OCR, paths, or search queries. Turn it off anytime in **Settings → Privacy**. Details: [`docs/analytics.md`](docs/analytics.md).
-
-## For agents (optional)
-
-Paste It can expose a local [MCP](https://modelcontextprotocol.io) server so agents can read and search history. **Off by default** — enable **MCP** from the menu bar while the app is running (`http://127.0.0.1:17321/mcp`). Setup and tools: [`docs/mcp.md`](docs/mcp.md).
-
-## Build from source
-
-For contributors:
+- macOS 14+，Swift tools 6.2+；现代 Vision OCR 使用 macOS 15+ API，结构化表格识别需要 macOS 26+。
+- 原生 SwiftUI、AppKit、SwiftData；通过 Swift Package Manager 构建。
+- 当前依赖固定为 Sparkle 2.9.4、MCP Swift SDK 0.12.1、PostHog 3.59.3。没有新增 OCR 云服务。
 
 ```sh
-swift run PasteIt
-# or
-./scripts/run-app.sh
+git clone https://github.com/Haookun/pastel-it.git
+cd pastel-it
+swift build
+swift test
 ```
 
-Requires Xcode / Swift 6.2. Packaging and signing: [`docs/mac-packaging.md`](docs/mac-packaging.md). Updates plumbing: [`docs/mac-updates.md`](docs/mac-updates.md).
+以上生成编译产物，不会安装到应用程序目录。需要临时调试应用窗口时，可运行 `./scripts/run-app.sh`；调试构建不能代替正式签名安装验收。
 
-## License
+若本机已有 `work/dependencies/` 下的离线修复依赖，可显式选择它们；这些本机依赖不进入仓库：
 
-[MIT License](LICENSE) — free for personal and commercial use, modification, and redistribution, provided the copyright and license notices are retained.
+```sh
+PASTEL_USE_LOCAL_DEPENDENCIES=1 swift build
+PASTEL_USE_LOCAL_DEPENDENCIES=1 swift test
+```
 
-Third-party dependencies remain subject to their respective licenses.
+正式打包沿用 `scripts/package-release.sh`，需要自己的 Developer ID 证书；没有配置私人更新源前不发布。`scripts/release.sh` 有创建 Release、改版本和推送的副作用，不能用作普通构建检查。参见 [macOS 打包](docs/mac-packaging.md) 和 [更新策略](docs/mac-updates.md)。
+
+## 设计与数据
+
+应用图标来自用户提供的奶油蛋挞参考图，经去背景、降噪和路径矢量化后生成正式 `AppIcon.icns` 与 `Assets.car`。菜单栏图标来自极简蛋挞参考图，使用系统模板着色适配明暗菜单栏。SVG 源稿与生成方式在 [设计说明](docs/design.md)。
+
+为保留已有历史和偏好，本版继续使用内部目标 `PasteIt` / `PasteItCore`、bundle ID `app.paste-it.mac` 及 `~/Library/Application Support/PasteIt/`。这是对现有安装的替代版本，**不支持与原应用同时独立运行**。本次未安装或迁移真实数据。
+
+统计接口沿用上游设计，可在“隐私”关闭；本仓库的 `PostHogProjectToken` 为空，没有 token 的构建不发送统计。详见 [统计说明](docs/analytics.md)。
+
+## 来源与许可证
+
+基于 Yipeng Zhang 及 Paste It contributors 的 [Paste It](https://github.com/yipeng-git/paste-it)，上游基线为 `904287f6f80e791ea347938582a3550775627927`（0.2.9）。保留原 [MIT License](LICENSE)。本派生版新增功能、设计和验证边界单独记录，未宣称已发布或完成安装验收。

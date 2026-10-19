@@ -1,89 +1,9 @@
-# Mac auto-updates (Sparkle + GitHub Releases)
+# Pastel it！更新策略
 
-Paste It uses **Sparkle 2** for in-app updates. Signed DMGs ship as **GitHub Releases on this same repository**. The stable feed is hosted on this repository’s GitHub Pages:
+本私人派生版尚未配置自己的签名更新源。`AppBrand.updatesEnabled` 为 false，Sparkle 不会启动；`Info.plist` 已移除原项目的 `SUFeedURL` 和 `SUPublicEDKey`，自动检查与下载均关闭。已有偏好中的上游更新开关不会使本版重新连接原源。
 
-`https://yipeng-git.github.io/paste-it/appcast.xml` → [`docs/appcast.xml`](appcast.xml)
+当前仓库没有安装包或 Release。应由维护者先配置自己的 Developer ID、公证凭据、Sparkle 更新签名密钥和经授权的分发方式，再启用更新。不要复用原作者的签名公钥或把私人构建指向公开上游下载地址。
 
-There is **no** version↔DMG database. The mapping is:
+`scripts/package-release.sh` 负责签名打包，默认生成 `Pastel it！.app`。`scripts/release.sh` 会修改版本、创建 GitHub Release、生成更新 feed、提交和推送，属于发布流程；`--dry-run`、`--no-push` 仍可能有本地或外部副作用。未经发布授权不得运行。私人仓库的分发与 GitHub Pages 可见性需另行设计，本次没有创建 Pages。
 
-| Source | Role |
-| --- | --- |
-| Release tag `mac-v{semver}` + assets `PasteIt-{semver}-arm64.dmg` and `PasteIt-{semver}-universal.dmg` on this repo | Download CDN |
-| `appcast.xml` (from `generate_appcast`) | What Sparkle polls; each arch build is its own item (`sparkle:version` = `CFBundleVersion`). Apple Silicon prefers the arm64 item (`hardwareRequirements`); Intel uses Universal. |
-
-## Client behavior
-
-Automatic checks and background downloads are enabled by default. `Info.plist` sets `SUEnableAutomaticChecks` and `SUAutomaticallyUpdate` to `true`, `SUScheduledCheckInterval` to 21,600 seconds (six hours), and `SUScheduledImpatientCheckInterval` to 86,400 seconds (24 hours). Sparkle's persisted user choices take precedence, including an explicit preference saved by an older build. **Settings → About** exposes automatic-check and automatic-download controls through Sparkle's settings.
-
-Once an update has downloaded, passed validation, and finished installation preparation, Paste It immediately brings Sparkle's standard update window to the foreground. The ready window offers **Install and Relaunch**, **Install on Quit**, and **Skip This Version** for ordinary updates. Closing the window or choosing Install on Quit leaves the update ready for normal app termination; if the app stays open and automatic checks remain enabled, the default reminder interval is 24 hours. Skipping cancels the prepared update. Sparkle applies its own available choices to critical or information-only updates.
-
-Reminders do not wait for editing, clipboard operations, or Paste Stack. There is no additional queue confirmation before restarting; the in-memory Paste Stack follows its existing app-exit behavior. Background download failures leave retrying to Sparkle, while manual checks retain Sparkle's result and error UI. Turning off automatic downloads keeps the update prompt available for user-approved downloads.
-
-### Reminder integration
-
-`Sources/PasteIt/App/UpdateChecker.swift` keeps Sparkle's download, verification, installer, and standard UI:
-
-- `willInstallUpdateOnQuit` records that an update is ready and returns `false`, allowing the automatic cycle to finish while Sparkle's installer retains the prepared update.
-- `didFinishUpdateCycle` consumes that pending reminder and, on success, calls `checkForUpdates()` synchronously. Sparkle has already released the previous driver; the new cycle resumes the prepared installer and shows the install-and-relaunch window. Deferring this call to another run-loop turn can race with Sparkle starting its next scheduling probe.
-- The standard user-driver delegate returns `false` for scheduled presentation and brings the existing alert into focus from `standardUserDriverWillHandleShowingUpdate`. Presentation clears the pending reminder, including when Sparkle presents a critical update directly, so dismissal does not immediately reopen it.
-- Automatic reminders retain analytics source `auto`, even when `checkForUpdates()` is used to present or focus Sparkle's UI. No immediate-install closure is retained.
-
-## Versions
-
-| Field | Rule |
-| --- | --- |
-| `CFBundleShortVersionString` | Marketing semver (`0.2.0`) in [`Info.plist`](../Info.plist) |
-| `CFBundleVersion` | Monotonic integer (Sparkle compares this) |
-| Git tag | `mac-v{CFBundleShortVersionString}` |
-
-`scripts/release.sh` manages both fields; don't edit them by hand for releases.
-
-## EdDSA keys
-
-- **Public** key is `SUPublicEDKey` in `Info.plist` (committed).
-- Private key lives in the local Keychain after `generate_keys` (item name: **Private key for signing Sparkle updates**). Never commit it.
-
-```sh
-# From the pinned tools (auto-downloaded to .tools/sparkle/):
-./.tools/sparkle/bin/generate_keys
-```
-
-## Release: one command
-
-```sh
-./scripts/release.sh 0.2.0
-```
-
-This runs the whole chain:
-
-1. Preflight — clean git tree, `gh` auth, Developer ID cert, notary profile, tag/release don't exist yet.
-2. Bumps `CFBundleShortVersionString` and `CFBundleVersion` +1.
-3. `package-release.sh` — builds **arm64** and **universal** apps, signs, notarizes, staples, writes two DMGs under `dist/`.
-4. Regenerates `appcast.xml`; enclosure URLs point at this repo’s Release download URLs.
-5. Create a draft GitHub Release on **this repository** and upload both DMGs.
-6. Copy the appcast to `docs/appcast.xml`, commit, tag `mac-v{ver}`, and push the exact release commit and tag.
-7. Publish the draft only after the tag is available remotely. This prevents GitHub from generating a tag at the previous default-branch commit.
-
-Flags: `--dry-run`, `--skip-package`, `--no-push`. With `--no-push`, the GitHub Release remains a draft until the local commit/tag are pushed and the draft is published.
-
-Override the release target with `PASTEIT_RELEASE_REPO=owner/name` if `origin` is not set yet.
-
-### Remaining step: GitHub Pages
-
-Enable GitHub Pages for this repo from the `/docs` folder (or your preferred static publish path) so `https://yipeng-git.github.io/paste-it/appcast.xml` is reachable after push.
-
-### Verify
-
-```sh
-curl -fsS https://yipeng-git.github.io/paste-it/appcast.xml
-```
-
-Install the build under `/Applications` and use **Settings → About → Check for Updates…**.
-
-## Local debug
-
-Debug `.app` from `./scripts/run-app.sh` embeds `Sparkle.framework`. Automatic checks still hit the public feed.
-
-### Full-archive updates
-
-The release workflow disables delta generation and publishes full signed DMGs. Both architecture lanes share the same bundle name and build number; Sparkle otherwise generates identical delta filenames for different binaries. Full archives avoid collisions and preserve architecture-specific signatures.
+普通开发使用 `swift build` / `swift test`；现有离线依赖可通过 `PASTEL_USE_LOCAL_DEPENDENCIES=1` 显式选择。资源与 UI 改动仍需正式签名安装后验收，当前安装边界见 [验证记录](validation.md)。

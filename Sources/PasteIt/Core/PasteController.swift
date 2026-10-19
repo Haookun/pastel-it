@@ -2,6 +2,7 @@ import AppKit
 import Foundation
 import ImageIO
 import PasteItCore
+import UniformTypeIdentifiers
 
 @MainActor
 final class PasteController {
@@ -101,25 +102,44 @@ final class PasteController {
         return plain.isEmpty ? nil : plain
     }
 
+    var pasteboardChangeCount: Int { pasteboard.changeCount }
+
+    /// Converts only the current clipboard, without reading history or changing it.
+    func quickPasteText(scope: QuickPasteScope, configuration: OCRConfiguration,
+                        ignoredTypes: Set<String>) async -> String? {
+        let types = Set((pasteboard.types ?? []).map(\.rawValue))
+        guard types.isDisjoint(with: ignoredTypes) else { return nil }
+        if types.contains(NSPasteboard.PasteboardType.fileURL.rawValue) {
+            guard scope.fileNames,
+                  let urls = pasteboard.readObjects(forClasses: [NSURL.self],
+                    options: [.urlReadingFileURLsOnly: true]) as? [URL], !urls.isEmpty else { return nil }
+            return urls.map(\.lastPathComponent).joined(separator: "\n")
+        }
+        if let type = pasteboard.types?.first(where: { UTType($0.rawValue)?.conforms(to: .image) == true }) {
+            guard scope.images, configuration.enabled, let data = pasteboard.data(forType: type) else { return nil }
+            return await OCRService.recognizeText(in: data, configuration: configuration)
+        }
+        guard scope.text else { return nil }
+        return plainTextFromGeneralPasteboard()
+    }
+
     /// Writes plain text only. Marks transient so other clipboard managers can ignore the blip.
     @discardableResult
     func writePlainTextToGeneralPasteboard(_ plain: String, markTransient: Bool = true) -> Bool {
         guard !plain.isEmpty else { return false }
-        pasteboard.clearContents()
         let item = NSPasteboardItem()
         item.setString(plain, forType: .string)
         if markTransient {
             item.setString("", forType: .init("org.nspasteboard.TransientType"))
         }
-        guard pasteboard.writeObjects([item]) else { return false }
-        onPasteboardMutation?(pasteboard.changeCount)
-        return true
+        return replaceContents(with: [item])
     }
 
     /// Restores a prior deep snapshot onto the general pasteboard.
     @discardableResult
     func restoreGeneralPasteboard(_ snapshot: GeneralPasteboardSnapshot) -> Bool {
         pasteboard.clearContents()
+        defer { onPasteboardMutation?(pasteboard.changeCount) }
         let objects: [NSPasteboardItem] = snapshot.items.map { item in
             let pasteboardItem = NSPasteboardItem()
             for entry in item.entries {
@@ -128,7 +148,6 @@ final class PasteController {
             return pasteboardItem
         }
         guard pasteboard.writeObjects(objects) else { return false }
-        onPasteboardMutation?(pasteboard.changeCount)
         return true
     }
 

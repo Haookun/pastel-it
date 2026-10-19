@@ -43,7 +43,7 @@ struct OnboardingDemoClip: Identifiable {
     static let link = OnboardingDemoClip(
         type: .url,
         previewText: "https://example.com/docs",
-        linkTitle: "Paste It Docs",
+        linkTitle: "Pastel it！ Docs",
         linkHost: "example.com/docs",
         sourceBundleIdentifier: "com.apple.Safari",
         createdAt: Date().addingTimeInterval(-40)

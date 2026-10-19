@@ -1,6 +1,6 @@
 # Analytics disclosure
 
-Paste It may send **anonymous product analytics** to [PostHog](https://posthog.com) to improve the app. Analytics is **on by default** and can be turned off in **Settings → Privacy**.
+Pastel it！ may send **anonymous product analytics** to [PostHog](https://posthog.com) to improve the app. Analytics is **on by default** and can be turned off in **Settings → Privacy**.
 
 This document is the public catalog of what is collected. The same list is shown in-app under **Settings → Privacy → What we collect**, and is defined in code as `AnalyticsCatalog`.
 
@@ -19,7 +19,7 @@ Registered via PostHog `register`:
 
 | Property | Meaning |
 | --- | --- |
-| `app_name` / `$app_name` | `"Paste It"` |
+| `app_name` / `$app_name` | `"Pastel it！"` |
 | `app_version` / `$app_version` | Marketing version |
 | `app_build` | Build number |
 | `platform` | `"macos"` |

@@ -16,8 +16,10 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     }
 
     func show(appState: AppState) {
-        wasAccessory = NSApp.activationPolicy() == .accessory
-        if wasAccessory {
+        if window?.isVisible != true {
+            wasAccessory = NSApp.activationPolicy() == .accessory
+        }
+        if NSApp.activationPolicy() == .accessory {
             NSApp.setActivationPolicy(.regular)
         }
 
@@ -30,13 +32,15 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     private func makeWindow(appState: AppState) -> NSWindow {
         let root = SettingsView(appState: appState)
         let hosting = SettingsHostingController(rootView: root)
+        // Let AppKit own the window size instead of adopting the Form's ideal size.
+        hosting.sizingOptions = []
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 860, height: 660),
             styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
-        window.title = L10n.tr("settings.windowTitle", default: "Paste It Settings")
+        window.title = L10n.tr("settings.windowTitle", default: "Pastel it！ Settings")
         // Keep a real titlebar toolbar even though settings has no sidebar toggle.
         // Without it, the full-height system sidebar starts below the titlebar.
         let toolbar = NSToolbar(identifier: "PasteItSettingsToolbar")
@@ -47,7 +51,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         window.contentViewController = hosting
         window.isReleasedWhenClosed = false
         window.delegate = self
-        window.contentMinSize = NSSize(width: 760, height: 580)
+        window.contentMinSize = NSSize(width: 680, height: 460)
         window.center()
         window.setFrameAutosaveName("PasteItSettings")
         return window

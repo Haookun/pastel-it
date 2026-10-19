@@ -7,9 +7,15 @@ struct PasteItApp: App {
 
     private let runtime = AppRuntime.shared
 
+    init() {
+        // Settings can render before applicationDidFinishLaunching.
+        AppDelegate.configureLocalization()
+    }
+
     var body: some Scene {
         Settings {
-            SettingsView(appState: runtime.state)
+            SettingsSceneBridge(appState: runtime.state)
+                .frame(width: 1, height: 1)
         }
     }
 }

@@ -18,6 +18,7 @@ final class UpdateChecker: NSObject, ObservableObject, SPUUpdaterDelegate, @Main
 
     private override init() {
         super.init()
+        guard AppBrand.updatesEnabled else { return }
         updaterController = SPUStandardUpdaterController(
             startingUpdater: true,
             updaterDelegate: self,
@@ -38,17 +39,17 @@ final class UpdateChecker: NSObject, ObservableObject, SPUUpdaterDelegate, @Main
     }
 
     var canCheckForUpdates: Bool {
-        updaterController.updater.canCheckForUpdates
+        updaterController?.updater.canCheckForUpdates ?? false
     }
 
     var automaticallyChecksForUpdates: Bool {
-        get { updaterController.updater.automaticallyChecksForUpdates }
-        set { updaterController.updater.automaticallyChecksForUpdates = newValue }
+        get { updaterController?.updater.automaticallyChecksForUpdates ?? false }
+        set { updaterController?.updater.automaticallyChecksForUpdates = newValue }
     }
 
     var automaticallyDownloadsUpdates: Bool {
-        get { updaterController.updater.automaticallyDownloadsUpdates }
-        set { updaterController.updater.automaticallyDownloadsUpdates = newValue }
+        get { updaterController?.updater.automaticallyDownloadsUpdates ?? false }
+        set { updaterController?.updater.automaticallyDownloadsUpdates = newValue }
     }
 
     // MARK: - Immediate update reminders

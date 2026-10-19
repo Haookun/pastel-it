@@ -73,13 +73,13 @@ BATCH2: dict[str, dict[str, str]] = {
     "menu.copyMcpURL": {"fr": "Copier l'URL MCP", "de": "MCP-URL kopieren", "es": "Copiar URL de MCP", "pl": "Kopiuj adres URL MCP"},
     "menu.preferences": {"fr": "Réglages…", "de": "Einstellungen…", "es": "Preferencias…", "pl": "Ustawienia…"},
     "menu.checkUpdates": {"fr": "Rechercher des mises à jour…", "de": "Nach Updates suchen…", "es": "Buscar actualizaciones…", "pl": "Sprawdź aktualizacje…"},
-    "menu.quit": {"fr": "Quitter Paste It", "de": "Paste It beenden", "es": "Salir de Paste It", "pl": "Zakończ Paste It"},
+    "menu.quit": {"fr": "Quitter Pastel it！", "de": "Pastel it！ beenden", "es": "Salir de Pastel it！", "pl": "Zakończ Pastel it！"},
     "menu.more": {"fr": "Plus", "de": "Mehr", "es": "Más", "pl": "Więcej"},
     "menu.statusTooltip": {
-        "fr": "Paste It — maintenez ⌘C / ⌘V pour afficher les touches",
-        "de": "Paste It — ⌘C / ⌘V gedrückt halten, um die Tasten anzuzeigen",
-        "es": "Paste It — mantén ⌘C / ⌘V para ver las teclas",
-        "pl": "Paste It — przytrzymaj ⌘C / ⌘V, aby pokazać klawisze",
+        "fr": "Pastel it！ — maintenez ⌘C / ⌘V pour afficher les touches",
+        "de": "Pastel it！ — ⌘C / ⌘V gedrückt halten, um die Tasten anzuzeigen",
+        "es": "Pastel it！ — mantén ⌘C / ⌘V para ver las teclas",
+        "pl": "Pastel it！ — przytrzymaj ⌘C / ⌘V, aby pokazać klawisze",
     },
     "menu.statusClickHint": {
         "fr": "Clic gauche : historique · Clic droit : menu",
@@ -152,12 +152,12 @@ BATCH2: dict[str, dict[str, str]] = {
     "settings.tab.folders": {"fr": "Dossiers", "de": "Ordner", "es": "Carpetas", "pl": "Foldery"},
     "settings.tab.stack": {"fr": "Pile", "de": "Stapel", "es": "Pila", "pl": "Stos"},
     "settings.tab.storage": {"fr": "Stockage", "de": "Speicher", "es": "Almacenamiento", "pl": "Pamięć"},
-    "settings.version": {"fr": "Paste It %@ (%@)", "de": "Paste It %@ (%@)", "es": "Paste It %@ (%@)", "pl": "Paste It %@ (%@)"},
+    "settings.version": {"fr": "Pastel it！ %@ (%@)", "de": "Pastel it！ %@ (%@)", "es": "Pastel it！ %@ (%@)", "pl": "Pastel it！ %@ (%@)"},
     "settings.aboutBlurb": {
-        "fr": "Paste It est un gestionnaire de presse-papiers local. L'historique reste sur ce Mac.",
-        "de": "Paste It ist ein lokaler Zwischenablage-Manager. Der Verlauf bleibt auf diesem Mac.",
-        "es": "Paste It es un gestor de portapapeles local. El historial permanece en este Mac.",
-        "pl": "Paste It to lokalny menedżer schowka. Historia pozostaje na tym Macu.",
+        "fr": "Pastel it！ est un gestionnaire de presse-papiers local. L'historique reste sur ce Mac.",
+        "de": "Pastel it！ ist ein lokaler Zwischenablage-Manager. Der Verlauf bleibt auf diesem Mac.",
+        "es": "Pastel it！ es un gestor de portapapeles local. El historial permanece en este Mac.",
+        "pl": "Pastel it！ to lokalny menedżer schowka. Historia pozostaje na tym Macu.",
     },
     "settings.versionLabel": {"fr": "Version", "de": "Version", "es": "Versión", "pl": "Wersja"},
     "settings.showTutorial": {"fr": "Afficher le tutoriel…", "de": "Tutorial anzeigen…", "es": "Mostrar tutorial…", "pl": "Pokaż samouczek…"},
@@ -231,10 +231,10 @@ BATCH2: dict[str, dict[str, str]] = {
     },
     "privacy.whatWeCollect": {"fr": "Ce que nous collectons", "de": "Was wir erfassen", "es": "Qué recopilamos", "pl": "Co zbieramy"},
     "privacy.eventsBlurb": {
-        "fr": "Les événements aident à améliorer Paste It (activation, panneau, mises à jour). Les données sont anonymes et envoyées à PostHog si activé.",
-        "de": "Ereignisse helfen, Paste It zu verbessern (Aktivierung, Panel, Updates). Daten sind anonym und werden bei Aktivierung an PostHog gesendet.",
-        "es": "Los eventos ayudan a mejorar Paste It (activación, panel, actualizaciones). Los datos son anónimos y se envían a PostHog si está activado.",
-        "pl": "Zdarzenia pomagają ulepszać Paste It (aktywacja, panel, aktualizacje). Dane są anonimowe i wysyłane do PostHog po włączeniu.",
+        "fr": "Les événements aident à améliorer Pastel it！ (activation, panneau, mises à jour). Les données sont anonymes et envoyées à PostHog si activé.",
+        "de": "Ereignisse helfen, Pastel it！ zu verbessern (Aktivierung, Panel, Updates). Daten sind anonym und werden bei Aktivierung an PostHog gesendet.",
+        "es": "Los eventos ayudan a mejorar Pastel it！ (activación, panel, actualizaciones). Los datos son anónimos y se envían a PostHog si está activado.",
+        "pl": "Zdarzenia pomagają ulepszać Pastel it！ (aktywacja, panel, aktualizacje). Dane są anonimowe i wysyłane do PostHog po włączeniu.",
     },
     "privacy.neverCollected": {"fr": "Jamais collecté", "de": "Nie erfasst", "es": "Nunca recopilado", "pl": "Nigdy nie zbierane"},
     "privacy.productEvents": {"fr": "Événements produit", "de": "Produkt-Ereignisse", "es": "Eventos del producto", "pl": "Zdarzenia produktu"},
@@ -279,10 +279,10 @@ BATCH2: dict[str, dict[str, str]] = {
     "onboarding.organize.title": {"fr": "Collage multiple", "de": "Mehrfach-Einfügen", "es": "Pegado múltiple", "pl": "Wklejanie wielokrotne"},
     "onboarding.stack.title": {"fr": "Pile de collage", "de": "Einfügestapel", "es": "Pila de pegado", "pl": "Stos wklejania"},
     "onboarding.capture.caption": {
-        "fr": "Copiez n'importe quoi — Paste It l'enregistre et affiche ⌘C dans la barre de menus.",
-        "de": "Alles kopieren — Paste It speichert es und blinkt ⌘C in der Menüleiste.",
-        "es": "Copia cualquier cosa — Paste It la guarda y muestra ⌘C en la barra de menús.",
-        "pl": "Kopiuj cokolwiek — Paste It zapisuje i miga ⌘C na pasku menu.",
+        "fr": "Copiez n'importe quoi — Pastel it！ l'enregistre et affiche ⌘C dans la barre de menus.",
+        "de": "Alles kopieren — Pastel it！ speichert es und blinkt ⌘C in der Menüleiste.",
+        "es": "Copia cualquier cosa — Pastel it！ la guarda y muestra ⌘C en la barra de menús.",
+        "pl": "Kopiuj cokolwiek — Pastel it！ zapisuje i miga ⌘C na pasku menu.",
     },
     "onboarding.paste.caption": {
         "fr": "⇧⌘V ouvre l'historique. Double-cliquez un élément, puis ⌘V — ou ⌃⌘V sans mise en forme.",
@@ -438,10 +438,10 @@ BATCH2.update({
         "pl": "Wysłano żądanie wklejenia"
     },
     "action.permissionDetail": {
-        "fr": "L’accessibilité permet à Paste It d’envoyer ⌘V à l’app cible. Sans autorisation, vous pouvez toujours copier et coller manuellement.",
-        "de": "Mit Bedienungshilfen kann Paste It ⌘V an die Ziel-App senden. Ohne Erlaubnis können Sie weiterhin kopieren und manuell einfügen.",
-        "es": "Accesibilidad permite a Paste It enviar ⌘V a la app de destino. Sin permiso, puedes copiar y pegar manualmente.",
-        "pl": "Ułatwienia dostępu pozwalają Paste It wysyłać ⌘V do aplikacji docelowej. Bez uprawnienia nadal możesz kopiować i wklejać ręcznie."
+        "fr": "L’accessibilité permet à Pastel it！ d’envoyer ⌘V à l’app cible. Sans autorisation, vous pouvez toujours copier et coller manuellement.",
+        "de": "Mit Bedienungshilfen kann Pastel it！ ⌘V an die Ziel-App senden. Ohne Erlaubnis können Sie weiterhin kopieren und manuell einfügen.",
+        "es": "Accesibilidad permite a Pastel it！ enviar ⌘V a la app de destino. Sin permiso, puedes copiar y pegar manualmente.",
+        "pl": "Ułatwienia dostępu pozwalają Pastel it！ wysyłać ⌘V do aplikacji docelowej. Bez uprawnienia nadal możesz kopiować i wklejać ręcznie."
     },
     "action.permissionNeeded": {
         "fr": "Le collage direct nécessite l’accessibilité",
@@ -593,10 +593,10 @@ BATCH2.update({
 # Native settings navigation and grouped forms.
 BATCH2.update({
     "settings.windowTitle": {
-        "fr": "Réglages de Paste It",
-        "de": "Paste It Einstellungen",
-        "es": "Ajustes de Paste It",
-        "pl": "Ustawienia Paste It"
+        "fr": "Réglages de Pastel it！",
+        "de": "Pastel it！ Einstellungen",
+        "es": "Ajustes de Pastel it！",
+        "pl": "Ustawienia Pastel it！"
     },
     "settings.sidebar.clipboard": {"fr": "Presse-papiers", "de": "Zwischenablage", "es": "Portapapeles", "pl": "Schowek"},
     "settings.tab.clipboard": {
@@ -672,10 +672,10 @@ BATCH2.update({
         "pl": "Automatycznie pobieraj aktualizacje"
     },
     "settings.automaticUpdatesHelp": {
-        "fr": "Les mises à jour sont téléchargées en arrière-plan. Lorsqu’une mise à jour est prête, vous serez invité à redémarrer Paste It. Vous pouvez aussi l’installer à la fermeture de l’application.",
-        "de": "Updates werden im Hintergrund geladen. Sobald ein Update bereit ist, werden Sie aufgefordert, Paste It neu zu starten. Sie können es auch beim Beenden der App installieren.",
-        "es": "Las actualizaciones se descargan en segundo plano. Cuando una actualización esté lista, se te pedirá que reinicies Paste It. También puedes instalarla al salir de la aplicación.",
-        "pl": "Aktualizacje są pobierane w tle. Gdy aktualizacja będzie gotowa, pojawi się prośba o ponowne uruchomienie Paste It. Możesz ją też zainstalować przy zamknięciu aplikacji."
+        "fr": "Les mises à jour sont téléchargées en arrière-plan. Lorsqu’une mise à jour est prête, vous serez invité à redémarrer Pastel it！. Vous pouvez aussi l’installer à la fermeture de l’application.",
+        "de": "Updates werden im Hintergrund geladen. Sobald ein Update bereit ist, werden Sie aufgefordert, Pastel it！ neu zu starten. Sie können es auch beim Beenden der App installieren.",
+        "es": "Las actualizaciones se descargan en segundo plano. Cuando una actualización esté lista, se te pedirá que reinicies Pastel it！. También puedes instalarla al salir de la aplicación.",
+        "pl": "Aktualizacje są pobierane w tle. Gdy aktualizacja będzie gotowa, pojawi się prośba o ponowne uruchomienie Pastel it！. Możesz ją też zainstalować przy zamknięciu aplikacji."
     },
     "settings.group.help": {
         "fr": "Aide",
@@ -685,6 +685,71 @@ BATCH2.update({
     }
 })
 
+
+# Local repair additions use the generator's English fallback where untranslated.
+BATCH2.update({
+    "shortcuts.invalid": {},
+    "shortcuts.duplicate": {},
+    "shortcuts.unavailable": {},
+    "shortcuts.registrationFailed": {},
+    "shortcuts.edit": {},
+    "shortcuts.reset": {},
+    "shortcuts.help": {},
+    "shortcuts.recordTitle": {},
+    "shortcuts.recordHelp": {},
+    "shortcuts.listening": {},
+    "shortcuts.plainFootnote": {},
+    "shortcuts.stackFootnote": {},
+    "shortcuts.stackTutorial": {},
+    "permissions.restartTitle": {},
+    "permissions.restartDetail": {},
+    "permissions.restartHint": {},
+    "permissions.understood": {}
+})
+
+
+BATCH2.update({
+    "shortcuts.unassigned": {},
+    "shortcuts.stackTutorialWithoutBinding": {}
+})
+
+
+# OCR and timeline additions use English where not translated yet.
+BATCH2.update({
+    "settings.tab.ocr": {},
+    "ocr.recognition": {},
+    "ocr.enabled": {},
+    "ocr.enabledHelp": {},
+    "ocr.tables": {},
+    "ocr.tablesHelp": {},
+    "ocr.automaticLanguage": {},
+    "ocr.accuracy": {},
+    "ocr.accurate": {},
+    "ocr.fast": {},
+    "ocr.correction": {},
+    "ocr.minimumHeight": {},
+    "ocr.parametersHelp": {},
+    "ocr.reset": {},
+    "quickPaste.title": {},
+    "quickPaste.enabled": {},
+    "quickPaste.help": {},
+    "quickPaste.text": {},
+    "quickPaste.images": {},
+    "quickPaste.files": {},
+    "quickPaste.scopeHelp": {},
+    "quickPaste.emptyScope": {},
+    "quickPaste.noContent": {},
+    "quickPaste.changed": {},
+    "quickPaste.manual": {},
+    "quickPaste.done": {},
+    "timeline.timeRuler": {},
+    "timeline.timeRulerHelp": {}
+})
+
+
+BATCH2.update({"settings.privateUpdates": {}})
+
+BATCH2["menu.statusTooltip"].update({"fr": "Pastel it！ — Historique du presse-papiers", "de": "Pastel it！ — Zwischenablageverlauf", "es": "Pastel it！ — Historial del portapapeles", "pl": "Pastel it！ — Historia schowka"})
 
 def merge_batch2(strings: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
     merged = {key: dict(locs) for key, locs in strings.items()}

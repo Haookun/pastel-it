@@ -37,7 +37,7 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
     weak var detachedWindowController: ClipDetachedWindowController?
     weak var pasteStackPanelController: PasteStackPanelController?
 
-    static let panelHeight: CGFloat = 320
+    static let panelHeight: CGFloat = 380
     private let bottomInset: CGFloat = 12
     private let animationDuration: CFTimeInterval = 0.28
 
@@ -268,7 +268,7 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
-        panel.title = "Paste It"
+        panel.title = "Pastel it！"
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
         panel.isFloatingPanel = true

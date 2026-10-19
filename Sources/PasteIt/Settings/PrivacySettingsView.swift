@@ -31,7 +31,7 @@ struct PrivacySettingsView: View {
 
                 DisclosureGroup(L10n.tr("privacy.whatWeCollect", default: "What we collect")) {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text(L10n.tr("privacy.eventsBlurb", default: "Events help improve Paste It (activation, panel use, updates). Data is anonymous and sent to PostHog when enabled."))
+                        Text(L10n.tr("privacy.eventsBlurb", default: "Events help improve Pastel it！ (activation, panel use, updates). Data is anonymous and sent to PostHog when enabled."))
                             .font(.callout)
                             .foregroundStyle(.secondary)
                             .fixedSize(horizontal: false, vertical: true)

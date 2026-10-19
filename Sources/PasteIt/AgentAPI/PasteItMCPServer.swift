@@ -42,7 +42,7 @@ actor PasteItMCPServer {
         let version =
             Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.1.0"
         let server = Server(
-            name: "Paste It",
+            name: "Pastel it！",
             version: version,
             capabilities: .init(tools: .init()),
             // Later HTTP requests have no shared handshake state in stateless mode.
