@@ -1,0 +1,41 @@
+import SwiftUI
+
+struct FilterPill: View {
+    let title: String
+    var systemImage: String?
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 5) {
+                if let systemImage {
+                    Image(systemName: systemImage)
+                }
+                Text(title)
+            }
+            .font(.caption.weight(.semibold))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background {
+                if isSelected {
+                    if #available(macOS 26, *) {
+                        Capsule()
+                            .fill(.clear)
+                            .glassEffect(.regular.tint(.accentColor), in: Capsule())
+                    } else {
+                        Capsule()
+                            .fill(Color.accentColor.opacity(0.18))
+                    }
+                } else if #available(macOS 26, *) {
+                    EmptyView()
+                } else {
+                    Capsule()
+                        .fill(Color.secondary.opacity(0.10))
+                }
+            }
+            .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+        }
+        .buttonStyle(.plain)
+    }
+}

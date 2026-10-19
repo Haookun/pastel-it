@@ -1,0 +1,44 @@
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Xcode
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+*.xcworkspace/*
+!*.xcworkspace/contents.xcworkspacedata
+xcuserdata/
+DerivedData/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor
+*.swp
+*~
+.idea/
+.vscode/
+.cursor/
+
+# Sparkle release archives (DMGs for generate_appcast); do not commit binaries
+updates/*
+!updates/.gitkeep
+*.dmg
+
+# Release packaging output
+dist/
+
+# Local analytics credentials (never commit)
+Secrets/posthog.env
+
+# Pinned Sparkle tools (auto-downloaded by scripts/generate-appcast.sh)
+.tools/
+
+
+# Local repair dependencies, evidence and backups
+work/

@@ -1,0 +1,129 @@
+# Paste It MCP
+
+Local [Model Context Protocol](https://modelcontextprotocol.io) server for agents. **Off by default** — enable from the menu bar **MCP** checkbox after opening Paste It normally.
+
+- MCP URL: `http://127.0.0.1:17321/mcp`
+- Transport: **Stateless HTTP** only (`POST /mcp`)
+- Bind: loopback only (`127.0.0.1`)
+- Mutating the main timeline / capture / settings is **not** exposed
+
+Configure clients with this **HTTP MCP URL** (not a command/args spawn). Paste It must already be running.
+
+## Prerequisites
+
+1. Open Paste It (double-click the app as usual)
+2. Right-click the menu bar icon → enable **MCP** (copies the URL automatically)
+3. Or use **Copy MCP URL** while MCP is on
+
+## Client config (example)
+
+Point your MCP client at:
+
+```text
+http://127.0.0.1:17321/mcp
+```
+
+Requests must be JSON-RPC over HTTP with:
+
+- `Content-Type: application/json`
+- `Accept: application/json`
+
+Clients initialize normally and use the negotiated `MCP-Protocol-Version` header on later requests. The endpoint does not issue an `MCP-Session-Id` or retain client handshake state between HTTP requests. Each request uses its own SDK server and transport, so multiple clients and reconnects can initialize independently, including when their JSON-RPC request IDs overlap. Tools remain available on subsequent requests without a session header.
+
+Cross-request cancellation is not supported: a `notifications/cancelled` POST cannot cancel work in another HTTP request. Clients may stop waiting locally, but an in-progress screenshot render can still finish. Request IDs are never used to cancel another client's work.
+
+## Tools
+
+| Tool | Purpose |
+|------|---------|
+| `paste_it_health` | `clipCount` + `running` |
+| `paste_it_list_clips` | `limit` / `offset` / `type` / `sourceApp` |
+| `paste_it_get_clip` | `id` + optional `includeBlobs` |
+| `paste_it_search` | `q` / `limit` / … (same query language as the app) |
+| `paste_it_render_screenshot` | Ephemeral cards + real `TimelineView` → screen-region PNG path |
+
+### `paste_it_render_screenshot`
+
+Builds a **throwaway** history (does not write main history), shows a temporary glass panel using the **same `TimelineView` toolbar and cards as the product**, captures a **screen-region** PNG (so Liquid Glass composites correctly), then destroys the session.
+
+Default output directory:
+
+`~/Library/Application Support/PasteIt/AgentScreenshots/`
+
+Arguments:
+
+```json
+{
+  "cards": [
+    {
+      "type": "text",
+      "title": "Snippet",
+      "plainText": "let x = 1",
+      "sourceAppName": "Xcode",
+      "sourceBundleIdentifier": "com.apple.dt.Xcode"
+    },
+    {
+      "type": "link",
+      "plainText": "https://example.com",
+      "linkTitle": "Example",
+      "sourceAppName": "Safari",
+      "sourceBundleIdentifier": "com.apple.Safari"
+    }
+  ],
+  "ui": { "query": "", "selectedIndex": 0 },
+  "outputPath": null
+}
+```
+
+Result (JSON text content):
+
+```json
+{ "path": "/Users/…/AgentScreenshots/render-….png", "width": 1120, "height": 320 }
+```
+
+To inspect the native removal toast, add `"removalPreviewFolder": "Work"` to `ui`. The renderer adds the selected synthetic clip to a temporary folder, removes that membership through the normal app action, and captures the toast above the panel. The PNG includes the toast and its surrounding margin, so its height is larger than the default timeline screenshot. Toast previews use a separate synthetic backdrop window with dark, white, and colored regions to check transparency and contrast without exposing other apps in the expanded capture area. All preview windows ignore input and are removed after capture. Main history, real folders, and system clipboard content remain untouched.
+
+Card fields (all optional except enough content to render):
+
+| Field | Notes |
+|-------|--------|
+| `type` | `text`, `url` (or `link`), `image`, `file`, … |
+| `plainText`, `title`, `htmlText` | Text content |
+| `sourceAppName`, `sourceBundleIdentifier` | Source chrome |
+| `ocrText`, `linkTitle`, `fileURLString` | Extra metadata |
+| `imageBase64` / `imagePath` | Image cards (`imagePath` max 25MB; loaded off the UI thread) |
+| `linkImageBase64` | Optional link preview image (skips network fetch when provided) |
+
+For `type: link`/`url` without `linkImageBase64`, render waits for OG image / favicon fetch before capturing. Concurrent renders return a tool error while one is in progress. If the listener ever dies, toggle **MCP** off/on to rebind `:17321`.
+
+## Manual smoke test
+
+```bash
+# initialize
+curl -s http://127.0.0.1:17321/mcp \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"curl","version":"0"}}}'
+
+# tools/list
+curl -s http://127.0.0.1:17321/mcp \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
+
+# tools/call health
+curl -s http://127.0.0.1:17321/mcp \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"paste_it_health","arguments":{}}}'
+```
+
+Old REST paths (`/v1/*`) are not served (404).
+
+For connection regression checks against the running app with MCP enabled:
+
+```bash
+python3 scripts/test-mcp-clients.py
+```
+
+This verifies two independent clients, a reconnect, and 24 concurrent clients reusing request IDs. It discovers tools, reads health metadata, and calls synthetic unknown tool names to check response routing; it does not list or read clipboard contents, render screenshots, or change history/settings. The automated Swift suite `MCPStatelessRequestTests` additionally checks malformed requests, origin/protocol validation, and transport stop/restart without opening a network port.
