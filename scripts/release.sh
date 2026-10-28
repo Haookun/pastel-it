@@ -122,6 +122,8 @@ if [[ "$SKIP_PACKAGE" -eq 0 ]]; then
   /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$INFO_PLIST"
   /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $NEW_BUILD" "$INFO_PLIST"
 
+  python3 "$SCRIPTS/generate-language-pack.py"
+
   log "Package (build / sign / notarize / dual DMG)"
   "$SCRIPTS/package-release.sh"
 else
@@ -272,7 +274,7 @@ cp -f "$UPDATES/appcast.xml" "$DOCS_APPCAST"
 # ----------------------------------------------------------- commit and tag
 if [[ "$DRY_RUN" -eq 0 ]]; then
   log "Commit + tag"
-  git -C "$ROOT" add "$INFO_PLIST" "$DOCS_APPCAST"
+  git -C "$ROOT" add "$INFO_PLIST" "$DOCS_APPCAST" "$ROOT/Sources/PasteItCore/LanguagePackManifest.swift" "$ROOT/Resources/LanguagePacks"
   git -C "$ROOT" commit -m "Release Mac $VERSION (build $NEW_BUILD)."
   git -C "$ROOT" tag "$TAG"
   if [[ "$NO_PUSH" -eq 0 ]]; then

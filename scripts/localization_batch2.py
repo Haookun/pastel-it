@@ -1106,6 +1106,101 @@ BATCH2.update({
     }
 })
 
+
+# Missing interface resource recovery.
+BATCH2.update({
+    "languageRepair.statusFallback": {
+        "fr": "Ressources linguistiques manquantes ; affichage temporaire en anglais.",
+        "de": "Sprachressourcen fehlen; vorübergehend wird Englisch verwendet.",
+        "es": "Faltan recursos de idioma; se usa inglés temporalmente.",
+        "pl": "Brak zasobów językowych; tymczasowo używany jest angielski."
+    },
+    "languageRepair.statusOK": {
+        "fr": "Ressources linguistiques",
+        "de": "Sprachressourcen",
+        "es": "Recursos de idioma",
+        "pl": "Zasoby językowe"
+    },
+    "languageRepair.download": {
+        "fr": "Télécharger et réparer",
+        "de": "Laden und reparieren",
+        "es": "Descargar y reparar",
+        "pl": "Pobierz i napraw"
+    },
+    "languageRepair.browser": {
+        "fr": "Télécharger via GitHub",
+        "de": "Über GitHub laden",
+        "es": "Descargar con GitHub",
+        "pl": "Pobierz przez GitHub"
+    },
+    "languageRepair.import": {
+        "fr": "Installer le pack téléchargé…",
+        "de": "Geladenes Sprachpaket installieren…",
+        "es": "Instalar paquete descargado…",
+        "pl": "Zainstaluj pobrany pakiet…"
+    },
+    "languageRepair.missingTitle": {
+        "fr": "Ressources linguistiques manquantes",
+        "de": "Sprachressourcen fehlen",
+        "es": "Faltan recursos de idioma",
+        "pl": "Brak zasobów językowych"
+    },
+    "languageRepair.missingMessage": {
+        "fr": "Les ressources manquent. L’app continue en anglais. Réglages et historique sont conservés.",
+        "de": "Die App läuft auf Englisch weiter. Einstellungen und Verlauf bleiben erhalten.",
+        "es": "La app seguirá en inglés. Se conservan ajustes e historial.",
+        "pl": "Aplikacja będzie działać po angielsku. Ustawienia i historia pozostają."
+    },
+    "languageRepair.importShort": {
+        "fr": "Installer le pack de langues",
+        "de": "Sprachpaket installieren",
+        "es": "Instalar paquete de idioma",
+        "pl": "Zainstaluj pakiet językowy"
+    },
+    "languageRepair.later": {
+        "fr": "Plus tard",
+        "de": "Später",
+        "es": "Más tarde",
+        "pl": "Później"
+    },
+    "languageRepair.downloading": {
+        "fr": "Téléchargement des ressources de cette version…",
+        "de": "Sprachressourcen für diese Version werden geladen…",
+        "es": "Descargando los recursos de esta versión…",
+        "pl": "Pobieranie zasobów dla tej wersji…"
+    },
+    "languageRepair.privateHelp": {
+        "fr": "Le dépôt est privé ou le fichier indisponible. Connectez-vous à GitHub dans le navigateur, téléchargez le pack de cette version puis installez-le. L’anglais reste disponible.",
+        "de": "Repository privat oder Datei nicht verfügbar. Melden Sie sich im Browser bei GitHub an, laden Sie das Sprachpaket dieser Version und installieren Sie es. Englisch bleibt verfügbar.",
+        "es": "El repositorio es privado o el archivo no está disponible. Inicia sesión en GitHub en el navegador, descarga el paquete de esta versión e instálalo. El inglés sigue disponible.",
+        "pl": "Repozytorium jest prywatne lub plik niedostępny. Zaloguj się do GitHub w przeglądarce, pobierz pakiet tej wersji i go zainstaluj. Angielski pozostaje dostępny."
+    },
+    "languageRepair.invalid": {
+        "fr": "Pack endommagé ou incompatible. Rien n’a été installé. Téléchargez le pack correspondant et réessayez.",
+        "de": "Sprachpaket beschädigt oder nicht passend. Es wurde nichts installiert. Laden Sie das passende Paket erneut.",
+        "es": "Paquete dañado o incompatible. No se instaló nada. Descarga el paquete correspondiente e inténtalo de nuevo.",
+        "pl": "Pakiet uszkodzony lub niezgodny. Niczego nie zainstalowano. Pobierz właściwy pakiet i spróbuj ponownie."
+    },
+    "languageRepair.failed": {
+        "fr": "Réparation impossible. Vérifiez la connexion ou installez un pack téléchargé. Réglages et historique sont conservés.",
+        "de": "Reparatur fehlgeschlagen. Verbindung prüfen oder geladenes Paket installieren. Einstellungen und Verlauf bleiben erhalten.",
+        "es": "No se pudo reparar. Comprueba la conexión o instala un paquete descargado. Se conservan ajustes e historial.",
+        "pl": "Naprawa nie powiodła się. Sprawdź połączenie lub zainstaluj pobrany pakiet. Ustawienia i historia pozostają."
+    },
+    "languageRepair.chooseFile": {
+        "fr": "Choisissez le pack téléchargé depuis le dépôt GitHub de cette app.",
+        "de": "Wählen Sie das Sprachpaket aus dem GitHub-Repository dieser App.",
+        "es": "Elige el paquete descargado del repositorio GitHub de esta app.",
+        "pl": "Wybierz pakiet pobrany z repozytorium GitHub tej aplikacji."
+    },
+    "languageRepair.installed": {
+        "fr": "Ressources installées. Rouvrez l’app pour actualiser toute l’interface. Réglages et historique sont conservés.",
+        "de": "Sprachressourcen installiert. Öffnen Sie die App erneut, um alle Texte zu aktualisieren. Einstellungen und Verlauf bleiben erhalten.",
+        "es": "Recursos instalados. Abre de nuevo la app para actualizar toda la interfaz. Se conservan ajustes e historial.",
+        "pl": "Zasoby zainstalowane. Otwórz aplikację ponownie, aby odświeżyć cały interfejs. Ustawienia i historia pozostają."
+    }
+})
+
 def merge_batch2(strings: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
     merged = {key: dict(locs) for key, locs in strings.items()}
     missing = set(merged) - set(BATCH2)

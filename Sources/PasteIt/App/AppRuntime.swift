@@ -116,7 +116,7 @@ final class AppRuntime: NSObject {
             panelController.prewarm()
         }
 
-        if !settings.hasCompletedOnboarding {
+        if !settings.hasCompletedOnboarding && !LanguageRepairController.shared.needsRepair {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [settings] in
                 guard !settings.hasCompletedOnboarding else { return }
                 OnboardingWindowController.shared.show(
@@ -125,7 +125,7 @@ final class AppRuntime: NSObject {
                     source: "first_launch"
                 )
             }
-        } else if settings.seenWhatsNewContentVersion < AppSettings.currentWhatsNewContentVersion {
+        } else if settings.seenWhatsNewContentVersion < AppSettings.currentWhatsNewContentVersion && !LanguageRepairController.shared.needsRepair {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [settings] in
                 guard settings.hasCompletedOnboarding else { return }
                 guard settings.seenWhatsNewContentVersion < AppSettings.currentWhatsNewContentVersion else { return }

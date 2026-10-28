@@ -50,6 +50,7 @@
 
 ## 本地化与资源
 
+- 界面资源加载只能走 `LocalizationResources`；不得重新调用会在缺包时fatalError的 `Bundle.module`。缺包回退英文并提示修复。语言包为版本绑定、SHA-256固定的纯JSON，仅在用户点击时下载，不读取GitHub凭据；私有库走浏览器登录下载再导入。恢复缓存与配置／历史分离，不改签名。见 [恢复说明](docs/language-recovery.md)。
 - 用户可见文案使用现有 `L10n.tr` 模式与稳定 key，保留英文默认值；格式参数（如 `%@`、`%lld`）在各语言中必须匹配。
 - 翻译源在 `scripts/generate-localizations.py`、`scripts/localization_batch2.py`、`scripts/localization_batch_cjk.py`。修改对应源表后，从仓库根目录运行：
 
@@ -57,6 +58,7 @@
   python3 scripts/generate-localizations.py
   ```
 
+- 本地化生成会同时更新 `Resources/LanguagePacks/<SHA256>.json` 与 `Sources/PasteItCore/LanguagePackManifest.swift`，一并提交，保留已发布的旧包。版本变更也需重新生成。打包会在签名前逐语言校验，缺失时中止。
 - 一并检查并提交生成的 `Resources/Localization/Localizable.xcstrings` 和 `Resources/*.lproj/Localizable.strings`；不要只修改会被生成脚本覆盖的输出。检查 diff，避免夹带无关翻译重写。
 - 新增语言时同步 `Info.plist` 的 `CFBundleLocalizations`；新增或更新文案时检查长文本和中日韩字符的截断、换行。
 - 用户可见功能或快捷键发生变化时，同步受影响的 README 语言版本和专题文档。

@@ -38,3 +38,5 @@ The candidate bar opens beside the text insertion caret, flips above it when nee
 Settings use a standard macOS title bar with App, Data and About groups. OCR and Quick Paste have separate pages. A vector animation previews both display styles; candidate mode includes an explicit Accessibility permission button.
 
 No usage analytics are collected or uploaded. Local diagnostic logs can be cleared in Settings → Privacy → Delete Past Logs without deleting settings, history, or attachments. See [local diagnostics](docs/analytics.md).
+
+Missing interface resources fall back to built-in English and show a repair prompt. Settings → About provides verified language-pack download/import. Private repositories require browser sign-in and import; public repositories support direct download. Settings and history stay intact. See [language recovery](docs/language-recovery.md).

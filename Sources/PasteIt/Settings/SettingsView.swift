@@ -69,7 +69,8 @@ struct SettingsView: View {
         let retention: AppSettings.KeepHistory?
     }
 
-    init(appState: AppState) {
+    init(appState: AppState, showLanguageRepair: Bool = false) {
+        _selectedPage = State(initialValue: showLanguageRepair ? .about : .general)
         self.appState = appState
         _settings = ObservedObject(wrappedValue: appState.settings)
         _historyStore = ObservedObject(wrappedValue: appState.historyStore)
@@ -87,6 +88,9 @@ struct SettingsView: View {
         }
         .toggleStyle(.switch)
         .frame(minWidth: 720, minHeight: 500)
+        .onReceive(NotificationCenter.default.publisher(for: SettingsWindowController.languageRepairRequested)) { _ in
+            selectedPage = .about
+        }
         .onAppear {
             accessibilityTrusted = SystemPasteSynthesizer.isAccessibilityTrusted
         }
@@ -225,6 +229,8 @@ struct SettingsView: View {
                 Text(L10n.tr("settings.aboutBlurb", default: "Pastel it！ is a local-first clipboard manager. History stays on this Mac."))
                     .foregroundStyle(.secondary)
             }
+
+            Section { LanguageRepairView() }
 
             Section(L10n.tr("settings.group.help", default: "Help")) {
                 Button(L10n.tr("settings.showTutorial", default: "Show Tutorial…")) {

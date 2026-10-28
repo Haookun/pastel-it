@@ -144,6 +144,7 @@ bin_path_for_arch() {
 }
 
 build_arch() {
+  python3 "$ROOT/scripts/generate-language-pack.py" --check
   local arch="$1"
   local bin_dir
   bin_dir="$(bin_path_for_arch "$arch")"
@@ -260,6 +261,7 @@ assemble_app() {
   if [[ -d "$sparkle_src/PasteIt_PasteIt.bundle" ]]; then
     cp -R "$sparkle_src/PasteIt_PasteIt.bundle" "$app/Contents/Resources/"
   fi
+  python3 "$ROOT/scripts/generate-language-pack.py" --check --validate-bundle "$app/Contents/Resources/PasteIt_PasteIt.bundle"
   # SwiftPM dependencies may have their own runtime resource bundles.
   local resource_bundle
   for resource_bundle in "$sparkle_src/"*.bundle; do

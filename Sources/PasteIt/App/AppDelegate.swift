@@ -6,15 +6,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let runtime = AppRuntime.shared
 
     static func configureLocalization() {
-        // Release apps embed SwiftPM resources in Contents/Resources. The
-        // generated Bundle.module accessor can look only at the app root and
-        // the build machine's path, so resolve the packaged bundle first.
-        if let resourceURL = Bundle.main.url(forResource: "PasteIt_PasteIt", withExtension: "bundle"),
-           let resourceBundle = Bundle(url: resourceURL) {
-            L10n.bundle = resourceBundle
-        } else {
-            L10n.bundle = Bundle.module
-        }
+        LanguageRepairController.shared.configure(LocalizationResources.resolve())
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -23,6 +15,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         MenuIconPolicy.disableSystemInjectedIcons()
         NSApp.setActivationPolicy(.accessory)
         runtime.start()
+        LanguageRepairController.shared.revealSettings = { [runtime] in
+            SettingsWindowController.shared.showLanguageRepair(appState: runtime.state)
+        }
+        let arguments = ProcessInfo.processInfo.arguments
+        if !arguments.contains("--ui-review") && LanguageRepairController.shared.needsRepair {
+            DispatchQueue.main.async { LanguageRepairPrompt.presentIfNeeded() }
+        }
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {

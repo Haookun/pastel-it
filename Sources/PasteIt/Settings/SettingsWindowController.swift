@@ -7,6 +7,7 @@ import PasteItCore
 @MainActor
 final class SettingsWindowController: NSObject, NSWindowDelegate {
     static let shared = SettingsWindowController()
+    static let languageRepairRequested = Notification.Name("PastelIt.LanguageRepairRequested")
 
     private var window: NSWindow?
     private var wasAccessory = true
@@ -29,8 +30,20 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         window.makeKeyAndOrderFront(nil)
     }
 
-    private func makeWindow(appState: AppState) -> NSWindow {
-        let root = SettingsView(appState: appState)
+    func showLanguageRepair(appState: AppState) {
+        if window == nil { window = makeWindow(appState: appState, showLanguageRepair: true) }
+        show(appState: appState)
+        // Navigate the existing hosting controller. Replacing it can reset its
+        // content view to an empty fitting size during AppKit layout.
+        NotificationCenter.default.post(name: Self.languageRepairRequested, object: nil)
+        // A newly shown SwiftUI hierarchy subscribes during its first layout.
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: Self.languageRepairRequested, object: nil)
+        }
+    }
+
+    private func makeWindow(appState: AppState, showLanguageRepair: Bool = false) -> NSWindow {
+        let root = SettingsView(appState: appState, showLanguageRepair: showLanguageRepair)
         let hosting = NSHostingController(rootView: root)
         // Let AppKit own the window size instead of adopting the Form's ideal size.
         hosting.sizingOptions = []

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import sys
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -1286,11 +1287,92 @@ STRINGS.update({
     }
 })
 
+
+# Missing interface resource recovery.
+STRINGS.update({
+    "languageRepair.statusFallback": {
+        "en": "Language resources are missing; running in English temporarily.",
+        "zh-Hans": "语言资源缺失，暂时使用英文界面。",
+        "ja": "言語リソースがないため、一時的に英語で表示しています。"
+    },
+    "languageRepair.statusOK": {
+        "en": "Language Resources",
+        "zh-Hans": "语言资源",
+        "ja": "言語リソース"
+    },
+    "languageRepair.download": {
+        "en": "Download and Repair",
+        "zh-Hans": "下载并修复",
+        "ja": "ダウンロードして修復"
+    },
+    "languageRepair.browser": {
+        "en": "Download via GitHub Login",
+        "zh-Hans": "登录 GitHub 下载",
+        "ja": "GitHubにログインして取得"
+    },
+    "languageRepair.import": {
+        "en": "Install Downloaded Language Pack…",
+        "zh-Hans": "安装已下载语言包…",
+        "ja": "取得した言語パックをインストール…"
+    },
+    "languageRepair.missingTitle": {
+        "en": "Language Resources Missing / 语言资源缺失",
+        "zh-Hans": "语言资源缺失",
+        "ja": "言語リソースがありません"
+    },
+    "languageRepair.missingMessage": {
+        "en": "The resources for your selected language are missing. The app will continue running in English. Your settings and history are not affected.",
+        "zh-Hans": "界面语言资源缺失，应用将继续使用英文运行。配置和剪贴板历史不受影响。",
+        "ja": "言語リソースがありません。英語で引き続き使用できます。設定と履歴は保持されます。"
+    },
+    "languageRepair.importShort": {
+        "en": "Install Downloaded Language Pack",
+        "zh-Hans": "安装已下载语言包",
+        "ja": "言語パックをインストール"
+    },
+    "languageRepair.later": {
+        "en": "Later",
+        "zh-Hans": "稍后",
+        "ja": "あとで"
+    },
+    "languageRepair.downloading": {
+        "en": "Downloading the language resources for this version…",
+        "zh-Hans": "正在下载与当前版本匹配的语言资源…",
+        "ja": "このバージョンの言語リソースを取得中…"
+    },
+    "languageRepair.privateHelp": {
+        "en": "This repository is private or the file is unavailable. Sign in to GitHub in your browser, download this version’s language pack, then install the downloaded file. English remains available.",
+        "zh-Hans": "仓库仍为私人或文件暂不可用。请在浏览器登录 GitHub，下载当前版本的语言包后导入安装。期间可继续使用英文界面。",
+        "ja": "非公開リポジトリまたはファイルを取得できません。ブラウザでGitHubにログインし、このバージョンの言語パックを取得してインストールしてください。英語で引き続き使用できます。"
+    },
+    "languageRepair.invalid": {
+        "en": "The language pack is damaged or does not match this app version. Nothing was installed. Download the matching pack and try again.",
+        "zh-Hans": "语言包已损坏或与当前应用版本不匹配，未安装任何内容。请下载匹配的语言包后重试。",
+        "ja": "言語パックが破損しているか、このバージョンと一致しません。インストールしていません。正しいパックで再試行してください。"
+    },
+    "languageRepair.failed": {
+        "en": "The language resources could not be repaired. Check your connection or install a downloaded pack. Your settings and history are unchanged.",
+        "zh-Hans": "暂时无法修复语言资源。请检查网络，或安装已下载的语言包。配置和历史保持不变。",
+        "ja": "言語リソースを修復できません。接続を確認するか、取得済みのパックをインストールしてください。設定と履歴は保持されます。"
+    },
+    "languageRepair.chooseFile": {
+        "en": "Choose the language pack downloaded from this app’s GitHub repository.",
+        "zh-Hans": "请选择从本应用 GitHub 仓库下载的语言包。",
+        "ja": "このアプリのGitHubリポジトリから取得した言語パックを選択してください。"
+    },
+    "languageRepair.installed": {
+        "en": "Language resources installed. Reopen the app for all interface text to refresh. Your settings and history are unchanged.",
+        "zh-Hans": "语言资源已安装。重新打开应用可完整刷新界面文字；配置和历史保持不变。",
+        "ja": "言語リソースをインストールしました。アプリを開き直すとすべての表示が更新されます。設定と履歴は保持されます。"
+    }
+})
+
 def main() -> None:
     strings = merge_batch_cjk(merge_batch2(STRINGS))
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(build_catalog(strings), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     write_strings_files(strings, LPROJ_ROOT)
+    subprocess.run([sys.executable, str(ROOT / "scripts/generate-language-pack.py")], check=True)
     print(f"Wrote {len(strings)} keys × {len(SUPPORTED_LANGS)} langs to {OUT} and {LPROJ_ROOT}/*.lproj")
 
 

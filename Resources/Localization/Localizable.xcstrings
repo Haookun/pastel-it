@@ -16496,6 +16496,876 @@
           }
         }
       }
+    },
+    "languageRepair.statusFallback": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language resources are missing; running in English temporarily."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语言资源缺失，暂时使用英文界面。"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言語リソースがないため、一時的に英語で表示しています。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ressources linguistiques manquantes ; affichage temporaire en anglais."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprachressourcen fehlen; vorübergehend wird Englisch verwendet."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faltan recursos de idioma; se usa inglés temporalmente."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak zasobów językowych; tymczasowo używany jest angielski."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "語言資源缺失，暫時使用英文介面。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "언어 리소스가 없어 임시로 영어로 표시합니다."
+          }
+        }
+      }
+    },
+    "languageRepair.statusOK": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language Resources"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语言资源"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言語リソース"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ressources linguistiques"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprachressourcen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recursos de idioma"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zasoby językowe"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "語言資源"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "언어 리소스"
+          }
+        }
+      }
+    },
+    "languageRepair.download": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download and Repair"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载并修复"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダウンロードして修復"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Télécharger et réparer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laden und reparieren"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descargar y reparar"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pobierz i napraw"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下載並修復"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다운로드 및 복구"
+          }
+        }
+      }
+    },
+    "languageRepair.browser": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download via GitHub Login"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "登录 GitHub 下载"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHubにログインして取得"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Télécharger via GitHub"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Über GitHub laden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descargar con GitHub"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pobierz przez GitHub"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "登入 GitHub 下載"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub 로그인 후 다운로드"
+          }
+        }
+      }
+    },
+    "languageRepair.import": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Install Downloaded Language Pack…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装已下载语言包…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取得した言語パックをインストール…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installer le pack téléchargé…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geladenes Sprachpaket installieren…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalar paquete descargado…"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zainstaluj pobrany pakiet…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安裝已下載語言包…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다운로드한 언어 팩 설치…"
+          }
+        }
+      }
+    },
+    "languageRepair.missingTitle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language Resources Missing / 语言资源缺失"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语言资源缺失"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言語リソースがありません"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ressources linguistiques manquantes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprachressourcen fehlen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faltan recursos de idioma"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak zasobów językowych"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "語言資源缺失"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "언어 리소스 없음"
+          }
+        }
+      }
+    },
+    "languageRepair.missingMessage": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The resources for your selected language are missing. The app will continue running in English. Your settings and history are not affected."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "界面语言资源缺失，应用将继续使用英文运行。配置和剪贴板历史不受影响。"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言語リソースがありません。英語で引き続き使用できます。設定と履歴は保持されます。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les ressources manquent. L’app continue en anglais. Réglages et historique sont conservés."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die App läuft auf Englisch weiter. Einstellungen und Verlauf bleiben erhalten."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La app seguirá en inglés. Se conservan ajustes e historial."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aplikacja będzie działać po angielsku. Ustawienia i historia pozostają."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "介面語言資源缺失，應用程式將繼續以英文運作。設定和剪貼簿歷史不受影響。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "언어 리소스가 없습니다. 영어로 계속 사용할 수 있으며 설정과 기록은 유지됩니다."
+          }
+        }
+      }
+    },
+    "languageRepair.importShort": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Install Downloaded Language Pack"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装已下载语言包"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言語パックをインストール"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installer le pack de langues"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprachpaket installieren"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalar paquete de idioma"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zainstaluj pakiet językowy"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安裝已下載語言包"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "언어 팩 설치"
+          }
+        }
+      }
+    },
+    "languageRepair.later": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Later"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "稍后"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あとで"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus tard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Später"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más tarde"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Później"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "稍後"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "나중에"
+          }
+        }
+      }
+    },
+    "languageRepair.downloading": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloading the language resources for this version…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在下载与当前版本匹配的语言资源…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このバージョンの言語リソースを取得中…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Téléchargement des ressources de cette version…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprachressourcen für diese Version werden geladen…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descargando los recursos de esta versión…"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pobieranie zasobów dla tej wersji…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在下載符合目前版本的語言資源…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "현재 버전의 언어 리소스를 다운로드하는 중…"
+          }
+        }
+      }
+    },
+    "languageRepair.privateHelp": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This repository is private or the file is unavailable. Sign in to GitHub in your browser, download this version’s language pack, then install the downloaded file. English remains available."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仓库仍为私人或文件暂不可用。请在浏览器登录 GitHub，下载当前版本的语言包后导入安装。期间可继续使用英文界面。"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "非公開リポジトリまたはファイルを取得できません。ブラウザでGitHubにログインし、このバージョンの言語パックを取得してインストールしてください。英語で引き続き使用できます。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le dépôt est privé ou le fichier indisponible. Connectez-vous à GitHub dans le navigateur, téléchargez le pack de cette version puis installez-le. L’anglais reste disponible."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repository privat oder Datei nicht verfügbar. Melden Sie sich im Browser bei GitHub an, laden Sie das Sprachpaket dieser Version und installieren Sie es. Englisch bleibt verfügbar."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El repositorio es privado o el archivo no está disponible. Inicia sesión en GitHub en el navegador, descarga el paquete de esta versión e instálalo. El inglés sigue disponible."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repozytorium jest prywatne lub plik niedostępny. Zaloguj się do GitHub w przeglądarce, pobierz pakiet tej wersji i go zainstaluj. Angielski pozostaje dostępny."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存庫仍為私人或檔案暫時無法使用。請在瀏覽器登入 GitHub，下載目前版本的語言包後匯入安裝。期間可繼續使用英文介面。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비공개 저장소이거나 파일에 접근할 수 없습니다. 브라우저에서 GitHub에 로그인하여 현재 버전의 언어 팩을 다운로드한 뒤 설치하세요. 영어로 계속 사용할 수 있습니다."
+          }
+        }
+      }
+    },
+    "languageRepair.invalid": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The language pack is damaged or does not match this app version. Nothing was installed. Download the matching pack and try again."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语言包已损坏或与当前应用版本不匹配，未安装任何内容。请下载匹配的语言包后重试。"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言語パックが破損しているか、このバージョンと一致しません。インストールしていません。正しいパックで再試行してください。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pack endommagé ou incompatible. Rien n’a été installé. Téléchargez le pack correspondant et réessayez."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprachpaket beschädigt oder nicht passend. Es wurde nichts installiert. Laden Sie das passende Paket erneut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paquete dañado o incompatible. No se instaló nada. Descarga el paquete correspondiente e inténtalo de nuevo."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pakiet uszkodzony lub niezgodny. Niczego nie zainstalowano. Pobierz właściwy pakiet i spróbuj ponownie."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "語言包已損壞或不符合目前應用程式版本，未安裝任何內容。請下載符合的語言包後重試。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "언어 팩이 손상되었거나 버전이 다릅니다. 아무것도 설치하지 않았습니다. 올바른 팩으로 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "languageRepair.failed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The language resources could not be repaired. Check your connection or install a downloaded pack. Your settings and history are unchanged."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂时无法修复语言资源。请检查网络，或安装已下载的语言包。配置和历史保持不变。"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言語リソースを修復できません。接続を確認するか、取得済みのパックをインストールしてください。設定と履歴は保持されます。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réparation impossible. Vérifiez la connexion ou installez un pack téléchargé. Réglages et historique sont conservés."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reparatur fehlgeschlagen. Verbindung prüfen oder geladenes Paket installieren. Einstellungen und Verlauf bleiben erhalten."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo reparar. Comprueba la conexión o instala un paquete descargado. Se conservan ajustes e historial."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naprawa nie powiodła się. Sprawdź połączenie lub zainstaluj pobrany pakiet. Ustawienia i historia pozostają."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暫時無法修復語言資源。請檢查網路，或安裝已下載的語言包。設定和歷史保持不變。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "언어 리소스를 복구할 수 없습니다. 연결을 확인하거나 다운로드한 팩을 설치하세요. 설정과 기록은 유지됩니다."
+          }
+        }
+      }
+    },
+    "languageRepair.chooseFile": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose the language pack downloaded from this app’s GitHub repository."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请选择从本应用 GitHub 仓库下载的语言包。"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このアプリのGitHubリポジトリから取得した言語パックを選択してください。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez le pack téléchargé depuis le dépôt GitHub de cette app."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wählen Sie das Sprachpaket aus dem GitHub-Repository dieser App."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige el paquete descargado del repositorio GitHub de esta app."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz pakiet pobrany z repozytorium GitHub tej aplikacji."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請選擇從本應用程式 GitHub 儲存庫下載的語言包。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱의 GitHub 저장소에서 다운로드한 언어 팩을 선택하세요."
+          }
+        }
+      }
+    },
+    "languageRepair.installed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language resources installed. Reopen the app for all interface text to refresh. Your settings and history are unchanged."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语言资源已安装。重新打开应用可完整刷新界面文字；配置和历史保持不变。"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言語リソースをインストールしました。アプリを開き直すとすべての表示が更新されます。設定と履歴は保持されます。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ressources installées. Rouvrez l’app pour actualiser toute l’interface. Réglages et historique sont conservés."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprachressourcen installiert. Öffnen Sie die App erneut, um alle Texte zu aktualisieren. Einstellungen und Verlauf bleiben erhalten."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recursos instalados. Abre de nuevo la app para actualizar toda la interfaz. Se conservan ajustes e historial."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zasoby zainstalowane. Otwórz aplikację ponownie, aby odświeżyć cały interfejs. Ustawienia i historia pozostają."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "語言資源已安裝。重新開啟應用程式可完整更新介面文字；設定和歷史保持不變。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "언어 리소스를 설치했습니다. 앱을 다시 열면 모든 문구가 갱신됩니다. 설정과 기록은 유지됩니다."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

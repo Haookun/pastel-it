@@ -820,6 +820,71 @@ BATCH_CJK.update({
     }
 })
 
+
+# Missing interface resource recovery.
+BATCH_CJK.update({
+    "languageRepair.statusFallback": {
+        "zh-Hant": "語言資源缺失，暫時使用英文介面。",
+        "ko": "언어 리소스가 없어 임시로 영어로 표시합니다."
+    },
+    "languageRepair.statusOK": {
+        "zh-Hant": "語言資源",
+        "ko": "언어 리소스"
+    },
+    "languageRepair.download": {
+        "zh-Hant": "下載並修復",
+        "ko": "다운로드 및 복구"
+    },
+    "languageRepair.browser": {
+        "zh-Hant": "登入 GitHub 下載",
+        "ko": "GitHub 로그인 후 다운로드"
+    },
+    "languageRepair.import": {
+        "zh-Hant": "安裝已下載語言包…",
+        "ko": "다운로드한 언어 팩 설치…"
+    },
+    "languageRepair.missingTitle": {
+        "zh-Hant": "語言資源缺失",
+        "ko": "언어 리소스 없음"
+    },
+    "languageRepair.missingMessage": {
+        "zh-Hant": "介面語言資源缺失，應用程式將繼續以英文運作。設定和剪貼簿歷史不受影響。",
+        "ko": "언어 리소스가 없습니다. 영어로 계속 사용할 수 있으며 설정과 기록은 유지됩니다."
+    },
+    "languageRepair.importShort": {
+        "zh-Hant": "安裝已下載語言包",
+        "ko": "언어 팩 설치"
+    },
+    "languageRepair.later": {
+        "zh-Hant": "稍後",
+        "ko": "나중에"
+    },
+    "languageRepair.downloading": {
+        "zh-Hant": "正在下載符合目前版本的語言資源…",
+        "ko": "현재 버전의 언어 리소스를 다운로드하는 중…"
+    },
+    "languageRepair.privateHelp": {
+        "zh-Hant": "儲存庫仍為私人或檔案暫時無法使用。請在瀏覽器登入 GitHub，下載目前版本的語言包後匯入安裝。期間可繼續使用英文介面。",
+        "ko": "비공개 저장소이거나 파일에 접근할 수 없습니다. 브라우저에서 GitHub에 로그인하여 현재 버전의 언어 팩을 다운로드한 뒤 설치하세요. 영어로 계속 사용할 수 있습니다."
+    },
+    "languageRepair.invalid": {
+        "zh-Hant": "語言包已損壞或不符合目前應用程式版本，未安裝任何內容。請下載符合的語言包後重試。",
+        "ko": "언어 팩이 손상되었거나 버전이 다릅니다. 아무것도 설치하지 않았습니다. 올바른 팩으로 다시 시도하세요."
+    },
+    "languageRepair.failed": {
+        "zh-Hant": "暫時無法修復語言資源。請檢查網路，或安裝已下載的語言包。設定和歷史保持不變。",
+        "ko": "언어 리소스를 복구할 수 없습니다. 연결을 확인하거나 다운로드한 팩을 설치하세요. 설정과 기록은 유지됩니다."
+    },
+    "languageRepair.chooseFile": {
+        "zh-Hant": "請選擇從本應用程式 GitHub 儲存庫下載的語言包。",
+        "ko": "앱의 GitHub 저장소에서 다운로드한 언어 팩을 선택하세요."
+    },
+    "languageRepair.installed": {
+        "zh-Hant": "語言資源已安裝。重新開啟應用程式可完整更新介面文字；設定和歷史保持不變。",
+        "ko": "언어 리소스를 설치했습니다. 앱을 다시 열면 모든 문구가 갱신됩니다. 설정과 기록은 유지됩니다."
+    }
+})
+
 def merge_batch_cjk(strings: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
     merged = {key: dict(locs) for key, locs in strings.items()}
     missing = set(merged) - set(BATCH_CJK)

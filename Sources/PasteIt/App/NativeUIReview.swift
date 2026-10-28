@@ -14,6 +14,10 @@ struct NativeUIReview {
         let oldPolicy = app.activationPolicy()
         let oldBundle = L10n.bundle
         AppDelegate.configureLocalization()
+        if ProcessInfo.processInfo.arguments.contains("--ui-review-language-repair-only") {
+            try await reviewLanguageRepair(directory: directory)
+            return
+        }
         let resources = L10n.bundle
         L10n.bundle = try require(resources.path(forResource: "zh-Hans", ofType: "lproj").flatMap(Bundle.init(path:)))
         let runtime = AppRuntime.shared
@@ -513,6 +517,75 @@ struct NativeUIReview {
             let point = NSPoint(x: rect.midX * view.bounds.width, y: rect.midY * view.bounds.height)
             return (text, view.convert(point, to: nil))
         }
+    }
+
+    private func reviewLanguageRepair(directory: URL) async throws {
+        let app = NSApplication.shared
+        let oldPolicy = app.activationPolicy()
+        let oldBundle = L10n.bundle
+        let runtime = AppRuntime.shared
+        let controller = LanguageRepairController.shared
+        let cache = LocalizationResources.cacheRoot
+        app.setActivationPolicy(.regular)
+        defer {
+            for window in app.windows where window.isVisible { window.orderOut(nil) }
+            runtime.stop()
+            try? FileManager.default.removeItem(at: cache)
+            L10n.bundle = oldBundle
+            app.setActivationPolicy(oldPolicy)
+        }
+        try check(controller.needsRepair)
+        try check(!FileManager.default.fileExists(atPath: Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/PasteIt_PasteIt.bundle").path))
+        SettingsWindowController.shared.showLanguageRepair(appState: runtime.state)
+        await settle()
+        let settings = try require(app.windows.first { $0.isVisible && $0.title.contains("Settings") })
+        settings.setContentSize(NSSize(width: 720, height: 500))
+        settings.appearance = NSAppearance(named: .aqua)
+        await settle()
+        try snapshot(settings, name: "language-missing-english", directory: directory)
+        try check(await hasText("Language Resources", in: settings))
+        // Exercise the actual startup NSAlert and its Later action inside this
+        // process. No system input or real clipboard/history is touched.
+        let dismissTimer = Timer(timeInterval: 0.5, repeats: false) { _ in
+            MainActor.assumeIsolated {
+            guard let modal = NSApp.modalWindow ?? NSApp.windows.first(where: { $0.isVisible && NSStringFromClass(type(of: $0)).contains("Alert") }) else { NSApp.abortModal(); return }
+            try? snapshot(modal, name: "language-missing-alert", directory: directory)
+            @MainActor func laterButton(in view: NSView) -> NSButton? {
+                if let button = view as? NSButton, button.title == "Later" { return button }
+                for child in view.subviews { if let found = laterButton(in: child) { return found } }
+                return nil
+            }
+            if let content = modal.contentView, let later = laterButton(in: content) { later.performClick(nil) }
+            else { NSApp.stopModal(withCode: .alertThirdButtonReturn) }
+            }
+        }
+        RunLoop.main.add(dismissTimer, forMode: .modalPanel)
+        RunLoop.main.add(dismissTimer, forMode: .common)
+        LanguageRepairPrompt.presentIfNeeded(controller: controller)
+        dismissTimer.invalidate()
+        try check(FileManager.default.fileExists(atPath: directory.appendingPathComponent("language-missing-alert.png").path))
+        try check(controller.needsRepair)
+        let arguments = ProcessInfo.processInfo.arguments
+        let index = try require(arguments.firstIndex(of: "--recovery-pack-file"))
+        try check(arguments.indices.contains(index + 1))
+        let originalIDs = runtime.historyStore.clips.map(\.id)
+        let originalSettings = runtime.settings.quickPasteEnabled
+        try controller.install(Data(contentsOf: URL(fileURLWithPath: arguments[index + 1])))
+        try check(!controller.needsRepair)
+        try check(LocalizationResources.resolve(cache: cache).source == .repaired)
+        try check(originalIDs == runtime.historyStore.clips.map(\.id))
+        try check(originalSettings == runtime.settings.quickPasteEnabled)
+        let chinese = try require(L10n.bundle.path(forResource: "zh-Hans", ofType: "lproj").flatMap(Bundle.init(path:)))
+        L10n.bundle = chinese
+        SettingsWindowController.shared.showLanguageRepair(appState: runtime.state)
+        await settle()
+        try check((settings.contentView?.bounds.width ?? 0) >= 700)
+        try check((settings.contentView?.bounds.height ?? 0) >= 490)
+        try snapshot(settings, name: "language-repaired-light", directory: directory)
+        settings.appearance = NSAppearance(named: .darkAqua)
+        await settle()
+        try snapshot(settings, name: "language-repaired-dark", directory: directory)
+        try "The signed synthetic App launched without its resource bundle, used English, displayed the native repair alert, continued after Later and installed a verified language pack into an isolated cache. Chinese resources restored; synthetic history/settings unchanged. No real clipboard/configuration accessed.\n".write(to: directory.appendingPathComponent("interaction-result.txt"), atomically: true, encoding: .utf8)
     }
 
     private func hasText(_ text: String, in window: NSWindow) async -> Bool {
