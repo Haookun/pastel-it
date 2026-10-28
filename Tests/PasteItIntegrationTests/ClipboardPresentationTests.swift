@@ -75,4 +75,24 @@ struct ClipboardPresentationTests {
         #expect(!panel.handleCandidateKey(commandEvent))
     }
 
+    @Test func abbreviatedCandidateLabelsKeepFullTextAndOCRPayload() async throws {
+        let original = "第一行内容\n第二行内容\n| 表格 | 单元格 |"
+        let text = ClipItem(title: "Synthetic multiline", plainText: original, primaryType: .text,
+                            pasteboardTypes: [], contentHash: "summary-text")
+        let image = ClipItem(title: "Synthetic OCR", primaryType: .image, pasteboardTypes: [],
+                             ocrText: original, contentHash: "summary-ocr")
+        #expect(CandidateRowContent.labelText(for: text) == "第一行内容…")
+        #expect(CandidateRowContent.labelText(for: image) == "第一行内容…")
+        #expect(text.plainText == original)
+        #expect(image.ocrText == original)
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("PasteItEphemeral-RowSummary-\(UUID())")
+        let blob = BlobStore(rootURL: root)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let board = NSPasteboard.withUniqueName()
+        defer { board.releaseGlobally() }
+        let writer = PasteController(blobStore: blob, pasteboard: board)
+        #expect(await writer.copyToPasteboardAsync(text))
+        #expect(board.string(forType: .string) == original)
+    }
+
 }

@@ -12,19 +12,25 @@ enum CandidateRowContent {
     }
 
     static func labelText(for item: ClipItem) -> String {
+        // Resolve the full display text exactly as before (OCR / file name /
+        // preview with empty-value fallbacks), then collapse to a single line
+        // for the fixed-height row. Core appends "…" when content is dropped.
+        let fullText: String
         switch item.primaryType {
         case .image:
             let ocr = item.ocrText?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            return ocr.isEmpty ? L10n.tr("clipType.image", default: "Image") : ocr
+            fullText = ocr.isEmpty ? L10n.tr("clipType.image", default: "Image") : ocr
         case .file:
             guard let first = item.storedFileURLs.first else {
-                return L10n.tr("clipType.file", default: "File")
+                fullText = L10n.tr("clipType.file", default: "File")
+                break
             }
-            return first.lastPathComponent
+            fullText = first.lastPathComponent
         default:
             let text = item.previewText.trimmingCharacters(in: .whitespacesAndNewlines)
-            return text.isEmpty ? item.primaryType.title : text
+            fullText = text.isEmpty ? item.primaryType.title : text
         }
+        return CandidateRowSummary.firstLine(fullText)
     }
 
     static func extraFileCount(for item: ClipItem) -> Int {
@@ -351,8 +357,15 @@ private final class CandidateCellView: NSTableCellView {
         iconView.imageScaling = .scaleProportionallyDown
 
         titleField.font = .systemFont(ofSize: 13)
+        // Hard single-line enforcement: never wrap, always truncate at the tail.
         titleField.lineBreakMode = .byTruncatingTail
         titleField.maximumNumberOfLines = 1
+        titleField.usesSingleLineMode = true
+        if let cell = titleField.cell as? NSTextFieldCell {
+            cell.wraps = false
+            cell.isScrollable = false
+            cell.lineBreakMode = .byTruncatingTail
+        }
 
         countField.font = .systemFont(ofSize: 10, weight: .medium)
         countChipBacking.wantsLayer = true
@@ -371,7 +384,10 @@ private final class CandidateCellView: NSTableCellView {
 
         NSLayoutConstraint.activate([
             stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            stack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -10),
+            // Required equality: the stack spans the full row width so the
+            // title receives a real, finite width after the key chip, icon
+            // and count chip reserve their space.
+            stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
             stack.centerYAnchor.constraint(equalTo: centerYAnchor),
             iconView.widthAnchor.constraint(equalToConstant: 14),
             keyField.centerXAnchor.constraint(equalTo: keyChipBacking.centerXAnchor),
@@ -383,8 +399,17 @@ private final class CandidateCellView: NSTableCellView {
             countField.centerYAnchor.constraint(equalTo: countChipBacking.centerYAnchor),
             countChipBacking.widthAnchor.constraint(equalTo: countField.widthAnchor, constant: 8),
             countChipBacking.heightAnchor.constraint(equalToConstant: 15),
+            // One line of 13pt text, capped so nothing can spill past the
+            // fixed 36pt row into neighbouring rows.
+            titleField.heightAnchor.constraint(lessThanOrEqualToConstant: 18),
         ])
+        // Only the title may shrink: key chip, icon and count chip keep
+        // their intrinsic width, the title takes the remainder and
+        // truncates at the tail.
         titleField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        titleField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        // Belt and braces: clip any residual overflow at the cell bounds.
+        clipsToBounds = true
 
         applyColors()
     }

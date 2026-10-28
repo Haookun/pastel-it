@@ -130,3 +130,5 @@ codesign -dv "dist/local-test/arm64/Pastel it！.app"
 同步目录的 Finder/FileProvider 元数据可能破坏 SwiftPM 测试包签名。测试使用非同步临时构建目录，例如 `swift test --scratch-path /private/tmp/pastel-it-build`；打包可设置 `PASTEIT_BUILD_PATH`。不要为绕过测试而清理真实历史、权限或全局同步配置。
 
 只复查显示样式动画时，可在上述显式 `--ui-review` 合成流程中追加 `--ui-review-preview-only`，仅输出两种动画在窄／标准／宽设置窗口及深色外观中的截图；不进入剪贴板选择与鼠标交互检查。动画使用固定480×300画布和统一比例缩放，不按宽高分别重排图形。
+
+候选摘要回归可在显式合成 `--ui-review` 流程追加 `--ui-review-summary-only`，仅检查10行合成多行文本／OCR与长首行在420pt、280pt及深色外观中的单行边界；不得用真实历史截图复现。摘要只改变展示，不截断存储与复制内容。

@@ -26,6 +26,10 @@ struct NativeUIReview {
             L10n.bundle = oldBundle
             app.setActivationPolicy(oldPolicy)
         }
+        if ProcessInfo.processInfo.arguments.contains("--ui-review-summary-only") {
+            try await reviewCandidateSummaries(directory: directory)
+            return
+        }
         SettingsWindowController.shared.show(appState: runtime.state)
         await settle()
         let settings = try require(app.windows.first { $0.isVisible && $0.title.contains("设置") })
@@ -312,6 +316,73 @@ struct NativeUIReview {
         input.close()
         runtime.settings.clipboardPresentationStyle = .timeline
         try "Native windows: settings grouped navigation, separate OCR/Quick Paste, light/dark/minimum/inactive appearance, two presentation demos and permission-button visibility, onboarding forward/back/finish, image/text tabs and OCR edit/cancel/save, candidate caret-relative vertical 10-row pages from a native text view, Tab next-page and previous-page with disjoint content, numeric selection, default-image and text native row clicks, short last-page sizing, constrained-window keyboard scrolling, and image/file preview content exercised. General clipboard and cross-app key synthesis were not used; candidate selection used a unique temporary pasteboard.\n".write(to: directory.appendingPathComponent("interaction-result.txt"), atomically: true, encoding: .utf8)
+    }
+
+    private func reviewCandidateSummaries(directory: URL) async throws {
+        let runtime = AppRuntime.shared
+        for clip in runtime.historyStore.clips { runtime.historyStore.context.delete(clip) }
+        let samples = [
+            "合成第一行\n第二行不能出现在候选栏\n第三行也必须保留在原文",
+            "| 表格列一 | 表格列二 |\r\n| --- | --- |\r\n| 合成数据 | 合成内容 |",
+            String(repeating: "这是很长的中文首行，用于检查末尾省略。", count: 20),
+            "Short first line\n" + String(repeating: "More content ", count: 30),
+            "日本語の一行目\u{2028}English second line",
+            "👨‍👩‍👧‍👦 合成家庭图标\n更多内容",
+            "只有这一行的合成内容",
+            "First line\rSecond line",
+            "第一行…\n已带省略号仍有后文",
+            String(repeating: "Long English content for native truncation. ", count: 12)
+        ]
+        let inserted = samples.enumerated().map { index, text in
+            ClipItem(createdAt: Date().addingTimeInterval(Double(-index)), title: "Synthetic summary \(index)",
+                plainText: index < 2 ? "" : text, primaryType: index < 2 ? .image : .text,
+                pasteboardTypes: [], ocrText: index < 2 ? text : nil, contentHash: "synthetic-summary-\(index)")
+        }
+        for item in inserted { runtime.historyStore.context.insert(item) }
+        try runtime.historyStore.context.save()
+        runtime.historyStore.refresh()
+        runtime.settings.clipboardPresentationStyle = .candidateBar
+        runtime.settings.timelinePrimaryAction = .copyOnly
+        let board = NSPasteboard.withUniqueName()
+        defer { board.releaseGlobally() }
+        let writer = PasteController(blobStore: runtime.blobStore, pasteboard: board)
+        let visible = NSScreen.main?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1200, height: 800)
+        let caret = CGRect(x: visible.minX + 80, y: visible.maxY - 100, width: 0, height: 20)
+        let controller = TimelinePanelController(appState: runtime.state, pasteController: writer, candidateAnchorProvider: { _ in caret })
+        NSApp.activate(ignoringOtherApps: true)
+        controller.show()
+        await settle()
+        let panel = try require(NSApp.windows.first { $0.isVisible && $0 is NSPanel && $0.title == "Pastel it！" })
+        for (width, appearance, name) in [(CGFloat(420), NSAppearance.Name.aqua, "summary-standard-light"),
+                                          (CGFloat(280), .aqua, "summary-narrow-light"),
+                                          (CGFloat(420), .darkAqua, "summary-standard-dark")] {
+            panel.appearance = NSAppearance(named: appearance)
+            panel.setContentSize(NSSize(width: width, height: 393))
+            await settle()
+            let table = try require(panel.contentView.flatMap { candidateTable(in: $0) })
+            try check(table.numberOfRows == 10 && table.rowHeight == 36)
+            for row in 0..<table.numberOfRows {
+                let cell = try require(table.view(atColumn: 0, row: row, makeIfNecessary: true))
+                let item = controller.candidatePageItems[row]
+                let expected = CandidateRowContent.labelText(for: item)
+                func labels(_ view: NSView) -> [NSTextField] {
+                    (view as? NSTextField).map { [$0] } ?? view.subviews.flatMap { labels($0) }
+                }
+                let title = try require(labels(cell).first { $0.stringValue == expected })
+                try check(!expected.contains(where: \.isNewline))
+                try check(title.usesSingleLineMode && title.maximumNumberOfLines == 1 && title.cell?.wraps == false)
+                try check(title.bounds.height <= 36 && title.bounds.width <= width)
+                let frame = title.convert(title.bounds, to: cell)
+                try check(cell.bounds.insetBy(dx: -1, dy: -1).contains(frame))
+            }
+            try snapshot(panel, name: name, directory: directory)
+        }
+        for (index, item) in inserted.enumerated() {
+            try check((index < 2 ? item.ocrText : item.plainText) == samples[index])
+        }
+        controller.hide()
+        await settle()
+        try "Native ten-row summaries checked at 420pt and 280pt widths, light/dark: first-line labels, tail ellipses and bounded text fields; original text/OCR unchanged.\n".write(to: directory.appendingPathComponent("interaction-result.txt"), atomically: true, encoding: .utf8)
     }
 
     private func candidateTable(in view: NSView) -> NSTableView? {
