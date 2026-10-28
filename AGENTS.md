@@ -12,7 +12,7 @@
 
 - 原生 macOS 菜单栏剪贴板管理器，使用 SwiftUI、AppKit、SwiftData，通过 Swift Package Manager 构建；不是 Web 项目，也不依赖 Xcode 工程文件。
 - Swift tools version 为 **6.2**，最低支持 **macOS 14**。使用较新系统 API 时保留 availability 检查与旧系统回退；玻璃样式统一复用 `Utilities/LiquidGlass.swift`。
-- `Package.swift` 定义应用 `PasteIt`、共享库 `PasteItCore`、测试 `PasteItTests`；外部依赖包括 Sparkle、MCP Swift SDK、PostHog。
+- `Package.swift` 定义应用 `PasteIt`、共享库 `PasteItCore`、测试 `PasteItTests`；外部依赖包括 Sparkle、MCP Swift SDK（归档MCP代码编译使用）。
 
 | 路径（相对于仓库根目录） | 职责 |
 | --- | --- |
@@ -23,7 +23,7 @@
 | `Sources/PasteIt/UI/` | AppKit 面板控制器、SwiftUI 时间线、卡片与预览 |
 | `Sources/PasteIt/Features/PasteStack/` | 粘贴队列及其面板 |
 | `Sources/PasteIt/Settings/`、`Onboarding/` | 设置与引导界面 |
-| `Sources/PasteIt/AgentAPI/`、`Analytics/` | 本地 MCP 服务、匿名统计 |
+| `Sources/PasteIt/AgentAPI/`、`Diagnostics/` | 归档 MCP 服务、仅本机诊断日志 |
 | `Sources/PasteItCore/`、`Tests/PasteItTests/` | 可独立测试的类型解析、文本处理、分类、本地化辅助及测试 |
 | `Resources/`、`scripts/`、`docs/` | 资源、生成与打包脚本、专题文档 |
 
@@ -44,9 +44,9 @@
 - 保留暂停采集、忽略应用和受保护 pasteboard 类型过滤；测试使用合成内容，不使用真实密码或敏感剪贴板内容。
 - 持久化目录为 `~/Library/Application Support/PasteIt/`，数据库为 `history.store`，附件在 `Blobs/` 和 `Thumbnails/`。**不要改用 SwiftData 默认的 `Application Support/default.store`**，它可能与其他未沙盒化应用冲突。
 - 不要通过删除真实历史、附件、偏好设置或重置系统权限来让测试通过。模型、清理或迁移改动需考虑现有数据兼容性；测试优先使用临时目录和内存存储，复用已有 ephemeral 支持。
-- 日志、测试快照和提交内容不得包含真实剪贴板正文、OCR、文件内容或私人路径。统计仅发送允许的元数据，不上传搜索词、剪贴板内容或 MCP payload；新增事件时同步 `AnalyticsCatalog` 与 [统计说明](docs/analytics.md)，并保留退出统计的行为。
+- 不收集或上传用户使用信息；不得重新引入统计 SDK、行为事件、会话计数或设备标识。诊断日志仅在本机，固定事件码，不接受剪贴板正文、OCR、文件内容、私人路径或 error.description。见 [日志与隐私说明](docs/analytics.md)。清理只能删除 `~/Library/Logs/PastelIt/` 中三个已知普通日志文件，不删除配置、历史、附件或系统日志；测试使用临时目录，拒绝软链接、硬链接和递归删除。
 - MCP 在当前私人派生版中完全停用，保留源码；启动不创建监听器，也不提供开关或 URL 入口，旧设置不得恢复运行。归档实现仅绑定 `127.0.0.1:17321`，不暴露主时间线、采集或设置的修改能力。截图工具使用临时历史；保持其与真实存储隔离。接口变化同步 [MCP 文档](docs/mcp.md)。
-- 不打印或提交 `Secrets/posthog.env`、签名私钥、公证凭据；沿用脚本的凭据注入方式。
+- 不打印或提交旧的 `Secrets/posthog.env`、签名私钥、公证凭据；旧统计凭据不再读取或注入应用。
 
 ## 本地化与资源
 
@@ -123,7 +123,7 @@ codesign -dv "dist/local-test/arm64/Pastel it！.app"
 
 ## 显式原生 UI 复验
 
-用户本轮明确授权代做界面确认时，可从干净临时签名包启动 `--validation-session --ui-review /absolute/temporary-output`。该开发检查模式只创建临时合成历史和独立偏好；启动分支不注册全局快捷键、不监听系统剪贴板、不启动统计或登录项同步。候选选择测试使用 uniquely named pasteboard，不使用系统剪贴板。
+用户本轮明确授权代做界面确认时，可从干净临时签名包启动 `--validation-session --ui-review /absolute/temporary-output`。该开发检查模式只创建临时合成历史和独立偏好；启动分支不注册全局快捷键、不监听系统剪贴板、不启动登录项同步。候选选择测试使用 uniquely named pasteboard，不使用系统剪贴板。
 
 该模式在真实 App 窗口内走原生控件操作并输出本应用的 AppKit 渲染图；不能将其等同于跨应用粘贴或全局快捷键验收。`candidate-page1-light` 与 `candidate-page2-light` 阶段最多等待20秒，输出目录中同名 `.continue` 文件可继续。它只在显式命令行参数下启用，不作为产品入口或后台服务。
 
@@ -132,3 +132,5 @@ codesign -dv "dist/local-test/arm64/Pastel it！.app"
 只复查显示样式动画时，可在上述显式 `--ui-review` 合成流程中追加 `--ui-review-preview-only`，仅输出两种动画在窄／标准／宽设置窗口及深色外观中的截图；不进入剪贴板选择与鼠标交互检查。动画使用固定480×300画布和统一比例缩放，不按宽高分别重排图形。
 
 候选摘要回归可在显式合成 `--ui-review` 流程追加 `--ui-review-summary-only`，仅检查10行合成多行文本／OCR与长首行在420pt、280pt及深色外观中的单行边界；不得用真实历史截图复现。摘要只改变展示，不截断存储与复制内容。
+
+仅复验日志设置时，可追加 `--ui-review-logs-only`；使用临时日志演示取消／确认清理，核对合成历史与设置不变。禁止为了测试点击真实应用的清理按钮。

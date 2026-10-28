@@ -1,104 +1,11 @@
-> 当前版本已移除旧 plain_paste 操作，并停用 Paste Stack；这两个历史事件不再由产品触发。相关归档代码可能仍保留历史 schema。
+# 日志与隐私
 
-# Analytics disclosure
+Pastel it！不收集或上传用户使用信息。已移除 PostHog SDK、所有行为事件／会话计数、设备标识生成、统计开关和打包时凭据注入。旧版保存的统计偏好不会被读取，也不能恢复收集。历史版本已发送到第三方的数据不属于本地日志按钮的清理范围。
 
-Pastel it！ may send **anonymous product analytics** to [PostHog](https://posthog.com) to improve the app. Analytics is **on by default** and can be turned off in **Settings → Privacy**.
+仅保留本机诊断日志：`~/Library/Logs/PastelIt/`。内容为时间与固定的启动／退出、存储失败、登录项失败等排障码，不记录复制内容、OCR、文件路径、搜索、按键、功能使用次数或错误正文；没有上传接口。日志最多14天，每个文件256 KiB，最多三个文件（768 KiB）。
 
-This document is the public catalog of what is collected. The same list is shown in-app under **Settings → Privacy → What we collect**, and is defined in code as `AnalyticsCatalog`.
+“设置 → 隐私 → 本地诊断日志 → 删除过去日志”显示确认框，确认后仅删除 `diagnostic.log`、`diagnostic.1.log`、`diagnostic.2.log`，取消不清理。后续故障或重启仍可生成新日志。拒绝目录重定向、软链接、硬链接和非普通文件，不递归删除。
 
-## Principles
+该按钮不删除偏好设置、快捷键、剪贴板历史、附件或macOS系统日志。历史与附件仍在 `~/Library/Application Support/PasteIt/`。macOS自行管理的系统日志／崩溃报告不能当成本应用文件日志清理；不使用全局日志清除命令。
 
-- **No clipboard contents** — never text, HTML, RTF, previews, OCR, images, file bytes, or local paths.
-- **No search strings** — only that a search happened during a panel session (count), never the query.
-- **No accounts** — anonymous device ID from the PostHog SDK; we do not call `identify` with a user id.
-- **Opt out anytime** — disabling analytics stops further events (`optOut`).
-
-Official builds inject a PostHog project token at package time (`Secrets/posthog.env`). Builds without a token send nothing.
-
-## Common properties (every event)
-
-Registered via PostHog `register`:
-
-| Property | Meaning |
-| --- | --- |
-| `app_name` / `$app_name` | `"Pastel it！"` |
-| `app_version` / `$app_version` | Marketing version |
-| `app_build` | Build number |
-| `platform` | `"macos"` |
-| `os` / `$os` | `"macOS"` |
-| `os_version` / `$os_version` | OS version |
-| `first_open_utc` | First analytics-enabled open (ISO8601) |
-| `preferred_language` | macOS preferred language list (first entry), e.g. `zh-Hans-CN`, `en-US` |
-| `system_locale` | macOS current locale identifier, e.g. `zh_CN`, `en_US` |
-
-The PostHog SDK may also attach its own library/device fields (including `$locale`, which is only a 2-letter language code such as `en` — prefer `preferred_language` for analytics).
-
-## Lifecycle events
-
-| Event | When | Properties |
-| --- | --- | --- |
-| `app_install` | First analytics-enabled run on this Mac | `install_utc` |
-| `app_open` | Launch, or analytics re-enabled | — |
-| `app_exit` | Clean quit | — |
-
-## Product events (P0)
-
-| Event | When | Properties (metadata only) |
-| --- | --- | --- |
-| `onboarding_started` | Tutorial opens | `source`: `first_launch` \| `update` \| `settings` |
-| `onboarding_step_viewed` | Tutorial page shown | `step`: `capture` \| `paste` \| `browse` \| `organize` \| `stack` |
-| `onboarding_completed` | Finish / skip / window close | `outcome`: `completed` \| `skipped` \| `dismissed`; `last_step` |
-| `panel_opened` | Timeline panel shown | `source`: `hotkey` \| `status_item` \| `menu`; `history_count_bucket`; `session_id` |
-| `panel_closed` | Timeline panel hidden | `duration_ms_bucket`; `did_stage`; `session_id` |
-| `session_summary` | Same moment as panel close | `opens`; `stages`; `searches`; `search_had_zero_results`; `session_id` |
-| `clip_staged` | Item staged to system pasteboard from timeline | `mode`; `trigger`; `clip_type`; `tab`; `age_bucket`; `session_id?` |
-| `update_interaction` | Sparkle update funnel | `action`; `source` (`auto` \| `menu` \| `settings`); `from_version`; `to_version?`; `result?` |
-
-### `update_interaction` notes
-
-- `action`: `check` · `found` · `download` · `shown` · `install` · `dismiss` · `not_found` · `fail`.
-- `shown` records presentation of Sparkle's update prompt. Its `result` is `ready_to_install` when the update is prepared, or `update_available` when downloading or preparation is still needed.
-- Automatic reminders use `source: auto`, including when a completed background download opens the install-and-relaunch prompt. Menu and Settings checks retain their respective sources.
-- Only version numbers and the fixed action, source, and result values are sent; update payloads and release-note contents are not collected. Existing download, choice, installation, and error events are unchanged.
-
-### Buckets (fixed cardinality)
-
-- `history_count_bucket`: `0` · `1-10` · `11-50` · `51-200` · `200+`
-- `duration_ms_bucket`: `<1s` · `1-3s` · `3-10s` · `10-30s` · `30-60s` · `60s+`
-- `age_bucket`: `<1m` · `<1h` · `<1d` · `<1w` · `older`
-- `collected_count_bucket` (Paste Stack): `0` · `1-3` · `4-10` · `11+`
-
-### `clip_type` values
-
-`text` · `richText` · `html` · `image` · `file` · `url` · `mixed`
-
-### `clip_staged.trigger` values
-
-`double_click` · `hotkey_1_9` · `return` · `shift_return` · `cmd_c` · `context_menu`
-
-### `paste_stack_session` notes
-
-- Fired **once** when the stack closes (or on app quit if still open) — not per paste-next — to limit PostHog volume.
-- `direction`: `fifo` \| `lifo`
-- `last_fail_reason` (optional): `empty` \| `accessibility` \| `stage_failed`
-- Search quality is **not** a separate event; `searches` + `search_had_zero_results` live on `session_summary` (once per panel close). Type filters are not tracked.
-- Clipboard capture (`clip_captured`) is **not** reported — high volume, low product signal; use `panel_opened.history_count_bucket` and `clip_staged.clip_type` instead.
-
-## Never collected
-
-- Clipboard text, HTML, RTF, or previews
-- OCR text from images
-- Image / file bytes or local paths
-- Full search query strings
-- Clip titles (often derived from content)
-- Source app clipboard payloads
-- MCP / Agent API payloads
-
-## Implementation
-
-- Client: `Sources/PasteIt/Analytics/`
-- Sparkle hooks: `Sources/PasteIt/App/UpdateChecker.swift`
-- Toggle: `AppSettings.analyticsEnabled` → Settings → Privacy
-- PostHog dashboard setup (journeys, KPIs, insight recipes): [`analytics-dashboard.md`](analytics-dashboard.md)
-
-macOS does **not** provide a reliable uninstall callback; churn is inferred from silence (`app_open` / panel activity), not an `uninstall` event.
+独立合成验证使用临时日志目录；自动测试只清理临时夹具，不清理真实日志或配置。

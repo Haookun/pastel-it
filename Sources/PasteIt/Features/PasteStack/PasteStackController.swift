@@ -95,19 +95,15 @@ final class PasteStackController: ObservableObject {
         refreshPasteIntercept()
         notifyChange()
         onPanelSync?(true)
-        Analytics.beginPasteStackSession(direction: analyticsDirection)
-        NSLog("PasteIt: Paste Stack opened")
     }
 
     func close() {
-        Analytics.endPasteStackSession()
         isCollecting = false
         items = []
         pendingDeliveries = 0
         tearDownEventTap()
         notifyChange()
         onPanelSync?(false)
-        NSLog("PasteIt: Paste Stack closed")
     }
 
     /// Compatibility alias used by menus / settings toggle.
@@ -128,8 +124,6 @@ final class PasteStackController: ObservableObject {
         refreshPasteIntercept()
         notifyChange()
         onPanelSync?(true)
-        Analytics.notePasteStackCollected(count: items.count)
-        NSLog("PasteIt: Paste Stack +1 → \(items.count) — \(item.title)")
     }
 
     func remove(_ item: ClipItem) {
@@ -167,7 +161,7 @@ final class PasteStackController: ObservableObject {
         let item = removeNext()
         let mode: PasteController.PasteMode = settings.pasteAsPlainTextByDefault ? .plainText : .normal
         let ok = pasteController.copyToPasteboard(item, mode: mode)
-        finishStage(itemTitle: item.title)
+        finishStage()
         return ok
     }
 
@@ -183,17 +177,16 @@ final class PasteStackController: ObservableObject {
         } else {
             ok = pasteController.copyToPasteboard(item, mode: mode)
         }
-        finishStage(itemTitle: item.title)
+        finishStage()
         return ok
     }
 
-    private func finishStage(itemTitle: String) {
+    private func finishStage() {
         refreshPasteIntercept()
         notifyChange()
         if !isCollecting && items.isEmpty {
             onPanelSync?(false)
         }
-        NSLog("PasteIt: Paste Stack staged — \(itemTitle) (\(items.count) left)")
     }
 
     @discardableResult
@@ -276,7 +269,6 @@ final class PasteStackController: ObservableObject {
             },
             userInfo: refcon
         ) else {
-            NSLog("PasteIt: failed to create Paste Stack event tap")
             return
         }
 
@@ -285,7 +277,6 @@ final class PasteStackController: ObservableObject {
         runLoopSource = source
         CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
         CGEvent.tapEnable(tap: tap, enable: true)
-        NSLog("PasteIt: Paste Stack ⌘V intercept enabled")
     }
 
     private func tearDownEventTap() {
@@ -356,10 +347,8 @@ final class PasteStackController: ObservableObject {
                 break
             }
             guard await stageNextAsync() else {
-                Analytics.notePasteStackPasteNext(success: false, failReason: "stage_failed")
                 continue
             }
-            Analytics.notePasteStackPasteNext(success: true, failReason: nil)
             try? await Task.sleep(nanoseconds: SystemPasteSynthesizer.writeSettleNanoseconds)
             // Only the synthetic keystrokes we post should pass the tap.
             isPassingSyntheticCommandV = true
@@ -378,10 +367,4 @@ final class PasteStackController: ObservableObject {
         onChange?()
     }
 
-    private var analyticsDirection: String {
-        switch direction {
-        case .oldestFirst: return "fifo"
-        case .newestFirst: return "lifo"
-        }
-    }
 }

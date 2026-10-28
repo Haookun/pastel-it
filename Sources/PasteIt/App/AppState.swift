@@ -577,7 +577,6 @@ final class AppState: ObservableObject {
             let result = source.filter { matches.contains($0.id) }
             tabVisibleCache[tab.id] = result
             applyResults(result, tabChanged: didChangeTab, preserveOrder: preserveOrder)
-            Analytics.notePanelSearch(resultCount: result.count)
         }
     }
 

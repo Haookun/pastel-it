@@ -228,7 +228,7 @@ final class HistoryStore: ObservableObject {
         do {
             container = try ModelContainer(for: schema, configurations: [configuration])
         } catch {
-            NSLog("PasteIt: failed to open history store at \(storeURL.path): \(error)")
+            DiagnosticLogs.shared.record(.historyOpenFailed)
             // Last resort: ephemeral store so the app can still launch.
             let fallback = ModelConfiguration(
                 "PasteItHistoryInMemory",
@@ -1064,9 +1064,9 @@ final class HistoryStore: ObservableObject {
             try context.save()
             return true
         } catch {
+            DiagnosticLogs.shared.record(.historySaveFailed)
             // Never crash the clipboard daemon on a failed save — roll back so the
             // context can accept future inserts instead of staying permanently dirty.
-            NSLog("PasteIt: SwiftData save failed: \(error)")
             context.rollback()
             return false
         }
@@ -1083,9 +1083,6 @@ final class HistoryStore: ObservableObject {
             UserDefaults.standard.set(true, forKey: Self.didBackfillLastUsedAtKey)
             clips.sort { $0.lastUsedAt > $1.lastUsedAt }
             notifyChange()
-            NSLog("PasteIt: backfilled lastUsedAt for \(clips.count) clips")
-        } else {
-            NSLog("PasteIt: failed to backfill lastUsedAt; will retry next launch")
         }
     }
 
@@ -1103,19 +1100,16 @@ final class HistoryStore: ObservableObject {
             item.sourceIconPNG = nil
         }
         guard saveQuietly() else {
-            NSLog("PasteIt: failed to purge embedded source icons; will retry next launch")
             return
         }
         UserDefaults.standard.set(true, forKey: Self.didPurgeSourceIconPNGKey)
         visualCache.removeAll()
-        NSLog("PasteIt: purged sourceIconPNG from \(victims.count) clips")
 
         // VACUUM while SwiftData holds the store often fails — retry before next open.
         if Self.compactStore(at: storeURL) {
             UserDefaults.standard.set(false, forKey: Self.needsHistoryStoreVacuumKey)
         } else {
             UserDefaults.standard.set(true, forKey: Self.needsHistoryStoreVacuumKey)
-            NSLog("PasteIt: history.store VACUUM deferred to next launch")
         }
     }
 
@@ -1139,20 +1133,13 @@ final class HistoryStore: ObservableObject {
             try process.run()
             process.waitUntilExit()
         } catch {
-            NSLog("PasteIt: failed to launch sqlite3 for VACUUM: \(error.localizedDescription)")
             return false
         }
 
         if process.terminationStatus != 0 {
-            let errData = errPipe.fileHandleForReading.readDataToEndOfFile()
-            let errText = String(data: errData, encoding: .utf8)?
-                .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            NSLog(
-                "PasteIt: history.store VACUUM failed (status \(process.terminationStatus)): \(errText)"
-            )
+            _ = errPipe.fileHandleForReading.readDataToEndOfFile()
             return false
         }
-        NSLog("PasteIt: compacted history.store at \(url.path)")
         return true
     }
 }

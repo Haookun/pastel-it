@@ -182,23 +182,6 @@ BATCH_CJK: dict[str, dict[str, str]] = {
     "folders.renameTitle": {"zh-Hant": "重新命名檔案夾", "ko": "폴더 이름 변경"},
     "folders.namePlaceholder": {"zh-Hant": "檔案夾名稱", "ko": "폴더 이름"},
     "folders.renameConfirm": {"zh-Hant": "重新命名", "ko": "이름 변경"},
-    "privacy.analytics": {"zh-Hant": "分析", "ko": "분석"},
-    "privacy.shareAnalytics": {
-        "zh-Hant": "分享匿名使用分析資料",
-        "ko": "익명 사용 분석 공유",
-    },
-    "privacy.whatWeCollect": {"zh-Hant": "我們收集的資料", "ko": "수집하는 데이터"},
-    "privacy.eventsBlurb": {
-        "zh-Hant": "事件資料有助於改進 Pastel it！（啟用、面板使用、更新等）。啟用後會以匿名方式傳送至 PostHog。",
-        "ko": "이벤트는 Pastel it！ 개선(활성화, 패널 사용, 업데이트 등)에 도움이 됩니다. 켜면 익명으로 PostHog에 전송됩니다.",
-    },
-    "privacy.neverCollected": {"zh-Hant": "絕不收集", "ko": "수집하지 않는 항목"},
-    "privacy.productEvents": {"zh-Hant": "產品事件", "ko": "제품 이벤트"},
-    "privacy.fullDisclosure": {"zh-Hant": "GitHub 上的完整說明", "ko": "GitHub에서 전체 공개 내용 보기"},
-    "privacy.analyticsFooter": {
-        "zh-Hant": "可選。關閉後不會傳送任何事件。詳見開放原始碼存放庫中的 %@。",
-        "ko": "선택 사항입니다. 끄면 이벤트가 전송되지 않습니다. 오픈 소스 저장소의 %@를 참고하세요.",
-    },
     "privacy.noIgnoredApps": {"zh-Hant": "沒有忽略的 App", "ko": "무시하는 App 없음"},
     "privacy.addApp": {"zh-Hant": "加入 App", "ko": "App 추가"},
     "privacy.removeApp": {"zh-Hant": "移除 App", "ko": "App 제거"},
@@ -791,6 +774,51 @@ BATCH_CJK.update({
 })
 
 BATCH_CJK["candidateBar.list"] = {"zh-Hant": "剪貼簿候選清單", "ko": "클립보드 후보"}
+
+
+# Local diagnostics only; no product analytics.
+BATCH_CJK.update({
+    "privacy.logs.title": {
+        "zh-Hant": "本機診斷日誌",
+        "ko": "로컬 진단 로그"
+    },
+    "privacy.logs.description": {
+        "zh-Hant": "不收集或上傳使用資訊。診斷日誌僅儲存在本機，不包含剪貼簿內容。",
+        "ko": "사용 정보를 수집하거나 전송하지 않습니다. 진단 로그는 이 Mac에만 저장되며 클립보드 내용을 포함하지 않습니다."
+    },
+    "privacy.logs.retention": {
+        "zh-Hant": "日誌最多保留14天，總量不超過約768 KB。",
+        "ko": "로그는 최대 14일, 총 약 768 KB까지 보관합니다."
+    },
+    "privacy.logs.summary": {
+        "zh-Hant": "%lld 個日誌檔案 · %@",
+        "ko": "파일 %lld개 · %@"
+    },
+    "privacy.logs.delete": {
+        "zh-Hant": "刪除過去日誌",
+        "ko": "이전 로그 삭제"
+    },
+    "privacy.logs.confirmTitle": {
+        "zh-Hant": "刪除過去日誌？",
+        "ko": "이전 로그를 삭제할까요?"
+    },
+    "privacy.logs.confirmMessage": {
+        "zh-Hant": "僅刪除本機診斷日誌，設定、剪貼簿歷史和附件均會保留。",
+        "ko": "로컬 진단 로그만 삭제합니다. 설정, 클립보드 기록과 첨부 파일은 유지됩니다."
+    },
+    "privacy.logs.deleted": {
+        "zh-Hant": "已刪除 %lld 個過去日誌檔案。",
+        "ko": "이전 로그 파일 %lld개를 삭제했습니다."
+    },
+    "privacy.logs.failed": {
+        "zh-Hant": "無法存取日誌，請重試。",
+        "ko": "로그에 접근할 수 없습니다. 다시 시도하세요."
+    },
+    "privacy.logs.footerScope": {
+        "zh-Hant": "僅清理本應用的本機日誌，不刪除設定、剪貼簿歷史、附件或 macOS 系統日誌。",
+        "ko": "이 앱의 로컬 로그만 삭제합니다. 설정, 기록, 첨부 파일과 macOS 시스템 로그는 유지됩니다."
+    }
+})
 
 def merge_batch_cjk(strings: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
     merged = {key: dict(locs) for key, locs in strings.items()}

@@ -13,7 +13,6 @@ final class AppValidationSession {
         defaults = UserDefaults(suiteName: defaultsDomain)!
         settings = AppSettings(defaults: defaults)
         settings.launchAtLogin = false
-        settings.analyticsEnabled = false
         settings.agentAPIEnabled = false
         settings.hasCompletedOnboarding = true
         settings.seenWhatsNewContentVersion = AppSettings.currentWhatsNewContentVersion

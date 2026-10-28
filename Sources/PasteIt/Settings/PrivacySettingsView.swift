@@ -10,6 +10,9 @@ struct PrivacySettingsView: View {
     @State private var selectedBundleIDs: Set<String> = []
     @State private var isLoadingApps = false
     @State private var isShowingAddSheet = false
+    @State private var logSummary: DiagnosticLogSummary?
+    @State private var logStatus: String?
+    @State private var isShowingDeleteConfirmation = false
 
     var body: some View {
         Form {
@@ -18,64 +21,35 @@ struct PrivacySettingsView: View {
             }
 
             Section {
-                Toggle(
-                    L10n.tr("privacy.shareAnalytics", default: "Share anonymous usage analytics"),
-                    isOn: Binding(
-                        get: { settings.analyticsEnabled },
-                        set: { enabled in
-                            settings.analyticsEnabled = enabled
-                            Analytics.setEnabled(enabled)
-                        }
-                    )
-                )
+                Text(L10n.tr("privacy.logs.description", default: "No usage information is collected or uploaded. Diagnostic logs are stored only on this Mac and never contain clipboard contents."))
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                DisclosureGroup(L10n.tr("privacy.whatWeCollect", default: "What we collect")) {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text(L10n.tr("privacy.eventsBlurb", default: "Events help improve Pastel it！ (activation, panel use, updates). Data is anonymous and sent to PostHog when enabled."))
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
+                Text(L10n.tr("privacy.logs.retention", default: "Logs are kept for at most 14 days, up to about 768 KB."))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
 
-                        Text(L10n.tr("privacy.neverCollected", default: "Never collected"))
-                            .font(.caption.weight(.semibold))
-                        ForEach(AnalyticsCatalog.neverCollected, id: \.self) { item in
-                            Text("· \(item)")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-
-                        Text(L10n.tr("privacy.productEvents", default: "Product events"))
-                            .font(.caption.weight(.semibold))
-                            .padding(.top, 4)
-                        ForEach(AnalyticsCatalog.lifecycleEvents + AnalyticsCatalog.productEvents) { event in
-                            VStack(alignment: .leading, spacing: 1) {
-                                Text(event.name)
-                                    .font(.caption.monospaced())
-                                Text(event.summary)
-                                    .font(.caption2)
-                                    .foregroundStyle(.tertiary)
-                            }
-                        }
-
-                        if let url = AnalyticsCatalog.documentationURL {
-                            Link(L10n.tr("privacy.fullDisclosure", default: "Full disclosure on GitHub"), destination: url)
-                                .font(.caption)
-                                .padding(.top, 4)
-                        }
+                HStack {
+                    Text(logSummaryText)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Button(L10n.tr("privacy.logs.delete", default: "Delete Past Logs"), role: .destructive) {
+                        isShowingDeleteConfirmation = true
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 4)
+                    .accessibilityIdentifier("privacy.deletePastLogs")
+                }
+
+                if let logStatus {
+                    Text(logStatus)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             } header: {
-                Text(L10n.tr("privacy.analytics", default: "Analytics"))
+                Text(L10n.tr("privacy.logs.title", default: "Local Diagnostic Logs"))
             } footer: {
-                Text(
-                    L10n.tr(
-                        "privacy.analyticsFooter",
-                        default: "Optional. Off means no events are sent. See %@ in the open-source repo.",
-                        AnalyticsCatalog.documentationPath
-                    )
-                )
+                Text(L10n.tr("privacy.logs.footerScope", default: "Deleting only removes this app's local log files. It never touches settings, clipboard history, attachments, or macOS system logs."))
             }
 
             Section {
@@ -167,9 +141,48 @@ struct PrivacySettingsView: View {
             )
             .frame(width: 420, height: 480)
         }
+        .alert(
+            L10n.tr("privacy.logs.confirmTitle", default: "Delete Past Logs?"),
+            isPresented: $isShowingDeleteConfirmation
+        ) {
+            Button(L10n.tr("common.cancel", default: "Cancel"), role: .cancel) {}
+            Button(L10n.tr("privacy.logs.delete", default: "Delete Past Logs"), role: .destructive) {
+                deletePastLogs()
+            }
+        } message: {
+            Text(L10n.tr("privacy.logs.confirmMessage", default: "This permanently deletes this app's past local diagnostic log files. Settings, clipboard history, and attachments are not affected."))
+        }
         .onAppear {
             loadAppsIfNeeded()
+            refreshLogSummary()
         }
+    }
+
+    private var logSummaryText: String {
+        let summary = logSummary ?? DiagnosticLogSummary(fileCount: 0, totalBytes: 0)
+        let size = ByteCountFormatter.string(fromByteCount: summary.totalBytes, countStyle: .file)
+        return L10n.tr("privacy.logs.summary", default: "%lld files · %@", Int64(summary.fileCount), size)
+    }
+
+    @MainActor
+    private func refreshLogSummary() {
+        do {
+            logSummary = try DiagnosticLogs.shared.store.snapshot()
+        } catch {
+            logSummary = nil
+            logStatus = L10n.tr("privacy.logs.failed", default: "Something went wrong. Please try again later.")
+        }
+    }
+
+    @MainActor
+    private func deletePastLogs() {
+        do {
+            let deleted = try DiagnosticLogs.shared.store.clearPastLogs()
+            logStatus = L10n.tr("privacy.logs.deleted", default: "Deleted %lld past log files.", Int64(deleted))
+        } catch {
+            logStatus = L10n.tr("privacy.logs.failed", default: "Something went wrong. Please try again later.")
+        }
+        refreshLogSummary()
     }
 
     private var ignoredApps: [InstalledApp] {

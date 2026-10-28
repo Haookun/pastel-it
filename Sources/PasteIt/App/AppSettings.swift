@@ -72,8 +72,6 @@ final class AppSettings: ObservableObject {
     static let currentWhatsNewContentVersion = 3
     @AppStorage("seenWhatsNewContentVersion") var seenWhatsNewContentVersion: Int = 0
     @AppStorage("agentAPIEnabled") private var legacyAgentAPIEnabled = false
-    /// Anonymous usage analytics (PostHog). Never includes clipboard contents.
-    @AppStorage("analyticsEnabled") var analyticsEnabled: Bool = true
     @AppStorage("pasteStackDefaultDirection") private var pasteStackDefaultDirectionRaw: String =
         PasteStackController.Direction.oldestFirst.rawValue
     @AppStorage("ignoredBundleIdentifiers") private var ignoredBundleIdentifiersRaw: String = defaultIgnoredApps.joined(separator: "\n")
@@ -96,7 +94,6 @@ final class AppSettings: ObservableObject {
         _hasCompletedOnboarding = AppStorage(wrappedValue: false, "hasCompletedOnboarding", store: defaults)
         _seenWhatsNewContentVersion = AppStorage(wrappedValue: 0, "seenWhatsNewContentVersion", store: defaults)
         _legacyAgentAPIEnabled = AppStorage(wrappedValue: false, "agentAPIEnabled", store: defaults)
-        _analyticsEnabled = AppStorage(wrappedValue: true, "analyticsEnabled", store: defaults)
         _pasteStackDefaultDirectionRaw = AppStorage(wrappedValue: PasteStackController.Direction.oldestFirst.rawValue, "pasteStackDefaultDirection", store: defaults)
         _ignoredBundleIdentifiersRaw = AppStorage(wrappedValue: defaultIgnoredApps.joined(separator: "\n"), "ignoredBundleIdentifiers", store: defaults)
         _ignoredPasteboardTypesRaw = AppStorage(wrappedValue: defaultIgnoredTypes.joined(separator: "\n"), "ignoredPasteboardTypes", store: defaults)

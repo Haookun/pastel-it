@@ -99,6 +99,7 @@ final class AppRuntime: NSObject {
             return
         }
 
+        if validationSession == nil { DiagnosticLogs.shared.record(.applicationStarted) }
         historyStore.load()
         pasteboardMonitor.start()
         hotkeyManager.start()
@@ -111,7 +112,6 @@ final class AppRuntime: NSObject {
         }
         // Retain Sparkle updater for automatic background checks.
         _ = UpdateChecker.shared
-        Analytics.start(enabled: settings.analyticsEnabled)
         DispatchQueue.main.async { [panelController] in
             panelController.prewarm()
         }
@@ -143,7 +143,7 @@ final class AppRuntime: NSObject {
     }
 
     func stop() {
-        Analytics.stop()
+        if validationSession == nil { DiagnosticLogs.shared.record(.applicationStopped) }
         pasteboardMonitor.stop()
         hotkeyManager.stop()
         quickPasteController.stop()

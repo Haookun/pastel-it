@@ -20,16 +20,6 @@ enum OnboardingPageID: Int, CaseIterable, Identifiable {
 
     var id: Int { rawValue }
 
-    var analyticsName: String {
-        switch self {
-        case .capture: return "capture"
-        case .paste: return "paste"
-        case .browse: return "browse"
-        case .organize: return "organize"
-        case .stack: return "stack"
-        }
-    }
-
     var title: String {
         switch self {
         case .capture: return L10n.tr("onboarding.capture.title", default: "Copy to save")

@@ -6,8 +6,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-# shellcheck source=lib/posthog-secrets.sh
-source "$ROOT/scripts/lib/posthog-secrets.sh"
 
 BIN_DIR="$(swift build -c debug --show-bin-path)"
 # SwiftPM can leave removed/excluded resources in an incremental build bundle.
@@ -22,7 +20,6 @@ rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" "$APP/Contents/Frameworks"
 cp "$BIN" "$APP/Contents/MacOS/PasteIt"
 cp "$ROOT/Info.plist" "$APP/Contents/Info.plist"
-inject_posthog_token "$APP/Contents/Info.plist"
 if [[ -f "$ICON" ]]; then
   cp "$ICON" "$APP/Contents/Resources/AppIcon.icns"
 fi

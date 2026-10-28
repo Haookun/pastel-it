@@ -13,7 +13,6 @@ struct AppValidationSessionTests {
         #expect(first.historyStore.blobStore.rootURL != second.historyStore.blobStore.rootURL)
         #expect(first.historyStore.blobStore.rootURL.lastPathComponent.hasPrefix("PasteItEphemeral-Validation-"))
         #expect(!first.settings.launchAtLogin)
-        #expect(!first.settings.analyticsEnabled)
         #expect(!first.settings.agentAPIEnabled)
         #expect(first.settings.hasCompletedOnboarding)
         #expect(first.historyStore.clips.count == 48)

@@ -30,7 +30,7 @@ enum LaunchAtLoginManager {
                 try SMAppService.mainApp.unregister()
             }
         } catch {
-            NSLog("Launch at login update failed: \(error.localizedDescription)")
+            Task { @MainActor in DiagnosticLogs.shared.record(.loginItemUpdateFailed) }
         }
     }
 

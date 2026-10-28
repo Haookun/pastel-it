@@ -222,29 +222,6 @@ BATCH2: dict[str, dict[str, str]] = {
     "folders.renameTitle": {"fr": "Renommer le dossier", "de": "Ordner umbenennen", "es": "Renombrar carpeta", "pl": "Zmień nazwę folderu"},
     "folders.namePlaceholder": {"fr": "Nom du dossier", "de": "Ordnername", "es": "Nombre de carpeta", "pl": "Nazwa folderu"},
     "folders.renameConfirm": {"fr": "Renommer", "de": "Umbenennen", "es": "Renombrar", "pl": "Zmień nazwę"},
-    "privacy.analytics": {"fr": "Analytique", "de": "Analyse", "es": "Analítica", "pl": "Analityka"},
-    "privacy.shareAnalytics": {
-        "fr": "Partager des statistiques d'utilisation anonymes",
-        "de": "Anonyme Nutzungsstatistiken teilen",
-        "es": "Compartir analítica de uso anónima",
-        "pl": "Udostępniaj anonimową analitykę użycia",
-    },
-    "privacy.whatWeCollect": {"fr": "Ce que nous collectons", "de": "Was wir erfassen", "es": "Qué recopilamos", "pl": "Co zbieramy"},
-    "privacy.eventsBlurb": {
-        "fr": "Les événements aident à améliorer Pastel it！ (activation, panneau, mises à jour). Les données sont anonymes et envoyées à PostHog si activé.",
-        "de": "Ereignisse helfen, Pastel it！ zu verbessern (Aktivierung, Panel, Updates). Daten sind anonym und werden bei Aktivierung an PostHog gesendet.",
-        "es": "Los eventos ayudan a mejorar Pastel it！ (activación, panel, actualizaciones). Los datos son anónimos y se envían a PostHog si está activado.",
-        "pl": "Zdarzenia pomagają ulepszać Pastel it！ (aktywacja, panel, aktualizacje). Dane są anonimowe i wysyłane do PostHog po włączeniu.",
-    },
-    "privacy.neverCollected": {"fr": "Jamais collecté", "de": "Nie erfasst", "es": "Nunca recopilado", "pl": "Nigdy nie zbierane"},
-    "privacy.productEvents": {"fr": "Événements produit", "de": "Produkt-Ereignisse", "es": "Eventos del producto", "pl": "Zdarzenia produktu"},
-    "privacy.fullDisclosure": {"fr": "Divulgation complète sur GitHub", "de": "Vollständige Offenlegung auf GitHub", "es": "Divulgación completa en GitHub", "pl": "Pełne ujawnienie na GitHub"},
-    "privacy.analyticsFooter": {
-        "fr": "Facultatif. Désactivé = aucun événement envoyé. Voir %@ dans le dépôt open source.",
-        "de": "Optional. Aus = keine Ereignisse. Siehe %@ im Open-Source-Repo.",
-        "es": "Opcional. Desactivado = no se envían eventos. Consulta %@ en el repositorio abierto.",
-        "pl": "Opcjonalne. Wyłączone = brak zdarzeń. Zobacz %@ w repozytorium open source.",
-    },
     "privacy.noIgnoredApps": {"fr": "Aucune app ignorée", "de": "Keine ignorierten Apps", "es": "No hay apps ignoradas", "pl": "Brak ignorowanych aplikacji"},
     "privacy.addApp": {"fr": "Ajouter une app", "de": "App hinzufügen", "es": "Añadir app", "pl": "Dodaj aplikację"},
     "privacy.removeApp": {"fr": "Retirer l'app", "de": "App entfernen", "es": "Quitar app", "pl": "Usuń aplikację"},
@@ -1063,6 +1040,71 @@ BATCH2.update({
 })
 
 BATCH2["candidateBar.list"] = {"fr": "Éléments du presse-papiers", "de": "Zwischenablage-Einträge", "es": "Candidatos del portapapeles", "pl": "Pozycje schowka"}
+
+
+# Local diagnostics only; no product analytics.
+BATCH2.update({
+    "privacy.logs.title": {
+        "fr": "Journaux de diagnostic locaux",
+        "de": "Lokale Diagnoseprotokolle",
+        "es": "Registros de diagnóstico locales",
+        "pl": "Lokalne dzienniki diagnostyczne"
+    },
+    "privacy.logs.description": {
+        "fr": "Aucune information d’utilisation n’est collectée ni envoyée. Les journaux restent sur ce Mac et ne contiennent pas le presse-papiers.",
+        "de": "Nutzungsdaten werden weder erfasst noch übertragen. Diagnoseprotokolle bleiben auf diesem Mac und enthalten keine Zwischenablage-Inhalte.",
+        "es": "No se recopila ni envía información de uso. Los registros permanecen en este Mac y no contienen el contenido del portapapeles.",
+        "pl": "Dane o użytkowaniu nie są zbierane ani wysyłane. Dzienniki pozostają na tym Macu i nie zawierają treści schowka."
+    },
+    "privacy.logs.retention": {
+        "fr": "Conservation maximale : 14 jours, environ 768 Ko.",
+        "de": "Aufbewahrung: maximal 14 Tage, insgesamt etwa 768 KB.",
+        "es": "Se conservan hasta 14 días, con un total de unos 768 KB.",
+        "pl": "Dzienniki są przechowywane do 14 dni, łącznie około 768 KB."
+    },
+    "privacy.logs.summary": {
+        "fr": "%lld fichiers · %@",
+        "de": "%lld Dateien · %@",
+        "es": "%lld archivos · %@",
+        "pl": "%lld plików · %@"
+    },
+    "privacy.logs.delete": {
+        "fr": "Supprimer les anciens journaux",
+        "de": "Bisherige Protokolle löschen",
+        "es": "Eliminar registros anteriores",
+        "pl": "Usuń dotychczasowe dzienniki"
+    },
+    "privacy.logs.confirmTitle": {
+        "fr": "Supprimer les anciens journaux ?",
+        "de": "Bisherige Protokolle löschen?",
+        "es": "¿Eliminar los registros anteriores?",
+        "pl": "Usunąć dotychczasowe dzienniki?"
+    },
+    "privacy.logs.confirmMessage": {
+        "fr": "Seuls les journaux locaux seront supprimés. Réglages, historique et pièces jointes seront conservés.",
+        "de": "Nur lokale Diagnoseprotokolle werden gelöscht. Einstellungen, Verlauf und Anhänge bleiben erhalten.",
+        "es": "Solo se eliminan los registros locales. Se conservan los ajustes, el historial y los adjuntos.",
+        "pl": "Usunięte zostaną tylko lokalne dzienniki. Ustawienia, historia i załączniki pozostaną."
+    },
+    "privacy.logs.deleted": {
+        "fr": "%lld fichiers journaux supprimés.",
+        "de": "%lld Protokolldateien gelöscht.",
+        "es": "Se eliminaron %lld archivos de registro.",
+        "pl": "Usunięto %lld plików dziennika."
+    },
+    "privacy.logs.failed": {
+        "fr": "Accès aux journaux impossible. Réessayez.",
+        "de": "Zugriff auf Protokolle fehlgeschlagen. Erneut versuchen.",
+        "es": "No se pudo acceder a los registros. Inténtalo de nuevo.",
+        "pl": "Nie można uzyskać dostępu do dzienników. Spróbuj ponownie."
+    },
+    "privacy.logs.footerScope": {
+        "fr": "Seuls les journaux locaux de cette app sont effacés. Réglages, historique, pièces jointes et journaux macOS sont conservés.",
+        "de": "Nur die lokalen Protokolle dieser App werden gelöscht. Einstellungen, Verlauf, Anhänge und macOS-Systemprotokolle bleiben erhalten.",
+        "es": "Solo se borran los registros locales de esta app. Se conservan ajustes, historial, adjuntos y registros del sistema macOS.",
+        "pl": "Usuwane są tylko lokalne dzienniki tej aplikacji. Ustawienia, historia, załączniki i dzienniki macOS pozostają."
+    }
+})
 
 def merge_batch2(strings: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
     merged = {key: dict(locs) for key, locs in strings.items()}

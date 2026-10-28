@@ -38,10 +38,6 @@
 	<string>14.0</string>
 	<key>LSUIElement</key>
 	<true/>
-	<key>PostHogHost</key>
-	<string>https://us.i.posthog.com</string>
-	<key>PostHogProjectToken</key>
-	<string></string>
 	<key>SUAutomaticallyUpdate</key>
 	<false/>
 	<key>SUEnableAutomaticChecks</key>

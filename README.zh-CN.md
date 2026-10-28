@@ -37,7 +37,7 @@ swift test
 ./scripts/package-release.sh --variant arm64 --local-test
 ```
 
-本机采用无需账号或证书的 ad-hoc 签名，不做公证或发布。已有 `work/dependencies/` 的本机可显式设置 `PASTEL_USE_LOCAL_DEPENDENCIES=1`，这些依赖副本不进入 Git。固定依赖为 Sparkle 2.9.4、MCP SDK 0.12.1、PostHog 3.59.3。
+本机采用无需账号或证书的 ad-hoc 签名，不做公证或发布。已有 `work/dependencies/` 的本机可显式设置 `PASTEL_USE_LOCAL_DEPENDENCIES=1`，这些依赖副本不进入 Git。固定依赖为 Sparkle 2.9.4、MCP SDK 0.12.1。
 
 代码检查与编译由 agent 负责，实际界面和功能由用户按 [确认清单](docs/manual-validation.md) 验收。测试版可双击 `dist/local-test/arm64/开始合成验证.command`，使用独立合成历史；`开始普通验证.command` 使用真实历史。启动器从干净签名压缩包解压到临时目录，避免文件同步元数据影响签名。
 
@@ -45,7 +45,7 @@ swift test
 
 保持内部目标 `PasteIt` / `PasteItCore`、bundle ID `app.paste-it.mac` 和数据目录 `~/Library/Application Support/PasteIt/`。本版替代原应用，不能同时独立运行。此前全新安装和项目迁移见 [安装记录](docs/installation.md)，后续功能更新不再清空数据。
 
-蛋挞图标由用户参考图矢量化生成，见 [设计说明](docs/design.md)。上游自动更新已停用；没有配置自己的更新源时不发布。PostHog token 为空的构建不发送统计，见 [统计说明](docs/analytics.md)。
+蛋挞图标由用户参考图矢量化生成，见 [设计说明](docs/design.md)。上游自动更新已停用；没有配置自己的更新源时不发布。不收集或上传使用信息；仅保留本机诊断日志，可在“设置 → 隐私 → 删除过去日志”清理，配置与剪贴板历史保持不变。见 [日志与隐私说明](docs/analytics.md)。
 
 基于 Yipeng Zhang 及 Paste It contributors 的上游 0.2.9（`904287f6f80e791ea347938582a3550775627927`），保留 [MIT License](LICENSE)。GitHub 仓库为保留上游历史的独立私有派生库，见 [来源](docs/origin.md)。
 

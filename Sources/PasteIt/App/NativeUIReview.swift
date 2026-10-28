@@ -5,7 +5,7 @@ import PasteItCore
 
 /// Explicit development-only real-window check, never started by ordinary
 /// launches. Uses AppValidationSession and does not start clipboard monitoring,
-/// login registration, analytics or global shortcuts.
+/// login registration or global shortcuts.
 @MainActor
 struct NativeUIReview {
     func run(directory: URL) async throws {
@@ -37,6 +37,40 @@ struct NativeUIReview {
         settings.setContentSize(NSSize(width: 860, height: 660))
         settings.center()
         await settle()
+        if ProcessInfo.processInfo.arguments.contains("--ui-review-logs-only") {
+            let store = DiagnosticLogs.shared.store
+            defer { try? FileManager.default.removeItem(at: store.directory) }
+            let originalClips = runtime.historyStore.clips.map(\.id)
+            let originalShortcut = runtime.settings.quickPasteEnabled
+            try store.record(.historySaveFailed)
+            try await press("隐私", in: settings)
+            await settle()
+            try check(await hasText("本地诊断日志", in: settings))
+            try check(!(await hasText("分享匿名使用统计", in: settings)))
+            try snapshot(settings, name: "privacy-logs-light", directory: directory)
+            try await press("删除过去日志", in: settings)
+            await settle()
+            let cancelSheet = try require(settings.attachedSheet, "Expected log deletion confirmation")
+            try snapshot(cancelSheet, name: "privacy-logs-confirm", directory: directory)
+            try await press("取消", in: cancelSheet)
+            await settle()
+            try check(try store.snapshot().fileCount == 1)
+            try await press("删除过去日志", in: settings)
+            await settle()
+            let deleteSheet = try require(settings.attachedSheet)
+            try await press("删除过去日志", in: deleteSheet)
+            await settle()
+            try check(try store.snapshot().fileCount == 0)
+            try check(await hasText("已删除 1 个过去日志文件。", in: settings))
+            try check(runtime.historyStore.clips.map(\.id) == originalClips)
+            try check(runtime.settings.quickPasteEnabled == originalShortcut)
+            try snapshot(settings, name: "privacy-logs-cleared", directory: directory)
+            settings.appearance = NSAppearance(named: .darkAqua)
+            await settle()
+            try snapshot(settings, name: "privacy-logs-dark", directory: directory)
+            try "Local log UI: confirmation cancel preserved logs; confirm removed synthetic logs; history/settings unchanged; light/dark rendered. No real clipboard/config/logs accessed.\n".write(to: directory.appendingPathComponent("interaction-result.txt"), atomically: true, encoding: .utf8)
+            return
+        }
         try snapshot(settings, name: "settings-general-light", directory: directory)
         try await press("剪贴板", in: settings)
         await settle()

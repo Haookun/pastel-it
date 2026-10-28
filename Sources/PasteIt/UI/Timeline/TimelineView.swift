@@ -461,7 +461,6 @@ struct TimelineView: View {
                 }
                 return
             }
-            logClipStaged(item, mode: mode, trigger: trigger)
             appState.notePromoteAfterHide(item)
             if manualFallback {
                 manualCopyReady = true
@@ -530,11 +529,7 @@ struct TimelineView: View {
             }
             appState.setStatus(L10n.tr("action.pasteSent", default: "Paste request sent"))
             if ordered.count == 1, let only = ordered.first {
-                logClipStaged(only, mode: mode, trigger: trigger)
                 appState.promoteAccessedClip(only, scroll: false)
-            } else {
-                Analytics.clipStaged(mode: mode == .plainText ? "plain" : "normal", trigger: trigger,
-                    clipType: "multi", tab: analyticsTabKind(appState.selectedTab), ageBucket: "multi")
             }
         }
     }
@@ -542,20 +537,6 @@ struct TimelineView: View {
     private func recoverSelection(_ items: [ClipItem]) {
         appState.panelController?.showPreservingContext()
         appState.selectClipsForRecovery(items.map(\.id))
-    }
-
-    private func logClipStaged(
-        _ item: ClipItem,
-        mode: PasteController.PasteMode,
-        trigger: String
-    ) {
-        Analytics.clipStaged(
-            mode: mode == .plainText ? "plain" : "normal",
-            trigger: trigger,
-            clipType: item.primaryType.rawValue,
-            tab: analyticsTabKind(appState.selectedTab),
-            ageBucket: Analytics.Buckets.age(since: item.createdAt)
-        )
     }
 
     /// Starts the panel slide-out immediately and returns after it has orderOut.
@@ -568,14 +549,6 @@ struct TimelineView: View {
             } else {
                 continuation.resume()
             }
-        }
-    }
-
-    private func analyticsTabKind(_ tab: TimelineTab) -> String {
-        switch tab {
-        case .timeline: return "default"
-        case .pinned: return "pinned"
-        case .folder: return "folder"
         }
     }
 

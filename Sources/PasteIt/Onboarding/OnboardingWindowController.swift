@@ -10,7 +10,6 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
     private var wasAccessory = true
     private var settings: AppSettings?
     private var flow: OnboardingFlow = .install
-    private var analytics: OnboardingAnalyticsHandle?
 
     var isVisible: Bool {
         window?.isVisible == true
@@ -23,8 +22,6 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
     ) {
         self.settings = settings
         self.flow = flow
-        let session = OnboardingAnalyticsHandle(source: source)
-        self.analytics = session
         wasAccessory = NSApp.activationPolicy() == .accessory
         if wasAccessory {
             NSApp.setActivationPolicy(.regular)
@@ -38,8 +35,7 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
             existing.maxSize = NSSize(width: 640, height: 540)
             existing.contentViewController = makeHostingController(
                 settings: settings,
-                flow: flow,
-                analytics: session
+                flow: flow
             )
             NSApp.activate(ignoringOtherApps: true)
             existing.makeKeyAndOrderFront(nil)
@@ -47,7 +43,7 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
             return
         }
 
-        let window = makeWindow(settings: settings, flow: flow, analytics: session)
+        let window = makeWindow(settings: settings, flow: flow)
         self.window = window
         NSApp.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
@@ -60,10 +56,9 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
 
     private func makeWindow(
         settings: AppSettings,
-        flow: OnboardingFlow,
-        analytics: OnboardingAnalyticsHandle
+        flow: OnboardingFlow
     ) -> NSWindow {
-        let hosting = makeHostingController(settings: settings, flow: flow, analytics: analytics)
+        let hosting = makeHostingController(settings: settings, flow: flow)
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 640, height: 540),
             styleMask: [.titled, .closable],
@@ -84,13 +79,11 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
 
     private func makeHostingController(
         settings: AppSettings,
-        flow: OnboardingFlow,
-        analytics: OnboardingAnalyticsHandle
+        flow: OnboardingFlow
     ) -> NSHostingController<OnboardingView> {
         let root = OnboardingView(
             settings: settings,
-            flow: flow,
-            analytics: analytics
+            flow: flow
         ) { [weak self] in
             self?.close()
         }
@@ -98,8 +91,6 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
     }
 
     func windowWillClose(_ notification: Notification) {
-        analytics?.markDismissedIfNeeded()
-        analytics = nil
         if let settings {
             switch flow {
             case .install:

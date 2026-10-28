@@ -1,44 +1,9 @@
 import SwiftUI
 import PasteItCore
 
-/// Shared between the onboarding window and SwiftUI view so close-without-button still reports.
-@MainActor
-final class OnboardingAnalyticsHandle {
-    let source: String
-    private(set) var lastStep: String = OnboardingPageID.capture.analyticsName
-    private(set) var didComplete = false
-    private var didStart = false
-
-    init(source: String) {
-        self.source = source
-    }
-
-    func markStarted() {
-        guard !didStart else { return }
-        didStart = true
-        Analytics.onboardingStarted(source: source)
-    }
-
-    func markStep(_ step: String) {
-        lastStep = step
-        Analytics.onboardingStepViewed(step: step)
-    }
-
-    func markFinished(outcome: String) {
-        guard !didComplete else { return }
-        didComplete = true
-        Analytics.onboardingCompleted(outcome: outcome, lastStep: lastStep)
-    }
-
-    func markDismissedIfNeeded() {
-        markFinished(outcome: "dismissed")
-    }
-}
-
 struct OnboardingView: View {
     @ObservedObject var settings: AppSettings
     var flow: OnboardingFlow
-    var analytics: OnboardingAnalyticsHandle
     var onFinished: () -> Void
 
     @State private var pageIndex = 0
@@ -73,13 +38,6 @@ struct OnboardingView: View {
         }
         .frame(width: 640, height: 540)
         .background(Color(nsColor: .windowBackgroundColor))
-        .onAppear {
-            analytics.markStarted()
-            analytics.markStep(currentPage.analyticsName)
-        }
-        .onChange(of: pageIndex) { _, _ in
-            analytics.markStep(currentPage.analyticsName)
-        }
     }
 
     private var titleBlock: some View {
@@ -119,7 +77,7 @@ struct OnboardingView: View {
         HStack(spacing: 0) {
             HStack(spacing: 0) {
                 Button(L10n.tr("onboarding.skip", default: "Skip")) {
-                    finish(outcome: "skipped")
+                    finish()
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
@@ -141,7 +99,7 @@ struct OnboardingView: View {
 
                 Button(isLastPage ? finishButtonTitle : L10n.tr("onboarding.continue", default: "Continue")) {
                     if isLastPage {
-                        finish(outcome: "completed")
+                        finish()
                     } else {
                         go(to: pageIndex + 1, forward: true)
                     }
@@ -190,9 +148,7 @@ struct OnboardingView: View {
         }
     }
 
-    private func finish(outcome: String) {
-        analytics.markStep(currentPage.analyticsName)
-        analytics.markFinished(outcome: outcome)
+    private func finish() {
         stampCompletion()
         onFinished()
     }

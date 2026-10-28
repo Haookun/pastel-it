@@ -8,12 +8,10 @@ import Foundation
 let usesLocalDependencies = ProcessInfo.processInfo.environment["PASTEL_USE_LOCAL_DEPENDENCIES"] == "1"
 let appDependencies: [Package.Dependency] = usesLocalDependencies ? [
     .package(path: "work/dependencies/Sparkle"),
-    .package(path: "work/dependencies/swift-sdk"),
-    .package(path: "work/dependencies/posthog-ios")
+    .package(path: "work/dependencies/swift-sdk")
 ] : [
     .package(url: "https://github.com/sparkle-project/Sparkle", exact: "2.9.4"),
-    .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", exact: "0.12.1"),
-    .package(url: "https://github.com/PostHog/posthog-ios.git", exact: "3.59.3")
+    .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", exact: "0.12.1")
 ]
 
 let package = Package(
@@ -40,8 +38,7 @@ let package = Package(
             dependencies: [
                 "PasteItCore",
                 .product(name: "Sparkle", package: "Sparkle"),
-                .product(name: "MCP", package: "swift-sdk"),
-                .product(name: "PostHog", package: "posthog-ios")
+                .product(name: "MCP", package: "swift-sdk")
             ],
             path: "Sources/PasteIt",
             // Only runtime translations belong in the SwiftPM bundle. App icons

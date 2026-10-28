@@ -16,7 +16,7 @@ A private macOS clipboard derivative of [Paste It](https://github.com/yipeng-git
 
 ## Build
 
-Requires macOS 14+ and Swift tools 6.2+. Modern text OCR uses macOS 15+, and table recognition needs macOS 26+. Fresh clones use pinned public dependencies (Sparkle 2.9.4, MCP 0.12.1, PostHog 3.59.3).
+Requires macOS 14+ and Swift tools 6.2+. Modern text OCR uses macOS 15+, and table recognition needs macOS 26+. Fresh clones use pinned public dependencies (Sparkle 2.9.4, MCP 0.12.1).
 
 ```sh
 git clone https://github.com/Haookun/pastel-it.git
@@ -36,3 +36,5 @@ Settings → Clipboard → Display Style switches between Timeline (default) and
 The candidate bar opens beside the text insertion caret, flips above it when needed, and stays within the active display. It reads geometry through macOS Accessibility; when permission or caret geometry is unavailable, it falls back beside the pointer with a notice.
 
 Settings use a standard macOS title bar with App, Data and About groups. OCR and Quick Paste have separate pages. A vector animation previews both display styles; candidate mode includes an explicit Accessibility permission button.
+
+No usage analytics are collected or uploaded. Local diagnostic logs can be cleared in Settings → Privacy → Delete Past Logs without deleting settings, history, or attachments. See [local diagnostics](docs/analytics.md).

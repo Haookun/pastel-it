@@ -55,7 +55,6 @@ final class AgentAPIServer: @unchecked Sendable {
         Task {
             await PasteItMCPServer.shared.stop()
         }
-        NSLog("PasteIt: MCP stopped")
     }
 
     @MainActor
@@ -78,9 +77,7 @@ final class AgentAPIServer: @unchecked Sendable {
                 switch state {
                 case .ready:
                     self?.setRunning(true)
-                    NSLog("PasteIt: MCP listening on \(Self.defaultBaseURL)")
-                case .failed(let error):
-                    NSLog("PasteIt: MCP listener failed: \(error)")
+                case .failed:
                     Task { @MainActor in
                         self?.stopListener()
                     }
@@ -95,7 +92,6 @@ final class AgentAPIServer: @unchecked Sendable {
             self.listener = listener
             lock.unlock()
         } catch {
-            NSLog("PasteIt: MCP listener failed to start: \(error)")
             setRunning(false)
         }
     }
@@ -192,8 +188,7 @@ private final class ConnectionSession: @unchecked Sendable {
         connection.receive(minimumIncompleteLength: 1, maximumLength: 1024 * 1024) {
             [weak self] data, _, isComplete, error in
             guard let self else { return }
-            if let error {
-                NSLog("PasteIt: MCP receive error: \(error)")
+            if error != nil {
                 self.connection.cancel()
                 return
             }

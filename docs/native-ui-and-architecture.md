@@ -25,7 +25,7 @@ Apple 建议采用系统的 grouped Form；Liquid Glass 用作控件和导航层
 
 [Apple 表格识别说明](https://developer.apple.com/documentation/vision/recognize-tables-within-a-document) 描述了系统文档表格能力。OCR 在设备上执行，不捆绑 Tesseract、PaddleOCR 等额外模型，也没有新增云 OCR 依赖；能识别的语言和质量受当前系统 Vision 模型限制。
 
-Sparkle、MCP SDK、PostHog 是第三方依赖，不属于 macOS 原生能力。当前上游自动更新停用，MCP 不运行；没有 PostHog token 的构建不发送统计。保留归档代码仍需保留相应编译依赖，不等于它们在后台执行。
+Sparkle、MCP SDK 是第三方依赖，不属于 macOS 原生能力。当前上游自动更新停用，MCP 不运行。PostHog 依赖和行为统计已移除，仅有本机固定诊断码日志，不上传。保留归档代码仍需保留相应编译依赖，不等于它们在后台执行。
 
 ## 候选栏的光标定位
 

@@ -33,7 +33,6 @@ enum SystemPasteSynthesizer {
         didPrompt = true
         let promptKey = "AXTrustedCheckOptionPrompt" as CFString
         _ = AXIsProcessTrustedWithOptions([promptKey: true] as CFDictionary)
-        NSLog("PasteIt: requesting Accessibility for synthesized ⌘V")
     }
 
     static func postCommandV() {

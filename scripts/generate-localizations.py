@@ -227,26 +227,6 @@ STRINGS: dict[str, dict[str, str]] = {
     "folders.namePlaceholder": {"en": "Folder name", "zh-Hans": "文件夹名称", "ja": "フォルダ名"},
     "folders.renameConfirm": {"en": "Rename", "zh-Hans": "重命名", "ja": "名前を変更"},
     # Privacy
-    "privacy.analytics": {"en": "Analytics", "zh-Hans": "分析", "ja": "アナリティクス"},
-    "privacy.shareAnalytics": {
-        "en": "Share anonymous usage analytics",
-        "zh-Hans": "分享匿名使用分析",
-        "ja": "匿名の利用状況分析を共有",
-    },
-    "privacy.whatWeCollect": {"en": "What we collect", "zh-Hans": "我们收集的内容", "ja": "収集するデータ"},
-    "privacy.eventsBlurb": {
-        "en": "Events help improve Pastel it！ (activation, panel use, updates). Data is anonymous and sent to PostHog when enabled.",
-        "zh-Hans": "事件数据有助于改进 Pastel it！（激活、面板使用、更新等）。启用后匿名发送至 PostHog。",
-        "ja": "イベントは Pastel it！ の改善に役立ちます（有効化、パネル利用、アップデートなど）。有効時は匿名で PostHog に送信されます。",
-    },
-    "privacy.neverCollected": {"en": "Never collected", "zh-Hans": "永不收集", "ja": "収集しないもの"},
-    "privacy.productEvents": {"en": "Product events", "zh-Hans": "产品事件", "ja": "プロダクトイベント"},
-    "privacy.fullDisclosure": {"en": "Full disclosure on GitHub", "zh-Hans": "GitHub 上的完整说明", "ja": "GitHub で完全な開示"},
-    "privacy.analyticsFooter": {
-        "en": "Optional. Off means no events are sent. See %@ in the open-source repo.",
-        "zh-Hans": "可选。关闭后不会发送任何事件。详见开源仓库中的 %@。",
-        "ja": "任意です。オフの場合イベントは送信されません。オープンソースリポジトリの %@ を参照してください。",
-    },
     "privacy.noIgnoredApps": {"en": "No ignored apps", "zh-Hans": "没有忽略的应用", "ja": "無視するアプリはありません"},
     "privacy.addApp": {"en": "Add App", "zh-Hans": "添加应用", "ja": "アプリを追加"},
     "privacy.removeApp": {"en": "Remove App", "zh-Hans": "移除应用", "ja": "アプリを削除"},
@@ -1249,6 +1229,62 @@ STRINGS.update({
 })
 
 STRINGS["candidateBar.list"] = {"en": "Clipboard candidates", "zh-Hans": "剪贴板候选列表", "zh-Hant": "剪貼簿候選清單", "ja": "クリップボード候補", "ko": "클립보드 후보", "fr": "Éléments du presse-papiers", "de": "Zwischenablage-Einträge", "es": "Candidatos del portapapeles", "pl": "Pozycje schowka"}
+
+
+
+# Local diagnostics only; no product analytics.
+STRINGS.update({
+    "privacy.logs.title": {
+        "en": "Local Diagnostic Logs",
+        "zh-Hans": "本地诊断日志",
+        "ja": "ローカル診断ログ"
+    },
+    "privacy.logs.description": {
+        "en": "No usage information is collected or uploaded. Diagnostic logs are stored only on this Mac and never contain clipboard contents.",
+        "zh-Hans": "不收集或上传使用信息。诊断日志仅保存在本机，不包含剪贴板内容。",
+        "ja": "使用情報の収集・送信は行いません。診断ログはこのMacにのみ保存され、クリップボードの内容を含みません。"
+    },
+    "privacy.logs.retention": {
+        "en": "Logs are kept for at most 14 days, up to about 768 KB.",
+        "zh-Hans": "日志最多保留14天，总量不超过约768 KB。",
+        "ja": "ログは最大14日間、合計約768 KBまで保存されます。"
+    },
+    "privacy.logs.summary": {
+        "en": "%lld files · %@",
+        "zh-Hans": "%lld 个日志文件 · %@",
+        "ja": "%lldファイル · %@"
+    },
+    "privacy.logs.delete": {
+        "en": "Delete Past Logs",
+        "zh-Hans": "删除过去日志",
+        "ja": "過去のログを削除"
+    },
+    "privacy.logs.confirmTitle": {
+        "en": "Delete Past Logs?",
+        "zh-Hans": "删除过去日志？",
+        "ja": "過去のログを削除しますか？"
+    },
+    "privacy.logs.confirmMessage": {
+        "en": "Only local diagnostic logs will be deleted. Settings, clipboard history, and attachments will be preserved.",
+        "zh-Hans": "仅删除本地诊断日志，配置、剪贴板历史和附件都会保留。",
+        "ja": "ローカル診断ログのみ削除します。設定、クリップボード履歴、添付ファイルは保持されます。"
+    },
+    "privacy.logs.deleted": {
+        "en": "Deleted %lld past log files.",
+        "zh-Hans": "已删除 %lld 个过去日志文件。",
+        "ja": "過去のログを%lldファイル削除しました。"
+    },
+    "privacy.logs.failed": {
+        "en": "Could not access the logs. Please try again.",
+        "zh-Hans": "无法访问日志，请重试。",
+        "ja": "ログにアクセスできません。再試行してください。"
+    },
+    "privacy.logs.footerScope": {
+        "en": "Deleting only removes this app’s local log files. Settings, clipboard history, attachments, and macOS system logs are preserved.",
+        "zh-Hans": "仅清理本应用的本地日志，不删除配置、剪贴板历史、附件或 macOS 系统日志。",
+        "ja": "このアプリのローカルログのみ削除します。設定、履歴、添付ファイル、macOSシステムログは保持されます。"
+    }
+})
 
 def main() -> None:
     strings = merge_batch_cjk(merge_batch2(STRINGS))

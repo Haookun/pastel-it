@@ -154,7 +154,6 @@ final class TimelinePanelController: NSObject, NSWindowDelegate, ObservableObjec
     }
 
     private func performShow(source: TimelinePanelOpenSource, preserveContext: Bool = false) {
-        let wasVisible = panel?.isVisible == true
         if !preserveContext {
             requestedCandidatePage = 0
             candidateMessage = nil
@@ -191,13 +190,6 @@ final class TimelinePanelController: NSObject, NSWindowDelegate, ObservableObjec
         panel.makeFirstResponder(nil)
         startOutsideClickMonitoring()
 
-        if !wasVisible {
-            Analytics.beginPanelSession(
-                source: source.rawValue,
-                historyCount: appState.historyStore.clips.count
-            )
-        }
-
         animationGeneration += 1
         let generation = animationGeneration
         panelAnimation = .showing
@@ -218,7 +210,6 @@ final class TimelinePanelController: NSObject, NSWindowDelegate, ObservableObjec
                     self.panel?.makeFirstResponder(nil)
                     self.appState.searchBlurRequest += 1
                     self.appState.warmTabCaches()
-                    NSLog("PasteIt: clipboard panel shown")
                 }
             }
         })
@@ -295,7 +286,6 @@ final class TimelinePanelController: NSObject, NSWindowDelegate, ObservableObjec
                 panel.orderOut(nil)
                 panel.alphaValue = 1
                 self.panelAnimation = .none
-                Analytics.endPanelSession()
                 if !self.preserveContextForHide { self.appState.prepareForNextPanelShow() }
                 self.flushHideCompletions()
             }
