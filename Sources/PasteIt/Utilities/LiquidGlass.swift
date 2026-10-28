@@ -40,7 +40,6 @@ enum PasteItGlass {
     static let controlShape = RoundedRectangle(cornerRadius: 10, style: .continuous)
     static let cardShape = RoundedRectangle(cornerRadius: 18, style: .continuous)
     static let stackRowShape = RoundedRectangle(cornerRadius: 12, style: .continuous)
-    static let menuSelectionShape = RoundedRectangle(cornerRadius: 6, style: .continuous)
     static let previewInsetShape = RoundedRectangle(cornerRadius: 12, style: .continuous)
     static let popoverShape = RoundedRectangle(cornerRadius: 14, style: .continuous)
 }
@@ -87,15 +86,9 @@ extension View {
             .background(ToastGlassBackground(cornerRadius: cornerRadius).allowsHitTesting(false))
     }
 
-    /// Timeline cards sitting on the glass panel.
-    @ViewBuilder
+    /// Content stays on a readable native surface; glass belongs to navigation.
     func pasteItCardGlass() -> some View {
-        if #available(macOS 26, *) {
-            clipShape(PasteItGlass.cardShape)
-                .glassEffect(.regular, in: PasteItGlass.cardShape)
-        } else {
-            background(Color(nsColor: .windowBackgroundColor), in: PasteItGlass.cardShape)
-        }
+        background(Color(nsColor: .controlBackgroundColor), in: PasteItGlass.cardShape)
     }
 
     /// Paste Stack queue rows.
@@ -117,15 +110,9 @@ extension View {
         }
     }
 
-    /// Inset preview surface inside the Space bubble (image viewport, editors).
-    @ViewBuilder
+    /// Text and image content use the system's ordinary inset background.
     func pasteItPreviewInsetGlass() -> some View {
-        if #available(macOS 26, *) {
-            clipShape(PasteItGlass.previewInsetShape)
-                .glassEffect(.regular, in: PasteItGlass.previewInsetShape)
-        } else {
-            background(Color.primary.opacity(0.04), in: PasteItGlass.previewInsetShape)
-        }
+        background(Color(nsColor: .controlBackgroundColor), in: PasteItGlass.previewInsetShape)
     }
 
     /// Toolbar / title-bar control: Liquid Glass button on macOS 26+, borderless below.
@@ -167,51 +154,6 @@ func pasteItActionBarButtonHighlight(isHovered: Bool, enabled: Bool = true) -> s
         } else {
             Circle()
                 .fill(Color.primary.opacity(enabled ? 0.14 : 0.08))
-        }
-    }
-}
-
-/// Selection chips inside a glass capsule group (tabs, segmented controls).
-@ViewBuilder
-func pasteItSegmentHighlight(
-    isSelected: Bool,
-    in namespace: Namespace.ID? = nil,
-    matchedID: String = "pasteItSegmentHighlight"
-) -> some View {
-    if isSelected {
-        if let namespace {
-            segmentHighlightBody()
-                .matchedGeometryEffect(id: matchedID, in: namespace)
-        } else {
-            segmentHighlightBody()
-        }
-    }
-}
-
-@ViewBuilder
-private func segmentHighlightBody() -> some View {
-    if #available(macOS 26, *) {
-        Capsule()
-            .fill(.clear)
-            // Slight primary tint lifts the pill off the outer capsule glass.
-            .glassEffect(.regular.tint(Color.primary.opacity(0.09)).interactive(), in: Capsule())
-    } else {
-        Capsule()
-            .fill(Color.primary.opacity(0.16))
-    }
-}
-
-/// Popover / menu row selection.
-@ViewBuilder
-func pasteItMenuRowHighlight(isSelected: Bool) -> some View {
-    if isSelected {
-        if #available(macOS 26, *) {
-            PasteItGlass.menuSelectionShape
-                .fill(.clear)
-                .glassEffect(.regular, in: PasteItGlass.menuSelectionShape)
-        } else {
-            PasteItGlass.menuSelectionShape
-                .fill(Color.primary.opacity(0.08))
         }
     }
 }

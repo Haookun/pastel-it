@@ -87,6 +87,7 @@ final class PasteStackController: ObservableObject {
     }
 
     func open() {
+        guard AppFeatures.pasteStackEnabled else { return }
         direction = settings.pasteStackDefaultDirection
         items = []
         isCollecting = true

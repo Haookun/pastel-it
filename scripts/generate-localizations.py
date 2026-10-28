@@ -868,6 +868,388 @@ STRINGS.update({"settings.privateUpdates": {"en": "Automatic updates are not con
 
 STRINGS["menu.statusTooltip"].update({"en": "Pastel it！ — Clipboard history", "zh-Hans": "Pastel it！ — 剪贴板历史", "ja": "Pastel it！ — クリップボード履歴"})
 
+
+# Native UI simplification and active shortcut wording.
+STRINGS.update({
+    "shortcuts.timelineFootnote": {
+        "en": "Open clipboard history with ⇧⌘C. Configure Quick Paste separately in OCR & Quick Paste.",
+        "zh-Hans": "⇧⌘C 打开剪贴板；快捷粘贴在“OCR 与快捷粘贴”中单独设置。",
+        "ja": "⇧⌘Cで履歴を開きます。クイックペーストはOCR設定で変更できます。"
+    },
+    "ocr.languages": {
+        "en": "Languages",
+        "zh-Hans": "识别语言",
+        "ja": "認識言語"
+    },
+    "shortcuts.binding": {
+        "en": "Keyboard Shortcut",
+        "zh-Hans": "快捷键",
+        "ja": "キーボードショートカット"
+    },
+    "timeline.folders": {
+        "en": "Collections",
+        "zh-Hans": "收藏分类",
+        "ja": "コレクション"
+    },
+    "quickPaste.help": {
+        "en": "Convert the current system clipboard to plain text and paste it. Default: ⇧⌘V. Open clipboard history separately with ⇧⌘C.",
+        "zh-Hans": "将当前系统剪贴板转换为纯文本并粘贴，默认 ⇧⌘V。打开剪贴板的默认快捷键为 ⇧⌘C。",
+        "ja": "システムクリップボードをプレーンテキストに変換してペーストします（⇧⌘V）。履歴を開く既定キーは⇧⌘Cです。"
+    },
+    "action.settingDetail": {
+        "en": "Double-click, Return, and ⌘1–9 use the selected action. Direct Paste is the default.",
+        "zh-Hans": "双击、Return 和 ⌘1–9 统一执行所选操作，默认直接粘贴。",
+        "ja": "ダブルクリック、Return、⌘1–9は選択した操作を実行します。既定は直接ペーストです。"
+    },
+    "action.copySingle": {
+        "en": "Select one clip to copy, or press Return to paste the selected clips in order.",
+        "zh-Hans": "请选择一项复制，或按 Return 按顺序粘贴所选项目。",
+        "ja": "コピーする項目を1つ選択するか、Returnで選択項目を順にペーストします。"
+    },
+    "onboarding.paste.caption": {
+        "en": "⇧⌘C opens history. Select a clip, then copy or paste it.",
+        "zh-Hans": "⇧⌘C 打开剪贴板，选中记录后复制或直接粘贴。",
+        "ja": "⇧⌘Cで履歴を開き、項目をコピーまたはペーストします。"
+    }
+})
+
+# Accessible label for the native image/text preview picker.
+STRINGS.update({
+    "preview.content": {
+        "en": "Preview content",
+        "zh-Hans": "预览内容",
+        "ja": "プレビュー内容"
+    }
+})
+
+# Settings sidebar and onboarding native layout refinement.
+STRINGS.update({
+    "settings.sidebar.ocr": {
+        "en": "OCR",
+        "zh-Hans": "OCR",
+        "ja": "OCR"
+    },
+    "onboarding.skip": {
+        "en": "Skip",
+        "zh-Hans": "跳过",
+        "ja": "スキップ"
+    },
+    "onboarding.back": {
+        "en": "Back",
+        "zh-Hans": "上一步",
+        "ja": "戻る"
+    },
+    "onboarding.continue": {
+        "en": "Continue",
+        "zh-Hans": "继续",
+        "ja": "続ける"
+    },
+    "onboarding.done": {
+        "en": "Done",
+        "zh-Hans": "完成",
+        "ja": "完了"
+    },
+    "onboarding.getStarted": {
+        "en": "Get Started",
+        "zh-Hans": "开始使用",
+        "ja": "使い始める"
+    }
+})
+
+# Clipboard candidate-bar presentation.
+STRINGS.update({
+    "settings.group.displayStyle": {
+        "en": "Display Style",
+        "zh-Hans": "显示样式",
+        "ja": "表示スタイル"
+    },
+    "clipboard.style.picker": {
+        "en": "Presentation",
+        "zh-Hans": "展示方式",
+        "ja": "表示方法"
+    },
+    "clipboard.style.timeline": {
+        "en": "Timeline",
+        "zh-Hans": "时间轴",
+        "ja": "タイムライン"
+    },
+    "clipboard.style.candidateBar": {
+        "en": "Candidate Bar",
+        "zh-Hans": "候选栏",
+        "ja": "候補バー"
+    },
+    "clipboard.style.help": {
+        "en": "Choose a timeline or a compact bar of recent clips. Open either with your clipboard shortcut.",
+        "zh-Hans": "选择时间轴或最近记录候选栏，均使用“打开剪贴板”快捷键。",
+        "ja": "タイムラインまたは最近の項目の候補バーを選べます。どちらも履歴のショートカットで開きます。"
+    },
+    "candidateBar.collapse": {
+        "en": "Show less",
+        "zh-Hans": "收起",
+        "ja": "折りたたむ"
+    },
+    "candidateBar.expand": {
+        "en": "Show more",
+        "zh-Hans": "展开更多",
+        "ja": "さらに表示"
+    },
+    "candidateBar.close": {
+        "en": "Close",
+        "zh-Hans": "关闭",
+        "ja": "閉じる"
+    },
+    "candidateBar.empty": {
+        "en": "No Recent Clips",
+        "zh-Hans": "暂无剪贴板记录",
+        "ja": "最近の項目はありません"
+    },
+    "candidateBar.emptyDetail": {
+        "en": "Copy text, images, or files and they will appear here.",
+        "zh-Hans": "复制文字、图片或文件后，即会显示在这里。",
+        "ja": "テキスト、画像、ファイルをコピーするとここに表示されます。"
+    },
+    "candidateBar.locationFallback": {
+        "en": "Caret position unavailable. Showing near the pointer; Accessibility may be required.",
+        "zh-Hans": "未能获取插入光标位置，暂在鼠标旁显示；请检查辅助功能权限。",
+        "zh-Hant": "無法取得插入游標位置，暫在滑鼠旁顯示；請檢查輔助使用權限。",
+        "ja": "カーソル位置を取得できないため、ポインタ付近に表示します。アクセシビリティ権限をご確認ください。",
+        "ko": "텍스트 커서 위치를 가져올 수 없어 포인터 근처에 표시합니다. 손쉬운 사용 권한을 확인하세요.",
+        "de": "Cursorposition nicht verfügbar. Anzeige am Mauszeiger; Bedienungshilfen prüfen.",
+        "fr": "Position du curseur indisponible. Affichage près du pointeur ; vérifiez l’accessibilité.",
+        "es": "Posición del cursor no disponible. Se muestra junto al puntero; comprueba Accesibilidad.",
+        "pl": "Pozycja kursora niedostępna. Wyświetlanie przy wskaźniku; sprawdź dostępność.",
+    },
+    "candidateBar.footer": {
+        "en": "1–5 to select · Tab to expand or collapse",
+        "zh-Hans": "1–5 选择 · Tab 展开或收起",
+        "ja": "1–5で選択 · Tabで展開／折りたたみ"
+    },
+    "candidateBar.moreFiles": {
+        "en": "+%lld more",
+        "zh-Hans": "另 %lld 个",
+        "ja": "ほか%lld件"
+    },
+    "candidateBar.noPreview": {
+        "en": "No Preview",
+        "zh-Hans": "无法预览",
+        "ja": "プレビューできません"
+    },
+    "candidateBar.fileCount": {
+        "en": "%lld files",
+        "zh-Hans": "%lld 个文件",
+        "ja": "%lld件のファイル"
+    },
+    "candidateBar.emptyText": {
+        "en": "Empty",
+        "zh-Hans": "空内容",
+        "ja": "空"
+    }
+})
+
+# Vertical candidate pages and native settings (2026-10-28).
+STRINGS.update({
+    "settings.group.app": {
+        "en": "App",
+        "zh-Hans": "应用",
+        "zh-Hant": "應用程式",
+        "ja": "アプリ",
+        "ko": "앱",
+        "fr": "Application",
+        "de": "App",
+        "es": "Aplicación",
+        "pl": "Aplikacja"
+    },
+    "settings.group.data": {
+        "en": "Data",
+        "zh-Hans": "数据",
+        "zh-Hant": "資料",
+        "ja": "データ",
+        "ko": "데이터",
+        "fr": "Données",
+        "de": "Daten",
+        "es": "Datos",
+        "pl": "Dane"
+    },
+    "settings.tab.quickPaste": {
+        "en": "Quick Paste",
+        "zh-Hans": "快捷粘贴",
+        "zh-Hant": "快速貼上",
+        "ja": "クイックペースト",
+        "ko": "빠른 붙여넣기",
+        "fr": "Collage rapide",
+        "de": "Schnelles Einfügen",
+        "es": "Pegado rápido",
+        "pl": "Szybkie wklejanie"
+    },
+    "clipboard.style.previewTimeline": {
+        "en": "Cards along the bottom of the screen.",
+        "zh-Hans": "在屏幕底部横向浏览卡片。",
+        "zh-Hant": "在螢幕底部橫向瀏覽卡片。",
+        "ja": "画面下部でカードを横に閲覧。",
+        "ko": "화면 아래에서 카드를 가로로 탐색합니다.",
+        "fr": "Des cartes en bas de l’écran.",
+        "de": "Karten am unteren Bildschirmrand.",
+        "es": "Tarjetas en la parte inferior de la pantalla.",
+        "pl": "Karty u dołu ekranu."
+    },
+    "clipboard.style.previewCandidate": {
+        "en": "A compact list next to your text cursor.",
+        "zh-Hans": "在输入光标旁显示纵向列表。",
+        "zh-Hant": "在文字游標旁顯示直向清單。",
+        "ja": "文字カーソルの横に縦リストを表示。",
+        "ko": "텍스트 커서 옆에 세로 목록을 표시합니다.",
+        "fr": "Une liste près du curseur de texte.",
+        "de": "Eine Liste neben dem Textcursor.",
+        "es": "Una lista junto al cursor de texto.",
+        "pl": "Lista przy kursorze tekstowym."
+    },
+    "candidatePlacement.title": {
+        "en": "Candidate Position",
+        "zh-Hans": "候选栏定位",
+        "zh-Hant": "候選列定位",
+        "ja": "候補の位置",
+        "ko": "후보 위치",
+        "fr": "Position des candidats",
+        "de": "Position der Kandidaten",
+        "es": "Posición de candidatos",
+        "pl": "Pozycja kandydatów"
+    },
+    "candidatePlacement.status": {
+        "en": "Accessibility",
+        "zh-Hans": "辅助功能",
+        "zh-Hant": "輔助使用",
+        "ja": "アクセシビリティ",
+        "ko": "손쉬운 사용",
+        "fr": "Accessibilité",
+        "de": "Bedienungshilfen",
+        "es": "Accesibilidad",
+        "pl": "Dostępność"
+    },
+    "candidatePlacement.granted": {
+        "en": "Granted",
+        "zh-Hans": "已授权",
+        "zh-Hant": "已授權",
+        "ja": "許可済み",
+        "ko": "허용됨",
+        "fr": "Autorisé",
+        "de": "Erlaubt",
+        "es": "Permitido",
+        "pl": "Zezwolono"
+    },
+    "candidatePlacement.notGranted": {
+        "en": "Not granted",
+        "zh-Hans": "未授权",
+        "zh-Hant": "未授權",
+        "ja": "未許可",
+        "ko": "허용 안 됨",
+        "fr": "Non autorisé",
+        "de": "Nicht erlaubt",
+        "es": "Sin permiso",
+        "pl": "Brak uprawnień"
+    },
+    "candidatePlacement.request": {
+        "en": "Grant Access…",
+        "zh-Hans": "获取权限…",
+        "zh-Hant": "取得權限…",
+        "ja": "権限を許可…",
+        "ko": "권한 허용…",
+        "fr": "Autoriser…",
+        "de": "Zugriff erlauben…",
+        "es": "Conceder acceso…",
+        "pl": "Przyznaj dostęp…"
+    },
+    "candidatePlacement.help": {
+        "en": "Accessibility lets Pastel it！ place the candidate bar next to your text cursor. Without it, the bar appears near the mouse pointer instead.",
+        "zh-Hans": "授权后可在输入光标旁显示候选列表；无法定位时在鼠标旁显示。",
+        "zh-Hant": "授權後可在文字游標旁顯示候選清單；無法定位時在滑鼠旁顯示。",
+        "ja": "権限を許可すると文字カーソル付近に表示します。位置を取得できない場合はポインタ付近に表示します。",
+        "ko": "권한을 허용하면 텍스트 커서 옆에 표시합니다. 위치를 확인할 수 없으면 포인터 근처에 표시합니다.",
+        "fr": "L’accessibilité permet un affichage près du curseur de texte, sinon près du pointeur.",
+        "de": "Mit Bedienungshilfen erscheint die Liste am Textcursor, andernfalls am Mauszeiger.",
+        "es": "Accesibilidad permite mostrar la lista junto al cursor; si no está disponible, junto al puntero.",
+        "pl": "Dostępność pozwala wyświetlać listę przy kursorze tekstowym, a w razie braku pozycji przy wskaźniku."
+    },
+    "candidateBar.page": {
+        "en": "%lld/%lld",
+        "zh-Hans": "%lld/%lld",
+        "zh-Hant": "%lld/%lld",
+        "ja": "%lld/%lld",
+        "ko": "%lld/%lld",
+        "fr": "%lld/%lld",
+        "de": "%lld/%lld",
+        "es": "%lld/%lld",
+        "pl": "%lld/%lld"
+    },
+    "candidateBar.previousPage": {
+        "en": "Previous page",
+        "zh-Hans": "上一页",
+        "zh-Hant": "上一頁",
+        "ja": "前のページ",
+        "ko": "이전 페이지",
+        "fr": "Page précédente",
+        "de": "Vorherige Seite",
+        "es": "Página anterior",
+        "pl": "Poprzednia strona"
+    },
+    "candidateBar.nextPage": {
+        "en": "Next page",
+        "zh-Hans": "下一页",
+        "zh-Hant": "下一頁",
+        "ja": "次のページ",
+        "ko": "다음 페이지",
+        "fr": "Page suivante",
+        "de": "Nächste Seite",
+        "es": "Página siguiente",
+        "pl": "Następna strona"
+    },
+    "settings.tab.ocr": {
+        "en": "OCR",
+        "zh-Hans": "OCR",
+        "zh-Hant": "OCR",
+        "ja": "OCR",
+        "ko": "OCR",
+        "fr": "OCR",
+        "de": "OCR",
+        "es": "OCR",
+        "pl": "OCR"
+    },
+    "shortcuts.timelineFootnote": {
+        "en": "Open clipboard history with ⇧⌘C. Configure Quick Paste separately on the Quick Paste page.",
+        "zh-Hans": "⇧⌘C 打开剪贴板；快捷粘贴在独立的“快捷粘贴”栏目中设置。",
+        "zh-Hant": "⇧⌘C 開啟剪貼簿；快速貼上可在獨立的「快速貼上」頁面設定。",
+        "ja": "⇧⌘Cで履歴を開きます。クイックペーストは専用ページで設定できます。",
+        "ko": "⇧⌘C로 기록을 엽니다. 빠른 붙여넣기는 별도 페이지에서 설정하세요.",
+        "fr": "⇧⌘C ouvre l’historique. Le collage rapide se configure sur sa propre page.",
+        "de": "⇧⌘C öffnet den Verlauf. Schnelles Einfügen hat eine eigene Einstellungsseite.",
+        "es": "⇧⌘C abre el historial. El pegado rápido se configura en su propia página.",
+        "pl": "⇧⌘C otwiera historię. Szybkie wklejanie ma osobną stronę ustawień."
+    },
+    "clipboard.style.help": {
+        "en": "Tab shows the next 10 clips in Candidate Bar. Both styles use the clipboard shortcut.",
+        "zh-Hans": "候选列表每页10条，Tab 翻页；两种样式共用打开快捷键。",
+        "zh-Hant": "候選清單每頁10筆，Tab 翻頁；兩種樣式共用開啟快速鍵。",
+        "ja": "候補は1ページ10件。Tabで次のページへ進みます。開くショートカットは共通です。",
+        "ko": "후보는 페이지당 10개이며 Tab으로 넘깁니다. 같은 단축키로 엽니다.",
+        "fr": "10 éléments par page, Tab pour avancer. Le raccourci d’ouverture reste commun.",
+        "de": "10 Einträge pro Seite, Tab blättert weiter. Beide Ansichten nutzen denselben Kurzbefehl.",
+        "es": "10 elementos por página; Tab avanza. Ambas vistas usan el mismo atajo.",
+        "pl": "10 pozycji na stronę; Tab przechodzi dalej. Oba widoki mają ten sam skrót."
+    },
+    "quickPaste.scopeHelp": {
+        "en": "Only selected types are converted. Images follow the OCR settings on the OCR page. Without Accessibility, plain text is prepared for manual ⌘V. Automatic pasting restores the original clipboard unless you copy something newer.",
+        "zh-Hans": "仅转换勾选的类型。图片遵循“OCR”栏目的设置；无辅助功能权限时，先准备纯文本，再手动按 ⌘V。自动粘贴后恢复原剪贴板；期间复制了新内容则保留新内容。",
+        "zh-Hant": "只轉換勾選的類型。圖片依照「OCR」頁面的設定；未授權輔助使用時，先準備純文字，再手動按 ⌘V。自動貼上後會還原原剪貼簿，除非期間複製了新內容。",
+        "ja": "選択した種類のみ変換します。画像はOCRページの設定を使用します。権限がない場合は⌘Vで手動ペーストできます。自動ペースト後は、新しいコピーがない限り元の内容に戻します。",
+        "ko": "선택한 유형만 변환합니다. 이미지는 OCR 페이지 설정을 따릅니다. 권한이 없으면 ⌘V로 직접 붙여넣습니다. 새로 복사한 내용이 없으면 자동 붙여넣기 후 원래 클립보드를 복원합니다.",
+        "fr": "Seuls les types sélectionnés sont convertis. Les images utilisent la page OCR. Sans accessibilité, collez avec ⌘V. Le presse-papiers est restauré sauf si un nouvel élément a été copié.",
+        "de": "Nur ausgewählte Typen werden umgewandelt. Bilder nutzen die OCR-Seite. Ohne Bedienungshilfen manuell mit ⌘V einfügen. Die Zwischenablage wird wiederhergestellt, sofern nichts Neues kopiert wurde.",
+        "es": "Solo se convierten los tipos seleccionados. Las imágenes usan la página OCR. Sin Accesibilidad, pega con ⌘V. El portapapeles se restaura salvo que copies algo nuevo.",
+        "pl": "Konwertowane są tylko zaznaczone typy. Obrazy korzystają ze strony OCR. Bez Dostępności wklej ręcznie przez ⌘V. Schowek jest przywracany, chyba że skopiowano coś nowego."
+    }
+})
+
+STRINGS["candidateBar.list"] = {"en": "Clipboard candidates", "zh-Hans": "剪贴板候选列表", "zh-Hant": "剪貼簿候選清單", "ja": "クリップボード候補", "ko": "클립보드 후보", "fr": "Éléments du presse-papiers", "de": "Zwischenablage-Einträge", "es": "Candidatos del portapapeles", "pl": "Pozycje schowka"}
+
 def main() -> None:
     strings = merge_batch_cjk(merge_batch2(STRINGS))
     OUT.parent.mkdir(parents=True, exist_ok=True)

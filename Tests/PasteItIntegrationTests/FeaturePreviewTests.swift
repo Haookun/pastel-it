@@ -16,8 +16,6 @@ struct FeaturePreviewTests {
         let state = AppState(settings: settings, historyStore: store, searchService: SearchService())
         let board = NSPasteboard.withUniqueName()
         let paste = PasteController(blobStore: store.blobStore, pasteboard: board)
-        let keys = HotkeyManager(defaults: defaults, showTimeline: {}, togglePasteStack: {},
-                                 pastePlain: { false }, editSelected: { false })
         for index in 0..<30 {
             store.context.insert(ClipItem(createdAt: Date().addingTimeInterval(Double(-index * 3600)),
                 title: "Synthetic note \(index)", plainText: "合成记录 \(index) · Synthetic text · テスト",
@@ -29,7 +27,7 @@ struct FeaturePreviewTests {
         state.selectFirst()
         let timeline = NSHostingController(rootView: TimelineView(appState: state, pasteController: paste)
             .frame(width: 1120, height: TimelinePanelController.panelHeight))
-        let preferences = NSHostingController(rootView: OCRSettingsView(settings: settings, manager: keys)
+        let preferences = NSHostingController(rootView: OCRSettingsView(settings: settings)
             .frame(width: 760, height: 720))
         let window = NSWindow(contentRect: NSRect(x: 100, y: 150, width: 1120, height: TimelinePanelController.panelHeight),
                               styleMask: [.titled, .closable], backing: .buffered, defer: false)
@@ -46,7 +44,7 @@ struct FeaturePreviewTests {
             defaults.removePersistentDomain(forName: name)
         }
         window.contentViewController = timeline
-        window.orderFrontRegardless()
+        if isInteractive { window.orderFrontRegardless() }
         if isInteractive { window.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true) }
         try await Task.sleep(for: .milliseconds(300))
         timeline.view.layoutSubtreeIfNeeded()

@@ -8,8 +8,7 @@ import PasteItCore
 @Suite("OCR preferences and quick clipboard conversion", .serialized)
 struct OCRPreferencesAndQuickPasteTests {
     private func manager(_ defaults: UserDefaults) -> HotkeyManager {
-        HotkeyManager(defaults: defaults, showTimeline: {}, togglePasteStack: {},
-                      pastePlain: { false }, editSelected: { false })
+        HotkeyManager(defaults: defaults, showTimeline: {}, editSelected: { false })
     }
 
     @Test func settingsSurviveRestartAndRemainInTheirOwnDomain() throws {
@@ -42,12 +41,12 @@ struct OCRPreferencesAndQuickPasteTests {
         let defaults = try #require(UserDefaults(suiteName: name))
         defer { defaults.removePersistentDomain(forName: name) }
         let keys = manager(defaults)
-        #expect(!keys.setQuickPasteEnabled(true))
-        #expect(keys.shortcuts == .defaults)
-        #expect(keys.errorMessage != nil)
-        #expect(!defaults.bool(forKey: "quickPasteEnabled"))
-        #expect(keys.set(ShortcutBinding(keyCode: 9, modifiers: [.command, .option], key: "V"), for: .timeline))
         #expect(keys.setQuickPasteEnabled(true))
+        #expect(keys.shortcuts == .defaults)
+        #expect(!keys.set(ShortcutAction.quickPaste.defaultBinding, for: .timeline))
+        #expect(keys.errorMessage != nil)
+        #expect(keys.shortcuts.timeline == ShortcutAction.timeline.defaultBinding)
+        #expect(keys.set(ShortcutBinding(keyCode: 9, modifiers: [.command, .option], key: "V"), for: .timeline))
         #expect(keys.shortcuts.quickPaste == ShortcutAction.quickPaste.defaultBinding)
         #expect(defaults.bool(forKey: "quickPasteEnabled"))
         #expect(manager(defaults).shortcuts == keys.shortcuts)

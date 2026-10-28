@@ -31,29 +31,28 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
 
     private func makeWindow(appState: AppState) -> NSWindow {
         let root = SettingsView(appState: appState)
-        let hosting = SettingsHostingController(rootView: root)
+        let hosting = NSHostingController(rootView: root)
         // Let AppKit own the window size instead of adopting the Form's ideal size.
         hosting.sizingOptions = []
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 860, height: 660),
-            styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
+            styleMask: [.titled, .closable, .miniaturizable, .resizable],
             backing: .buffered,
             defer: false
         )
         window.title = L10n.tr("settings.windowTitle", default: "Pastel it！ Settings")
-        // Keep a real titlebar toolbar even though settings has no sidebar toggle.
-        // Without it, the full-height system sidebar starts below the titlebar.
-        let toolbar = NSToolbar(identifier: "PasteItSettingsToolbar")
-        toolbar.allowsUserCustomization = false
-        toolbar.displayMode = .iconOnly
-        window.toolbar = toolbar
-        window.toolbarStyle = .unified
+        // Standard AppKit titlebar: no fullSizeContentView and no empty
+        // NSToolbar, so the in-content sidebar divider is the only vertical
+        // line and stays aligned from top to bottom of the content area.
         window.contentViewController = hosting
         window.isReleasedWhenClosed = false
         window.delegate = self
-        window.contentMinSize = NSSize(width: 680, height: 460)
+        window.contentMinSize = NSSize(width: 720, height: 500)
         window.center()
-        window.setFrameAutosaveName("PasteItSettings")
+        let arguments = ProcessInfo.processInfo.arguments
+        if !arguments.contains("--validation-session") && !arguments.contains("--ui-review") {
+            window.setFrameAutosaveName("PasteItSettings")
+        }
         return window
     }
 
@@ -61,36 +60,5 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         guard wasAccessory else { return }
         if OnboardingWindowController.shared.isVisible { return }
         NSApp.setActivationPolicy(.accessory)
-    }
-}
-
-/// Removing SwiftUI's toggle alone still allows AppKit to collapse a sidebar by
-/// dragging its divider. Configure the native split item without replacing its
-/// delegate or the system's Liquid Glass presentation.
-@MainActor
-private final class SettingsHostingController: NSHostingController<SettingsView> {
-    override func viewDidLayout() {
-        super.viewDidLayout()
-        keepSidebarVisible(in: self)
-    }
-
-    private func keepSidebarVisible(in controller: NSViewController) {
-        if let split = controller as? NSSplitViewController {
-            for item in split.splitViewItems where item.behavior == .sidebar {
-                if !item.allowsFullHeightLayout { item.allowsFullHeightLayout = true }
-                if item.minimumThickness != SettingsView.sidebarWidth {
-                    item.minimumThickness = SettingsView.sidebarWidth
-                }
-                if item.maximumThickness != SettingsView.sidebarWidth {
-                    item.maximumThickness = SettingsView.sidebarWidth
-                }
-                if item.canCollapse { item.canCollapse = false }
-                if item.canCollapseFromWindowResize { item.canCollapseFromWindowResize = false }
-                if item.isCollapsed { item.isCollapsed = false }
-            }
-        }
-        for child in controller.children {
-            keepSidebarVisible(in: child)
-        }
     }
 }

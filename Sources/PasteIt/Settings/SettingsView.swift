@@ -2,18 +2,17 @@ import SwiftUI
 import PasteItCore
 
 struct SettingsView: View {
-    // System Settings on macOS 26: 215 pt of glass plus the 8 pt leading inset.
     static let sidebarWidth: CGFloat = 223
 
     private enum Page: Hashable {
-        case general, clipboard, ocr, stack, folders, privacy, storage, about
+        case general, clipboard, ocr, quickPaste, folders, privacy, storage, about
 
         var title: String {
             switch self {
             case .general: L10n.tr("settings.tab.general", default: "General")
             case .clipboard: L10n.tr("settings.tab.clipboard", default: "Clipboard & History")
             case .ocr: L10n.tr("settings.tab.ocr", default: "OCR")
-            case .stack: L10n.tr("settings.tab.stack", default: "Stack")
+            case .quickPaste: L10n.tr("settings.tab.quickPaste", default: "Quick Paste")
             case .folders: L10n.tr("settings.tab.folders", default: "Folders")
             case .privacy: L10n.tr("settings.tab.privacy", default: "Privacy")
             case .storage: L10n.tr("settings.tab.storage", default: "Storage")
@@ -26,7 +25,7 @@ struct SettingsView: View {
             case .general: "gearshape.fill"
             case .clipboard: "clipboard.fill"
             case .ocr: "text.viewfinder"
-            case .stack: "square.3.layers.3d"
+            case .quickPaste: "bolt.fill"
             case .folders: "folder.fill"
             case .privacy: "hand.raised.fill"
             case .storage: "internaldrive.fill"
@@ -35,16 +34,18 @@ struct SettingsView: View {
         }
 
         var sidebarTitle: String {
-            self == .clipboard
-                ? L10n.tr("settings.sidebar.clipboard", default: "Clipboard")
-                : title
+            switch self {
+            case .clipboard:
+                L10n.tr("settings.sidebar.clipboard", default: "Clipboard")
+            default:
+                title
+            }
         }
 
         var tint: Color {
             switch self {
             case .general, .storage: .gray
-            case .clipboard, .privacy, .about, .ocr: .blue
-            case .stack: .indigo
+            case .clipboard, .privacy, .about, .ocr, .quickPaste: .blue
             case .folders: .orange
             }
         }
@@ -75,41 +76,17 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        // Standard navigation owns the Liquid Glass sidebar and toolbar on macOS 26.
-        // Keep Form content on its system surface instead of layering glass over text.
-        NavigationSplitView(columnVisibility: .constant(.all)) {
-            List(selection: $selectedPage) {
-                Section {
-                    navigationRow(.general)
-                    navigationRow(.clipboard)
-                    navigationRow(.ocr)
-                    navigationRow(.stack)
-                    navigationRow(.folders)
-                }
-                Section {
-                    navigationRow(.privacy)
-                    navigationRow(.storage)
-                }
-                Section {
-                    navigationRow(.about)
-                }
-            }
-            .listStyle(.sidebar)
-            .navigationSplitViewColumnWidth(
-                min: Self.sidebarWidth,
-                ideal: Self.sidebarWidth,
-                max: Self.sidebarWidth
-            )
-            .toolbar(removing: .sidebarToggle)
-        } detail: {
-            detail
-                .frame(maxWidth: 760)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .navigationTitle((selectedPage ?? .general).title)
+        // Plain HStack layout under a standard AppKit titlebar: a fixed-width
+        // native sidebar List, a single Divider, and the detail Form. This
+        // avoids NavigationSplitView's full-height sidebar toolbar chrome,
+        // which misaligned the split divider between titlebar and content.
+        HStack(spacing: 0) {
+            sidebar
+            Divider()
+            detailColumn
         }
-        .navigationSplitViewStyle(.balanced)
         .toggleStyle(.switch)
-        .frame(minWidth: 680, minHeight: 460)
+        .frame(minWidth: 720, minHeight: 500)
         .onAppear {
             accessibilityTrusted = SystemPasteSynthesizer.isAccessibilityTrusted
         }
@@ -155,24 +132,57 @@ struct SettingsView: View {
         }
     }
 
-    private func navigationRow(_ page: Page) -> some View {
-        NavigationLink(value: page) {
-            Label {
-                Text(page.sidebarTitle)
-                    .font(.system(size: 13))
-                    .lineLimit(2)
-            } icon: {
-                Image(systemName: page.symbol)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 12, height: 12)
-                    .foregroundStyle(.white)
-                    .frame(width: 20, height: 20)
-                    .background(page.tint.gradient, in: RoundedRectangle(cornerRadius: 5))
-                    .accessibilityHidden(true)
+    // MARK: - Sidebar
+
+    private var sidebar: some View {
+        List(selection: $selectedPage) {
+            Section(L10n.tr("settings.group.app", default: "App")) {
+                sidebarRow(.general)
+                sidebarRow(.clipboard)
+                sidebarRow(.ocr)
+                sidebarRow(.quickPaste)
             }
-            .padding(.vertical, 2)
+            Section(L10n.tr("settings.group.data", default: "Data")) {
+                sidebarRow(.folders)
+                sidebarRow(.privacy)
+                sidebarRow(.storage)
+            }
+            Section {
+                sidebarRow(.about)
+            }
         }
+        .listStyle(.sidebar)
+        .frame(width: Self.sidebarWidth)
+        .frame(maxHeight: .infinity)
+    }
+
+    private func sidebarRow(_ page: Page) -> some View {
+        Label {
+            Text(page.sidebarTitle)
+        } icon: {
+            if selectedPage == page {
+                Image(systemName: page.symbol)
+            } else {
+                Image(systemName: page.symbol)
+                    .foregroundStyle(page.tint)
+            }
+        }
+        .tag(page)
+    }
+
+    // MARK: - Detail
+
+    private var detailColumn: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text((selectedPage ?? .general).title)
+                .font(.title3.weight(.semibold))
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
+                .padding(.bottom, 4)
+            detail
+        }
+        .frame(maxWidth: 760)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     @ViewBuilder
@@ -180,8 +190,8 @@ struct SettingsView: View {
         switch selectedPage ?? .general {
         case .general: general
         case .clipboard: clipboard
-        case .ocr: OCRSettingsView(settings: settings, manager: AppRuntime.shared.hotkeyManager)
-        case .stack: stack
+        case .ocr: OCRSettingsView(settings: settings)
+        case .quickPaste: QuickPasteSettingsView(settings: settings, manager: AppRuntime.shared.hotkeyManager)
         case .folders: FoldersSettingsView(historyStore: historyStore)
         case .privacy: PrivacySettingsView(settings: settings)
         case .storage: storage
@@ -265,7 +275,6 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .pasteItGlassButtonStyle()
     }
 
     private var general: some View {
@@ -301,24 +310,23 @@ struct SettingsView: View {
                         Text(action.title).tag(action)
                     }
                 }
-                Toggle(L10n.tr("settings.pastePlainDefault", default: "Paste as plain text by default"), isOn: $settings.pasteAsPlainTextByDefault)
                 if settings.timelinePrimaryAction == .paste && !accessibilityTrusted {
                     DirectPastePermissionView()
                 }
             } header: {
                 Text(L10n.tr("settings.group.pasting", default: "Pasting"))
             } footer: {
-                Text(L10n.tr("action.settingDetail", default: "Double-click, Return, and ⌘1–9 use the selected action. Direct Paste is the default. ⇧Return always pastes plain text."))
+                Text(L10n.tr("action.settingDetail", default: "Double-click, Return, and ⌘1–9 use the selected action. Direct Paste is the default."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             Section {
-                ShortcutSettingsView(manager: AppRuntime.shared.hotkeyManager, actions: [.timeline, .stack, .plainPaste])
+                ShortcutSettingsView(manager: AppRuntime.shared.hotkeyManager, actions: [.timeline])
             } header: {
                 Text(L10n.tr("settings.group.shortcuts", default: "Keyboard Shortcuts"))
             } footer: {
-                Text(L10n.tr("shortcuts.plainFootnote", default: "The plain-text shortcut pastes once without formatting, then restores the original clipboard (Accessibility required). In the timeline, ⇧↩ pastes the selection as plain text."))
+                Text(L10n.tr("shortcuts.timelineFootnote", default: "Open clipboard history with ⇧⌘C. Configure Quick Paste separately on the Quick Paste page."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -328,6 +336,30 @@ struct SettingsView: View {
 
     private var clipboard: some View {
         Form {
+            Section(L10n.tr("settings.group.displayStyle", default: "Display Style")) {
+                Picker(L10n.tr("clipboard.style.picker", default: "Presentation"), selection: $settings.clipboardPresentationStyle) {
+                    Text(L10n.tr("clipboard.style.timeline", default: "Timeline"))
+                        .tag(ClipboardPresentationStyle.timeline)
+                    Text(L10n.tr("clipboard.style.candidateBar", default: "Candidate Bar"))
+                        .tag(ClipboardPresentationStyle.candidateBar)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+
+                ClipboardStylePreview(style: settings.clipboardPresentationStyle)
+
+                if settings.clipboardPresentationStyle == .candidateBar {
+                    CandidatePlacementPermissionRow(trusted: accessibilityTrusted)
+                    Text(L10n.tr("candidatePlacement.help", default: "Accessibility lets Pastel it！ place the candidate bar next to your text cursor. Without it, the bar appears near the mouse pointer instead."))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Text(L10n.tr("clipboard.style.help", default: "Choose a timeline or a compact bar of recent clips. Open either with your clipboard shortcut."))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
             Section(L10n.tr("settings.group.capture", default: "Capture")) {
                 Toggle(L10n.tr("settings.pauseCapture", default: "Pause clipboard capture"), isOn: $settings.capturePaused)
             }
@@ -411,31 +443,6 @@ struct SettingsView: View {
                         }
                     }
                 }
-            }
-        }
-        .formStyle(.grouped)
-    }
-
-    private var stack: some View {
-        Form {
-            Section {
-                Picker(L10n.tr("settings.stackDirection", default: "Default paste direction"), selection: Binding(
-                    get: { settings.pasteStackDefaultDirection },
-                    set: { newValue in
-                        settings.pasteStackDefaultDirection = newValue
-                        appState.pasteStackController?.direction = newValue
-                    }
-                )) {
-                    ForEach(PasteStackController.Direction.allCases) { direction in
-                        Text(direction.title).tag(direction)
-                    }
-                }
-            } footer: {
-                Text(L10n.tr("shortcuts.stackFootnote", default: "The Paste Stack shortcut opens or closes the queue. While it has items, ⌘V in any app pastes the next one (Accessibility required)."))
-            }
-
-            Section(L10n.tr("settings.group.shortcuts", default: "Keyboard Shortcuts")) {
-                ShortcutSettingsView(manager: AppRuntime.shared.hotkeyManager, actions: [.stack])
             }
         }
         .formStyle(.grouped)

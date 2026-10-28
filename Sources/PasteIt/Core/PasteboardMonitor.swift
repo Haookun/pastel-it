@@ -8,7 +8,6 @@ final class PasteboardMonitor: NSObject {
     private let settings: AppSettings
     private let blobStore: BlobStore
     private let historyStore: HistoryStore
-    private let pasteStackController: PasteStackController
 
     private var timer: Timer?
     private var lastChangeCount: Int
@@ -18,13 +17,11 @@ final class PasteboardMonitor: NSObject {
     init(
         settings: AppSettings,
         blobStore: BlobStore,
-        historyStore: HistoryStore,
-        pasteStackController: PasteStackController
+        historyStore: HistoryStore
     ) {
         self.settings = settings
         self.blobStore = blobStore
         self.historyStore = historyStore
-        self.pasteStackController = pasteStackController
         self.lastChangeCount = pasteboard.changeCount
     }
 
@@ -85,9 +82,6 @@ final class PasteboardMonitor: NSObject {
         )
         if let captured {
             historyStore.add(captured)
-            if pasteStackController.isCollecting {
-                pasteStackController.append(captured)
-            }
         }
         isCapturing = false
     }

@@ -1,3 +1,5 @@
+> 当前版本已移除旧 plain_paste 操作，并停用 Paste Stack；这两个历史事件不再由产品触发。相关归档代码可能仍保留历史 schema。
+
 # Analytics disclosure
 
 Pastel it！ may send **anonymous product analytics** to [PostHog](https://posthog.com) to improve the app. Analytics is **on by default** and can be turned off in **Settings → Privacy**.
@@ -50,8 +52,6 @@ The PostHog SDK may also attach its own library/device fields (including `$local
 | `panel_closed` | Timeline panel hidden | `duration_ms_bucket`; `did_stage`; `session_id` |
 | `session_summary` | Same moment as panel close | `opens`; `stages`; `searches`; `search_had_zero_results`; `session_id` |
 | `clip_staged` | Item staged to system pasteboard from timeline | `mode`; `trigger`; `clip_type`; `tab`; `age_bucket`; `session_id?` |
-| `plain_paste` | ⌃⌘V paste without formatting | `success`; `fail_reason?` (`empty` \| `accessibility`) |
-| `paste_stack_session` | Paste Stack closed (one event per open→close) | `direction`; `duration_ms_bucket`; `collected_count_bucket`; `paste_next_count`; `paste_next_attempts`; `empty_paste_next_count`; `paste_next_without_ax`; `accessibility_trusted_at_open`; `accessibility_trusted_at_close`; `last_fail_reason?` |
 | `update_interaction` | Sparkle update funnel | `action`; `source` (`auto` \| `menu` \| `settings`); `from_version`; `to_version?`; `result?` |
 
 ### `update_interaction` notes

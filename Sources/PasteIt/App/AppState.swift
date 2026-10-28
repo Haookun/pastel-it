@@ -84,7 +84,6 @@ final class AppState: ObservableObject {
     let searchService: SearchService
 
     weak var panelController: TimelinePanelController?
-    var pasteStackController: PasteStackController?
 
     @Published private var debouncedQuery: String = ""
     private var searchDebounceTask: Task<Void, Never>?

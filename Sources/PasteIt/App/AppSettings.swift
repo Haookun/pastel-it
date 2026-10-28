@@ -5,6 +5,17 @@ import SwiftUI
 @MainActor
 final class AppSettings: ObservableObject {
     @AppStorage("timelinePrimaryAction") private var timelinePrimaryActionRaw = ""
+    @AppStorage("clipboardPresentationStyle") private var clipboardPresentationStyleRaw = ClipboardPresentationStyle.timeline.rawValue
+
+    var clipboardPresentationStyle: ClipboardPresentationStyle {
+        get { ClipboardPresentationStyle(rawValue: clipboardPresentationStyleRaw) ?? .timeline }
+        set {
+            guard clipboardPresentationStyle != newValue else { return }
+            objectWillChange.send()
+            clipboardPresentationStyleRaw = newValue.rawValue
+        }
+    }
+
 
     var timelinePrimaryAction: TimelinePrimaryAction {
         get { .initialValue(saved: timelinePrimaryActionRaw) }
@@ -60,7 +71,7 @@ final class AppSettings: ObservableObject {
     /// Bump when shipping a What's New feature pack (not every semver).
     static let currentWhatsNewContentVersion = 3
     @AppStorage("seenWhatsNewContentVersion") var seenWhatsNewContentVersion: Int = 0
-    @AppStorage("agentAPIEnabled") var agentAPIEnabled: Bool = false
+    @AppStorage("agentAPIEnabled") private var legacyAgentAPIEnabled = false
     /// Anonymous usage analytics (PostHog). Never includes clipboard contents.
     @AppStorage("analyticsEnabled") var analyticsEnabled: Bool = true
     @AppStorage("pasteStackDefaultDirection") private var pasteStackDefaultDirectionRaw: String =
@@ -71,6 +82,7 @@ final class AppSettings: ObservableObject {
     /// Injectable preferences keep integration tests out of the user's defaults domain.
     init(defaults: UserDefaults = .standard) {
         _timelinePrimaryActionRaw = AppStorage(wrappedValue: "", "timelinePrimaryAction", store: defaults)
+        _clipboardPresentationStyleRaw = AppStorage(wrappedValue: ClipboardPresentationStyle.timeline.rawValue, "clipboardPresentationStyle", store: defaults)
         _clipboardCheckInterval = AppStorage(wrappedValue: 0.35, "clipboardCheckInterval", store: defaults)
         _capturePaused = AppStorage(wrappedValue: false, "capturePaused", store: defaults)
         _keepHistoryRaw = AppStorage(wrappedValue: KeepHistory.forever.rawValue, "keepHistory", store: defaults)
@@ -83,11 +95,18 @@ final class AppSettings: ObservableObject {
         _quickPasteScopeData = AppStorage(wrappedValue: Data(), "quickPasteScope", store: defaults)
         _hasCompletedOnboarding = AppStorage(wrappedValue: false, "hasCompletedOnboarding", store: defaults)
         _seenWhatsNewContentVersion = AppStorage(wrappedValue: 0, "seenWhatsNewContentVersion", store: defaults)
-        _agentAPIEnabled = AppStorage(wrappedValue: false, "agentAPIEnabled", store: defaults)
+        _legacyAgentAPIEnabled = AppStorage(wrappedValue: false, "agentAPIEnabled", store: defaults)
         _analyticsEnabled = AppStorage(wrappedValue: true, "analyticsEnabled", store: defaults)
         _pasteStackDefaultDirectionRaw = AppStorage(wrappedValue: PasteStackController.Direction.oldestFirst.rawValue, "pasteStackDefaultDirection", store: defaults)
         _ignoredBundleIdentifiersRaw = AppStorage(wrappedValue: defaultIgnoredApps.joined(separator: "\n"), "ignoredBundleIdentifiers", store: defaults)
         _ignoredPasteboardTypesRaw = AppStorage(wrappedValue: defaultIgnoredTypes.joined(separator: "\n"), "ignoredPasteboardTypes", store: defaults)
+        legacyAgentAPIEnabled = false
+    }
+
+    // Retain compatibility with archived code, but never honor a saved true value.
+    var agentAPIEnabled: Bool {
+        get { false }
+        set { legacyAgentAPIEnabled = false }
     }
 
     var keepHistory: KeepHistory {

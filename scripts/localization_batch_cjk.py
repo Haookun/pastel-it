@@ -575,6 +575,223 @@ BATCH_CJK.update({"settings.privateUpdates": {}})
 
 BATCH_CJK["menu.statusTooltip"].update({"zh-Hant": "Pastel it！ — 剪貼簿記錄", "ko": "Pastel it！ — 클립보드 기록"})
 
+
+# Native UI simplification and active shortcut wording.
+BATCH_CJK.update({
+    "shortcuts.timelineFootnote": {
+        "zh-Hant": "⇧⌘C 打開剪貼簿；快速貼上在 OCR 設定中另行設定。",
+        "ko": "⇧⌘C로 기록을 엽니다. 빠른 붙여넣기는 OCR 설정에서 변경합니다。"
+    },
+    "ocr.languages": {
+        "zh-Hant": "辨識語言",
+        "ko": "인식 언어"
+    },
+    "shortcuts.binding": {
+        "zh-Hant": "快速鍵",
+        "ko": "키보드 단축키"
+    },
+    "timeline.folders": {
+        "zh-Hant": "收藏分類",
+        "ko": "모음"
+    },
+    "quickPaste.help": {
+        "zh-Hant": "將目前系統剪貼簿轉為純文字並貼上，預設 ⇧⌘V。⇧⌘C 開啟剪貼簿。",
+        "ko": "현재 클립보드를 일반 텍스트로 변환하여 붙여넣습니다(⇧⌘V). 기록 열기 기본값은 ⇧⌘C입니다."
+    },
+    "action.settingDetail": {
+        "zh-Hant": "按兩下、Return 和 ⌘1–9 執行所選操作，預設直接貼上。",
+        "ko": "더블 클릭, Return, ⌘1–9는 선택한 동작을 실행합니다. 기본값은 바로 붙여넣기입니다."
+    },
+    "action.copySingle": {
+        "zh-Hant": "選取一項複製，或按 Return 依序貼上所選項目。",
+        "ko": "복사할 항목 하나를 선택하거나 Return으로 선택 항목을 순서대로 붙여넣으세요."
+    },
+    "onboarding.paste.caption": {
+        "zh-Hant": "⇧⌘C 開啟剪貼簿，選取記錄後複製或直接貼上。",
+        "ko": "⇧⌘C로 기록을 열고 항목을 복사하거나 붙여넣습니다."
+    }
+})
+
+# Accessible label for the native image/text preview picker.
+BATCH_CJK.update({
+    "preview.content": {
+        "zh-Hant": "預覽內容",
+        "ko": "미리보기 내용"
+    }
+})
+
+# Settings sidebar and onboarding native layout refinement.
+BATCH_CJK.update({
+    "settings.sidebar.ocr": {
+        "zh-Hant": "OCR",
+        "ko": "OCR"
+    },
+    "onboarding.skip": {
+        "zh-Hant": "略過",
+        "ko": "건너뛰기"
+    },
+    "onboarding.back": {
+        "zh-Hant": "上一步",
+        "ko": "뒤로"
+    },
+    "onboarding.continue": {
+        "zh-Hant": "繼續",
+        "ko": "계속"
+    },
+    "onboarding.done": {
+        "zh-Hant": "完成",
+        "ko": "완료"
+    },
+    "onboarding.getStarted": {
+        "zh-Hant": "開始使用",
+        "ko": "시작하기"
+    }
+})
+
+# Clipboard candidate-bar presentation.
+BATCH_CJK.update({
+    "settings.group.displayStyle": {
+        "zh-Hant": "顯示樣式",
+        "ko": "표시 스타일"
+    },
+    "clipboard.style.picker": {
+        "zh-Hant": "顯示方式",
+        "ko": "표시 방식"
+    },
+    "clipboard.style.timeline": {
+        "zh-Hant": "時間軸",
+        "ko": "타임라인"
+    },
+    "clipboard.style.candidateBar": {
+        "zh-Hant": "候選列",
+        "ko": "후보 막대"
+    },
+    "clipboard.style.help": {
+        "zh-Hant": "選擇時間軸或最近記錄候選列，均使用「開啟剪貼簿」快速鍵。",
+        "ko": "타임라인이나 최근 항목 후보 막대를 선택하세요. 같은 단축키로 열 수 있습니다."
+    },
+    "candidateBar.collapse": {
+        "zh-Hant": "收合",
+        "ko": "접기"
+    },
+    "candidateBar.expand": {
+        "zh-Hant": "展開更多",
+        "ko": "더 보기"
+    },
+    "candidateBar.close": {
+        "zh-Hant": "關閉",
+        "ko": "닫기"
+    },
+    "candidateBar.empty": {
+        "zh-Hant": "尚無剪貼簿記錄",
+        "ko": "최근 항목 없음"
+    },
+    "candidateBar.emptyDetail": {
+        "zh-Hant": "複製文字、圖片或檔案後，即會顯示在這裡。",
+        "ko": "텍스트, 이미지 또는 파일을 복사하면 여기에 표시됩니다."
+    },
+    "candidateBar.footer": {
+        "zh-Hant": "1–5 選取 · Tab 展開或收合",
+        "ko": "1–5 선택 · Tab 펼치기/접기"
+    },
+    "candidateBar.moreFiles": {
+        "zh-Hant": "另 %lld 個",
+        "ko": "외 %lld개"
+    },
+    "candidateBar.noPreview": {
+        "zh-Hant": "無法預覽",
+        "ko": "미리보기 없음"
+    },
+    "candidateBar.fileCount": {
+        "zh-Hant": "%lld 個檔案",
+        "ko": "파일 %lld개"
+    },
+    "candidateBar.emptyText": {
+        "zh-Hant": "空白內容",
+        "ko": "비어 있음"
+    }
+})
+
+BATCH_CJK["candidateBar.locationFallback"] = {'zh-Hant': '無法取得插入游標位置，暫在滑鼠旁顯示；請檢查輔助使用權限。', 'ko': '텍스트 커서 위치를 가져올 수 없어 포인터 근처에 표시합니다. 손쉬운 사용 권한을 확인하세요.'}
+
+# Vertical candidate pages and native settings (2026-10-28).
+BATCH_CJK.update({
+    "settings.group.app": {
+        "zh-Hant": "應用程式",
+        "ko": "앱"
+    },
+    "settings.group.data": {
+        "zh-Hant": "資料",
+        "ko": "데이터"
+    },
+    "settings.tab.quickPaste": {
+        "zh-Hant": "快速貼上",
+        "ko": "빠른 붙여넣기"
+    },
+    "clipboard.style.previewTimeline": {
+        "zh-Hant": "在螢幕底部橫向瀏覽卡片。",
+        "ko": "화면 아래에서 카드를 가로로 탐색합니다."
+    },
+    "clipboard.style.previewCandidate": {
+        "zh-Hant": "在文字游標旁顯示直向清單。",
+        "ko": "텍스트 커서 옆에 세로 목록을 표시합니다."
+    },
+    "candidatePlacement.title": {
+        "zh-Hant": "候選列定位",
+        "ko": "후보 위치"
+    },
+    "candidatePlacement.status": {
+        "zh-Hant": "輔助使用",
+        "ko": "손쉬운 사용"
+    },
+    "candidatePlacement.granted": {
+        "zh-Hant": "已授權",
+        "ko": "허용됨"
+    },
+    "candidatePlacement.notGranted": {
+        "zh-Hant": "未授權",
+        "ko": "허용 안 됨"
+    },
+    "candidatePlacement.request": {
+        "zh-Hant": "取得權限…",
+        "ko": "권한 허용…"
+    },
+    "candidatePlacement.help": {
+        "zh-Hant": "授權後可在文字游標旁顯示候選清單；無法定位時在滑鼠旁顯示。",
+        "ko": "권한을 허용하면 텍스트 커서 옆에 표시합니다. 위치를 확인할 수 없으면 포인터 근처에 표시합니다."
+    },
+    "candidateBar.page": {
+        "zh-Hant": "%lld/%lld",
+        "ko": "%lld/%lld"
+    },
+    "candidateBar.previousPage": {
+        "zh-Hant": "上一頁",
+        "ko": "이전 페이지"
+    },
+    "candidateBar.nextPage": {
+        "zh-Hant": "下一頁",
+        "ko": "다음 페이지"
+    },
+    "settings.tab.ocr": {
+        "zh-Hant": "OCR",
+        "ko": "OCR"
+    },
+    "shortcuts.timelineFootnote": {
+        "zh-Hant": "⇧⌘C 開啟剪貼簿；快速貼上可在獨立的「快速貼上」頁面設定。",
+        "ko": "⇧⌘C로 기록을 엽니다. 빠른 붙여넣기는 별도 페이지에서 설정하세요."
+    },
+    "clipboard.style.help": {
+        "zh-Hant": "候選清單每頁10筆，Tab 翻頁；兩種樣式共用開啟快速鍵。",
+        "ko": "후보는 페이지당 10개이며 Tab으로 넘깁니다. 같은 단축키로 엽니다."
+    },
+    "quickPaste.scopeHelp": {
+        "zh-Hant": "只轉換勾選的類型。圖片依照「OCR」頁面的設定；未授權輔助使用時，先準備純文字，再手動按 ⌘V。自動貼上後會還原原剪貼簿，除非期間複製了新內容。",
+        "ko": "선택한 유형만 변환합니다. 이미지는 OCR 페이지 설정을 따릅니다. 권한이 없으면 ⌘V로 직접 붙여넣습니다. 새로 복사한 내용이 없으면 자동 붙여넣기 후 원래 클립보드를 복원합니다."
+    }
+})
+
+BATCH_CJK["candidateBar.list"] = {"zh-Hant": "剪貼簿候選清單", "ko": "클립보드 후보"}
+
 def merge_batch_cjk(strings: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
     merged = {key: dict(locs) for key, locs in strings.items()}
     missing = set(merged) - set(BATCH_CJK)

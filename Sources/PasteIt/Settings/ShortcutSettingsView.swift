@@ -6,8 +6,6 @@ extension ShortcutAction {
     var title: String {
         switch self {
         case .timeline: L10n.tr("menu.openPaste", default: "Open Paste")
-        case .stack: L10n.tr("stack.open", default: "Open Paste Stack")
-        case .plainPaste: L10n.tr("menu.pastePlain", default: "Paste Without Formatting")
         case .quickPaste: L10n.tr("quickPaste.title", default: "Quick Paste")
         }
     }
@@ -17,19 +15,21 @@ struct ShortcutSettingsView: View {
     @ObservedObject var manager: HotkeyManager
     var actions: [ShortcutAction] = ShortcutAction.allCases
     var showsReset = true
+    var rowLabel: String? = nil
     @State private var recording: ShortcutAction?
 
     var body: some View {
         ForEach(actions, id: \.self) { action in
-            LabeledContent(action.title) {
+            LabeledContent(rowLabel ?? action.title) {
                 Button {
                     manager.clearError()
                     manager.beginRecording()
                     recording = action
                 } label: {
-                    Text(manager.shortcuts[action]?.display ?? "")
+                    Text(manager.shortcuts[action]?.display ?? L10n.tr("shortcuts.unassigned", default: "Not assigned"))
                         .frame(minWidth: 56, minHeight: 18)
                 }
+                .buttonStyle(.bordered)
                 .font(.system(.body, design: .monospaced))
                 .accessibilityLabel(action.title + ": " + (manager.shortcuts[action]?.display ?? L10n.tr("shortcuts.unassigned", default: "Not assigned")))
                 .help(L10n.tr("shortcuts.edit", default: "Click to change this shortcut"))
@@ -75,6 +75,7 @@ struct ShortcutSettingsView: View {
                 HStack {
                     Spacer()
                     Button(L10n.tr("common.cancel", default: "Cancel")) { recording = nil }
+                        .keyboardShortcut(.cancelAction)
                 }
             }
             .padding(24)

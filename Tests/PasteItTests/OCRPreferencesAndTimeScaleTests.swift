@@ -40,15 +40,17 @@ struct OCRPreferencesAndTimeScaleTests {
         #expect(single.nearest(to: 1) == entries[0])
     }
 
-    @Test func quickShortcutDefaultsConflictWithoutOverwritingTimeline() throws {
+    @Test func quickShortcutDefaultsAreIndependentAndRejectCustomConflicts() throws {
         var object = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(ShortcutConfiguration.defaults)) as? [String: Any])
         object.removeValue(forKey: "quickPaste")
         let legacy = try JSONSerialization.data(withJSONObject: object)
         let decoded = try JSONDecoder().decode(ShortcutConfiguration.self, from: legacy)
         #expect(decoded.quickPaste == nil)
-        #expect(decoded.timeline?.keyCode == 9)
+        #expect(decoded.timeline?.keyCode == 8)
         var value = ShortcutConfiguration.defaults
         value.quickPaste = ShortcutAction.quickPaste.defaultBinding
+        #expect(value.isValid)
+        value.timeline = ShortcutAction.quickPaste.defaultBinding
         #expect(!value.isValid)
         value.timeline = ShortcutBinding(keyCode: 9, modifiers: [.command, .option], key: "V")
         #expect(value.isValid)

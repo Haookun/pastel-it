@@ -228,6 +228,35 @@ struct OCRServiceTests {
         }
     }
 
+    @available(macOS 26.0, *)
+    @Test func quickPasteTableRoundTripRestoresImageAndSuppressesOwnWrites() async throws {
+        let board = NSPasteboard.withUniqueName()
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("PasteIt-Table-RoundTrip-\(UUID())")
+        defer { board.releaseGlobally(); try? FileManager.default.removeItem(at: root) }
+        let data = try tablePNG(OCRTableSample.multilingual[1])
+        #expect(board.setData(data, forType: .png))
+        let paste = PasteController(blobStore: BlobStore(rootURL: root), pasteboard: board)
+        let originalCount = board.changeCount
+        let snapshot = try #require(paste.snapshotGeneralPasteboard())
+        let text = try #require(await paste.quickPasteText(scope: .init(), configuration: .init(), ignoredTypes: []))
+        #expect(text.contains("| --- | --- | --- |"))
+        #expect(compact(text).contains("|苹果|12|30|"))
+        #expect(board.changeCount == originalCount)
+
+        var suppressedCounts: [Int] = []
+        paste.onPasteboardMutation = { suppressedCounts.append($0) }
+        #expect(paste.writePlainTextToGeneralPasteboard(text))
+        #expect(board.string(forType: .string) == text)
+        #expect(board.data(forType: .png) == nil)
+        #expect(board.types?.contains(.html) == false)
+        let writtenCount = board.changeCount
+        #expect(suppressedCounts == [writtenCount])
+        #expect(paste.restoreGeneralPasteboard(snapshot))
+        #expect(board.data(forType: .png) == data)
+        #expect(board.string(forType: .string) == nil)
+        #expect(suppressedCounts == [writtenCount, board.changeCount])
+    }
+
     @Test func rerunUpdatesPreviouslyCachedImageSearchResults() async throws {
         let suite = "PasteIt-OCR-Tests-\(UUID())"
         let defaults = try #require(UserDefaults(suiteName: suite))

@@ -751,6 +751,319 @@ BATCH2.update({"settings.privateUpdates": {}})
 
 BATCH2["menu.statusTooltip"].update({"fr": "Pastel it！ — Historique du presse-papiers", "de": "Pastel it！ — Zwischenablageverlauf", "es": "Pastel it！ — Historial del portapapeles", "pl": "Pastel it！ — Historia schowka"})
 
+
+# Native UI simplification and active shortcut wording.
+BATCH2.update({
+    "shortcuts.timelineFootnote": {
+        "de": "⇧⌘C öffnet den Verlauf. Schnelles Einfügen wird in den OCR-Einstellungen konfiguriert.",
+        "fr": "⇧⌘C ouvre l’historique. Configurez le collage rapide dans les réglages OCR.",
+        "es": "⇧⌘C abre el historial. Configura Pegado rápido en los ajustes de OCR.",
+        "pl": "⇧⌘C otwiera historię. Szybkie wklejanie skonfigurujesz w ustawieniach OCR."
+    },
+    "ocr.languages": {
+        "de": "Sprachen",
+        "fr": "Langues",
+        "es": "Idiomas",
+        "pl": "Języki"
+    },
+    "shortcuts.binding": {
+        "de": "Tastaturkurzbefehl",
+        "fr": "Raccourci clavier",
+        "es": "Atajo de teclado",
+        "pl": "Skrót klawiszowy"
+    },
+    "timeline.folders": {
+        "de": "Sammlungen",
+        "fr": "Collections",
+        "es": "Colecciones",
+        "pl": "Kolekcje"
+    },
+    "quickPaste.help": {
+        "de": "Aktuelle Zwischenablage als reinen Text einfügen: ⇧⌘V. Verlauf öffnen: ⇧⌘C.",
+        "fr": "Convertir le presse-papiers en texte brut et coller : ⇧⌘V. Ouvrir l’historique : ⇧⌘C.",
+        "es": "Convierte el portapapeles en texto sin formato y pega con ⇧⌘V. Abre el historial con ⇧⌘C.",
+        "pl": "Wklej bieżący schowek jako zwykły tekst: ⇧⌘V. Otwórz historię: ⇧⌘C."
+    },
+    "action.settingDetail": {
+        "de": "Doppelklick, Return und ⌘1–9 führen die gewählte Aktion aus. Standard: direkt einfügen.",
+        "fr": "Double-clic, Retour et ⌘1–9 exécutent l’action choisie. Par défaut : coller directement.",
+        "es": "Doble clic, Intro y ⌘1–9 ejecutan la acción seleccionada. Por defecto: pegar directamente.",
+        "pl": "Dwuklik, Return i ⌘1–9 wykonują wybraną czynność. Domyślnie: wklej bezpośrednio."
+    },
+    "action.copySingle": {
+        "de": "Ein Element zum Kopieren wählen oder Return drücken, um die Auswahl der Reihe nach einzufügen.",
+        "fr": "Sélectionnez un élément à copier ou appuyez sur Retour pour coller la sélection dans l’ordre.",
+        "es": "Selecciona un elemento para copiar o pulsa Intro para pegar la selección en orden.",
+        "pl": "Wybierz element do skopiowania lub naciśnij Return, aby wkleić zaznaczenie po kolei."
+    },
+    "onboarding.paste.caption": {
+        "de": "⇧⌘C öffnet den Verlauf. Ein Element auswählen und kopieren oder einfügen.",
+        "fr": "⇧⌘C ouvre l’historique. Sélectionnez un élément à copier ou coller.",
+        "es": "⇧⌘C abre el historial. Selecciona un elemento para copiar o pegar.",
+        "pl": "⇧⌘C otwiera historię. Wybierz element do skopiowania lub wklejenia."
+    }
+})
+
+# Accessible label for the native image/text preview picker.
+BATCH2.update({
+    "preview.content": {
+        "fr": "Contenu de l’aperçu",
+        "de": "Vorschauinhalt",
+        "es": "Contenido de la vista previa",
+        "pl": "Zawartość podglądu"
+    }
+})
+
+# Settings sidebar and onboarding native layout refinement.
+BATCH2.update({
+    "settings.sidebar.ocr": {
+        "fr": "OCR",
+        "de": "OCR",
+        "es": "OCR",
+        "pl": "OCR"
+    },
+    "onboarding.skip": {
+        "fr": "Ignorer",
+        "de": "Überspringen",
+        "es": "Omitir",
+        "pl": "Pomiń"
+    },
+    "onboarding.back": {
+        "fr": "Retour",
+        "de": "Zurück",
+        "es": "Atrás",
+        "pl": "Wstecz"
+    },
+    "onboarding.continue": {
+        "fr": "Continuer",
+        "de": "Weiter",
+        "es": "Continuar",
+        "pl": "Dalej"
+    },
+    "onboarding.done": {
+        "fr": "Terminé",
+        "de": "Fertig",
+        "es": "Listo",
+        "pl": "Gotowe"
+    },
+    "onboarding.getStarted": {
+        "fr": "Commencer",
+        "de": "Los geht’s",
+        "es": "Empezar",
+        "pl": "Rozpocznij"
+    }
+})
+
+# Clipboard candidate-bar presentation.
+BATCH2.update({
+    "settings.group.displayStyle": {
+        "fr": "Style d’affichage",
+        "de": "Darstellungsstil",
+        "es": "Estilo de vista",
+        "pl": "Styl wyświetlania"
+    },
+    "clipboard.style.picker": {
+        "fr": "Présentation",
+        "de": "Darstellung",
+        "es": "Presentación",
+        "pl": "Sposób wyświetlania"
+    },
+    "clipboard.style.timeline": {
+        "fr": "Chronologie",
+        "de": "Zeitleiste",
+        "es": "Cronología",
+        "pl": "Oś czasu"
+    },
+    "clipboard.style.candidateBar": {
+        "fr": "Barre de sélection",
+        "de": "Auswahlleiste",
+        "es": "Barra de opciones",
+        "pl": "Pasek wyboru"
+    },
+    "clipboard.style.help": {
+        "fr": "Choisissez la chronologie ou une barre des éléments récents. Le même raccourci ouvre les deux.",
+        "de": "Zeitleiste oder kompakte Auswahl der letzten Einträge. Beide öffnen sich mit demselben Kurzbefehl.",
+        "es": "Elige la cronología o una barra de elementos recientes. Ambas usan el mismo atajo.",
+        "pl": "Wybierz oś czasu lub pasek ostatnich elementów. Oba widoki otwiera ten sam skrót."
+    },
+    "candidateBar.collapse": {
+        "fr": "Réduire",
+        "de": "Weniger anzeigen",
+        "es": "Mostrar menos",
+        "pl": "Zwiń"
+    },
+    "candidateBar.expand": {
+        "fr": "Afficher plus",
+        "de": "Mehr anzeigen",
+        "es": "Mostrar más",
+        "pl": "Rozwiń"
+    },
+    "candidateBar.close": {
+        "fr": "Fermer",
+        "de": "Schließen",
+        "es": "Cerrar",
+        "pl": "Zamknij"
+    },
+    "candidateBar.empty": {
+        "fr": "Aucun élément récent",
+        "de": "Keine letzten Einträge",
+        "es": "Sin elementos recientes",
+        "pl": "Brak ostatnich elementów"
+    },
+    "candidateBar.emptyDetail": {
+        "fr": "Copiez du texte, des images ou des fichiers pour les voir ici.",
+        "de": "Kopierter Text, Bilder und Dateien erscheinen hier.",
+        "es": "Copia texto, imágenes o archivos para verlos aquí.",
+        "pl": "Skopiuj tekst, obrazy lub pliki, aby pojawiły się tutaj."
+    },
+    "candidateBar.footer": {
+        "fr": "1–5 : sélectionner · Tab : développer/réduire",
+        "de": "1–5 auswählen · Tab auf-/zuklappen",
+        "es": "1–5: elegir · Tab: expandir/contraer",
+        "pl": "1–5: wybór · Tab: rozwiń/zwiń"
+    },
+    "candidateBar.moreFiles": {
+        "fr": "+%lld autres",
+        "de": "+%lld weitere",
+        "es": "+%lld más",
+        "pl": "+%lld więcej"
+    },
+    "candidateBar.noPreview": {
+        "fr": "Aucun aperçu",
+        "de": "Keine Vorschau",
+        "es": "Sin vista previa",
+        "pl": "Brak podglądu"
+    },
+    "candidateBar.fileCount": {
+        "fr": "%lld fichiers",
+        "de": "%lld Dateien",
+        "es": "%lld archivos",
+        "pl": "Pliki: %lld"
+    },
+    "candidateBar.emptyText": {
+        "fr": "Vide",
+        "de": "Leer",
+        "es": "Vacío",
+        "pl": "Puste"
+    }
+})
+
+BATCH2["candidateBar.locationFallback"] = {'fr': 'Position du curseur indisponible. Affichage près du pointeur ; vérifiez l’accessibilité.', 'de': 'Cursorposition nicht verfügbar. Anzeige am Mauszeiger; Bedienungshilfen prüfen.', 'es': 'Posición del cursor no disponible. Se muestra junto al puntero; comprueba Accesibilidad.', 'pl': 'Pozycja kursora niedostępna. Wyświetlanie przy wskaźniku; sprawdź dostępność.'}
+
+# Vertical candidate pages and native settings (2026-10-28).
+BATCH2.update({
+    "settings.group.app": {
+        "fr": "Application",
+        "de": "App",
+        "es": "Aplicación",
+        "pl": "Aplikacja"
+    },
+    "settings.group.data": {
+        "fr": "Données",
+        "de": "Daten",
+        "es": "Datos",
+        "pl": "Dane"
+    },
+    "settings.tab.quickPaste": {
+        "fr": "Collage rapide",
+        "de": "Schnelles Einfügen",
+        "es": "Pegado rápido",
+        "pl": "Szybkie wklejanie"
+    },
+    "clipboard.style.previewTimeline": {
+        "fr": "Des cartes en bas de l’écran.",
+        "de": "Karten am unteren Bildschirmrand.",
+        "es": "Tarjetas en la parte inferior de la pantalla.",
+        "pl": "Karty u dołu ekranu."
+    },
+    "clipboard.style.previewCandidate": {
+        "fr": "Une liste près du curseur de texte.",
+        "de": "Eine Liste neben dem Textcursor.",
+        "es": "Una lista junto al cursor de texto.",
+        "pl": "Lista przy kursorze tekstowym."
+    },
+    "candidatePlacement.title": {
+        "fr": "Position des candidats",
+        "de": "Position der Kandidaten",
+        "es": "Posición de candidatos",
+        "pl": "Pozycja kandydatów"
+    },
+    "candidatePlacement.status": {
+        "fr": "Accessibilité",
+        "de": "Bedienungshilfen",
+        "es": "Accesibilidad",
+        "pl": "Dostępność"
+    },
+    "candidatePlacement.granted": {
+        "fr": "Autorisé",
+        "de": "Erlaubt",
+        "es": "Permitido",
+        "pl": "Zezwolono"
+    },
+    "candidatePlacement.notGranted": {
+        "fr": "Non autorisé",
+        "de": "Nicht erlaubt",
+        "es": "Sin permiso",
+        "pl": "Brak uprawnień"
+    },
+    "candidatePlacement.request": {
+        "fr": "Autoriser…",
+        "de": "Zugriff erlauben…",
+        "es": "Conceder acceso…",
+        "pl": "Przyznaj dostęp…"
+    },
+    "candidatePlacement.help": {
+        "fr": "L’accessibilité permet un affichage près du curseur de texte, sinon près du pointeur.",
+        "de": "Mit Bedienungshilfen erscheint die Liste am Textcursor, andernfalls am Mauszeiger.",
+        "es": "Accesibilidad permite mostrar la lista junto al cursor; si no está disponible, junto al puntero.",
+        "pl": "Dostępność pozwala wyświetlać listę przy kursorze tekstowym, a w razie braku pozycji przy wskaźniku."
+    },
+    "candidateBar.page": {
+        "fr": "%lld/%lld",
+        "de": "%lld/%lld",
+        "es": "%lld/%lld",
+        "pl": "%lld/%lld"
+    },
+    "candidateBar.previousPage": {
+        "fr": "Page précédente",
+        "de": "Vorherige Seite",
+        "es": "Página anterior",
+        "pl": "Poprzednia strona"
+    },
+    "candidateBar.nextPage": {
+        "fr": "Page suivante",
+        "de": "Nächste Seite",
+        "es": "Página siguiente",
+        "pl": "Następna strona"
+    },
+    "settings.tab.ocr": {
+        "fr": "OCR",
+        "de": "OCR",
+        "es": "OCR",
+        "pl": "OCR"
+    },
+    "shortcuts.timelineFootnote": {
+        "fr": "⇧⌘C ouvre l’historique. Le collage rapide se configure sur sa propre page.",
+        "de": "⇧⌘C öffnet den Verlauf. Schnelles Einfügen hat eine eigene Einstellungsseite.",
+        "es": "⇧⌘C abre el historial. El pegado rápido se configura en su propia página.",
+        "pl": "⇧⌘C otwiera historię. Szybkie wklejanie ma osobną stronę ustawień."
+    },
+    "clipboard.style.help": {
+        "fr": "10 éléments par page, Tab pour avancer. Le raccourci d’ouverture reste commun.",
+        "de": "10 Einträge pro Seite, Tab blättert weiter. Beide Ansichten nutzen denselben Kurzbefehl.",
+        "es": "10 elementos por página; Tab avanza. Ambas vistas usan el mismo atajo.",
+        "pl": "10 pozycji na stronę; Tab przechodzi dalej. Oba widoki mają ten sam skrót."
+    },
+    "quickPaste.scopeHelp": {
+        "fr": "Seuls les types sélectionnés sont convertis. Les images utilisent la page OCR. Sans accessibilité, collez avec ⌘V. Le presse-papiers est restauré sauf si un nouvel élément a été copié.",
+        "de": "Nur ausgewählte Typen werden umgewandelt. Bilder nutzen die OCR-Seite. Ohne Bedienungshilfen manuell mit ⌘V einfügen. Die Zwischenablage wird wiederhergestellt, sofern nichts Neues kopiert wurde.",
+        "es": "Solo se convierten los tipos seleccionados. Las imágenes usan la página OCR. Sin Accesibilidad, pega con ⌘V. El portapapeles se restaura salvo que copies algo nuevo.",
+        "pl": "Konwertowane są tylko zaznaczone typy. Obrazy korzystają ze strony OCR. Bez Dostępności wklej ręcznie przez ⌘V. Schowek jest przywracany, chyba że skopiowano coś nowego."
+    }
+})
+
+BATCH2["candidateBar.list"] = {"fr": "Éléments du presse-papiers", "de": "Zwischenablage-Einträge", "es": "Candidatos del portapapeles", "pl": "Pozycje schowka"}
+
 def merge_batch2(strings: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
     merged = {key: dict(locs) for key, locs in strings.items()}
     missing = set(merged) - set(BATCH2)

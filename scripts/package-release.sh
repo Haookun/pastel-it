@@ -23,6 +23,8 @@ source "$ROOT/scripts/lib/posthog-secrets.sh"
 SKIP_NOTARIZE=0
 SKIP_DMG=0
 REPACK_DMG=0
+BUILD_ONLY=0
+LOCAL_TEST=0
 CONFIGURATION=release
 # both | arm64 | universal
 VARIANT=both
@@ -34,6 +36,8 @@ Usage: package-release.sh [options]
   --skip-notarize   Sign only (no notarytool / stapler)
   --skip-dmg        Stop after signed (and optionally notarized) .app
   --repack-dmg      Reuse existing signed, notarized apps; rebuild only DMGs
+  --build-only      Assemble unsigned .app in dist/build-only (no signing or DMG)
+  --local-test      Ad-hoc sign for local testing in dist/local-test (no install)
   --variant NAME    both (default) | arm64 | universal
   -h, --help        Show this help
 
@@ -42,6 +46,7 @@ Env:
   PASTEIT_NOTARY_PROFILE      notarytool keychain profile (default: paste-it-notary)
   POSTHOG_PROJECT_TOKEN       Optional; or put in Secrets/posthog.env (gitignored)
   POSTHOG_HOST                Optional; default https://us.i.posthog.com
+  PASTEIT_BUILD_PATH          Optional SwiftPM scratch directory
 EOF
 }
 
@@ -50,6 +55,8 @@ while [[ $# -gt 0 ]]; do
     --skip-notarize) SKIP_NOTARIZE=1; shift ;;
     --skip-dmg) SKIP_DMG=1; shift ;;
     --repack-dmg) REPACK_DMG=1; shift ;;
+    --build-only) BUILD_ONLY=1; shift ;;
+    --local-test) LOCAL_TEST=1; shift ;;
     --variant)
       VARIANT="${2:-}"
       [[ "$VARIANT" == "both" || "$VARIANT" == "arm64" || "$VARIANT" == "universal" ]] \
@@ -61,8 +68,21 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ "$LOCAL_TEST" -eq 1 ]]; then
+  [[ "$BUILD_ONLY" -eq 0 && "$REPACK_DMG" -eq 0 ]] || { echo "--local-test cannot be combined with --build-only or --repack-dmg" >&2; exit 1; }
+  SKIP_NOTARIZE=1
+  SKIP_DMG=1
+fi
+if [[ "$BUILD_ONLY" -eq 1 ]]; then
+  [[ "$REPACK_DMG" -eq 0 ]] || { echo "--build-only cannot be combined with --repack-dmg" >&2; exit 1; }
+  SKIP_NOTARIZE=1
+  SKIP_DMG=1
+fi
+
 ENTITLEMENTS="$ROOT/PasteIt.entitlements"
 DIST="$ROOT/dist"
+[[ "$BUILD_ONLY" -eq 0 ]] || DIST="$DIST/build-only"
+[[ "$LOCAL_TEST" -eq 0 ]] || DIST="$DIST/local-test"
 APP_NAME="Pastel it！.app"
 ICON="$ROOT/Resources/AppIcon.icns"
 ASSETS_CAR="$ROOT/Resources/Assets.car"
@@ -96,8 +116,16 @@ resolve_identity() {
   return 0
 }
 
-IDENTITY="$(resolve_identity)" || exit 1
-echo "Signing identity: $IDENTITY"
+IDENTITY=""
+if [[ "$LOCAL_TEST" -eq 1 ]]; then
+  IDENTITY="-"
+  echo "Local test build: ad-hoc signing only; not a Developer ID release or installation."
+elif [[ "$BUILD_ONLY" -eq 0 ]]; then
+  IDENTITY="$(resolve_identity)" || exit 1
+  echo "Signing identity: $IDENTITY"
+else
+  echo "Build only: unsigned application, not eligible for installed-app acceptance testing."
+fi
 echo "Version: $SHORT_VERSION ($BUILD_VERSION)"
 echo "Variant: $VARIANT"
 
@@ -110,6 +138,9 @@ BUILD_FLAGS=(
   -Xswiftc -file-prefix-map -Xswiftc "$REPO_ROOT=/pasteit"
   -Xlinker -dead_strip
 )
+if [[ -n "${PASTEIT_BUILD_PATH:-}" ]]; then
+  BUILD_FLAGS+=(--scratch-path "$PASTEIT_BUILD_PATH")
+fi
 
 bin_path_for_arch() {
   local arch="$1"
@@ -130,13 +161,22 @@ build_arch() {
 }
 
 sign() {
-  codesign --force --timestamp --options runtime --sign "$IDENTITY" "$@"
+  if [[ "$LOCAL_TEST" -eq 1 ]]; then
+    codesign --force --sign "$IDENTITY" "$@"
+  else
+    codesign --force --timestamp --options runtime --sign "$IDENTITY" "$@"
+  fi
 }
 
 sign_app_bundle() {
   local app="$1"
   local sparkle="$app/Contents/Frameworks/Sparkle.framework"
   local sparkle_b="$sparkle/Versions/B"
+
+  # Copied frameworks/icons can carry Finder metadata from Documents. It is
+  # not application content, and codesign rejects it on nested bundles.
+  xattr -r -d com.apple.FinderInfo "$app" 2>/dev/null || true
+  xattr -r -d com.apple.ResourceFork "$app" 2>/dev/null || true
 
   echo "==> Sign Sparkle (inside-out, no --deep) — $(basename "$(dirname "$app")")"
   if [[ -d "$sparkle_b/XPCServices/Installer.xpc" ]]; then
@@ -225,6 +265,13 @@ assemble_app() {
   if [[ -d "$sparkle_src/PasteIt_PasteIt.bundle" ]]; then
     cp -R "$sparkle_src/PasteIt_PasteIt.bundle" "$app/Contents/Resources/"
   fi
+  # SwiftPM dependencies may have their own runtime resource bundles.
+  local resource_bundle
+  for resource_bundle in "$sparkle_src/"*.bundle; do
+    [[ -d "$resource_bundle" ]] || continue
+    [[ "$(basename "$resource_bundle")" != "PasteIt_PasteIt.bundle" ]] || continue
+    cp -R "$resource_bundle" "$app/Contents/Resources/"
+  done
 
   install_name_tool -add_rpath @executable_path/../Frameworks "$app/Contents/MacOS/PasteIt" 2>/dev/null || true
 
@@ -245,7 +292,70 @@ package_variant() {
   local app="$app_dir/$APP_NAME"
   local dmg="$DIST/PasteIt-${SHORT_VERSION}-${label}.dmg"
 
+  if [[ "$LOCAL_TEST" -eq 1 ]]; then
+    # File-provider metadata in Documents can reappear immediately after xattr
+    # cleanup. Sign a clean temporary copy, then copy the sealed app back.
+    local staging_root
+    staging_root="$(mktemp -d "${TMPDIR:-/private/tmp}/PastelItLocalSign.XXXXXX")"
+    local staging_app="$staging_root/$label/$APP_NAME"
+    assemble_app "$staging_root/$label" "$binary" "$sparkle_src" "$label"
+    sign_app_bundle "$staging_app"
+    # The archive also preserves a clean sealed copy if a file provider later
+    # decorates the expanded .app in Documents with Finder metadata again.
+    ditto --norsrc --noextattr -c -k --keepParent "$staging_app" "$DIST/Pastel-it-${label}-local.zip"
+    rm -rf "$app_dir"
+    mkdir -p "$app_dir"
+    ditto --norsrc --noextattr "$staging_app" "$app"
+    local attempt verified=0
+    for attempt in 1 2 3 4 5; do
+      # Bounded retry for asynchronously attached metadata, never a signature
+      # bypass: the final strict verification must succeed before delivery.
+      sleep 1
+      xattr -r -d com.apple.FinderInfo "$app" 2>/dev/null || true
+      xattr -r -d com.apple.ResourceFork "$app" 2>/dev/null || true
+      if codesign --verify --deep --strict --verbose=2 "$app"; then
+        verified=1
+        break
+      fi
+    done
+    [[ "$verified" -eq 1 ]] || { echo "Local app signature verification failed; clean signed archive retained." >&2; return 1; }
+    rm -rf "$staging_root"
+    cat > "$app_dir/开始合成验证.command" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+APP_DIR="$(cd "$(dirname "$0")" && pwd)"
+ARCH="$(basename "$APP_DIR")"
+# Keep execution outside file-provider folders so sync metadata cannot break
+# the clean archived signature after verification. No application is installed.
+RUN_DIR="$(mktemp -d "${TMPDIR:-/private/tmp}/PastelItManual.XXXXXX")"
+ditto -x -k "$APP_DIR/../Pastel-it-${ARCH}-local.zip" "$RUN_DIR"
+codesign --verify --deep --strict "$RUN_DIR/Pastel it！.app"
+case "${1:-}" in
+  "") open -n "$RUN_DIR/Pastel it！.app" --args --validation-session ;;
+  --normal) open -n "$RUN_DIR/Pastel it！.app" ;;
+  *) echo "Unsupported option: $1" >&2; exit 1 ;;
+esac
+EOF
+    chmod +x "$app_dir/开始合成验证.command"
+    cat > "$app_dir/开始普通验证.command" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+APP_DIR="$(cd "$(dirname "$0")" && pwd)"
+exec "$APP_DIR/开始合成验证.command" --normal
+EOF
+    chmod +x "$app_dir/开始普通验证.command"
+    echo "Built local test app: $app"
+    return 0
+  fi
+
   assemble_app "$app_dir" "$binary" "$sparkle_src" "$label"
+  if [[ "$BUILD_ONLY" -eq 1 ]]; then
+    # The linker emits a temporary arm64 signature. Assembly/stripping changes
+    # the binary; remove that stale signature rather than presenting it as valid.
+    codesign --remove-signature "$app/Contents/MacOS/PasteIt"
+    echo "Built unsigned app: $app"
+    return 0
+  fi
   sign_app_bundle "$app"
   notarize_app "$app" "$label"
 
@@ -318,7 +428,7 @@ if [[ "$VARIANT" == "both" || "$VARIANT" == "universal" ]]; then
 fi
 
 echo ""
-echo "Release artifacts:"
+echo "Application artifacts:"
 if [[ "$VARIANT" == "both" || "$VARIANT" == "arm64" ]]; then
   echo "  App (arm64):     $DIST/arm64/$APP_NAME"
   [[ "$SKIP_DMG" -eq 0 ]] && echo "  DMG (arm64):     $DIST/PasteIt-${SHORT_VERSION}-arm64.dmg"
@@ -328,5 +438,11 @@ if [[ "$VARIANT" == "both" || "$VARIANT" == "universal" ]]; then
   [[ "$SKIP_DMG" -eq 0 ]] && echo "  DMG (universal): $DIST/PasteIt-${SHORT_VERSION}-universal.dmg"
 fi
 echo ""
-echo "Next: copy DMGs to updates/, run generate-appcast.sh, upload GitHub Release mac-v${SHORT_VERSION}."
+if [[ "$LOCAL_TEST" -eq 1 ]]; then
+  echo "Local test build only. No app was installed or released."
+elif [[ "$BUILD_ONLY" -eq 1 ]]; then
+  echo "Unsigned build only. No app was installed or released."
+else
+  echo "Next: copy DMGs to updates/, run generate-appcast.sh, upload GitHub Release mac-v${SHORT_VERSION}."
+fi
 echo "See docs/mac-packaging.md and docs/mac-updates.md"

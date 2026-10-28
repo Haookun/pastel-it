@@ -13,4 +13,8 @@ swift build
 swift test
 ```
 
-Quick Paste starts disabled and attempts ⇧⌘V on first enablement. Its shortcut is separate from Open History; conflicts must be resolved before enabling it. Existing internal identifiers and the data directory are retained for compatibility; do not run both apps side by side. See [LICENSE](LICENSE) for upstream MIT attribution.
+Open History defaults to ⇧⌘C; Quick Paste defaults to ⇧⌘V and starts disabled. The standalone legacy plain-paste command is removed. Paste Stack and MCP are archived with all product entries and runtime activation disabled. Existing internal identifiers and the data directory are retained for compatibility; do not run both apps side by side. See [LICENSE](LICENSE) for upstream MIT attribution.
+
+설정의 클립보드 → 표시 스타일에서 타임라인과 후보 막대를 선택할 수 있습니다. 페이지당 10개 항목을 세로로 표시하며 1–9와 0으로 선택하고 Tab으로 다음 페이지, Shift-Tab으로 이전 페이지로 이동합니다. 이미지 OCR 요약과 파일 이름을 표시하고 마우스를 올리면 이미지나 전체 경로를 미리 봅니다.
+
+후보 막대는 텍스트 커서 옆에 표시되고 아래 공간이 부족하면 위로 이동합니다. 손쉬운 사용 권한이나 커서 위치를 사용할 수 없으면 안내와 함께 포인터 근처에 표시합니다.

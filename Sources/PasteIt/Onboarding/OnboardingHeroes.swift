@@ -1,4 +1,5 @@
 import SwiftUI
+import PasteItCore
 
 struct OnboardingHeroView: View {
     let page: OnboardingPageID
@@ -82,7 +83,7 @@ private struct CaptureHero: View {
     }
 }
 
-// MARK: - Paste — Open timeline → double-click → ⌘V → ⌃⌘V plain
+// MARK: - Paste — Open history → select → copy/paste
 
 private struct PasteHero: View {
     let isActive: Bool
@@ -91,11 +92,11 @@ private struct PasteHero: View {
     private let pasteResult = "Pastel it！ Docs\nexample.com/docs"
 
     var body: some View {
-        OnboardingBeatLoop(isActive: isActive, delays: [1.1, 1.5, 1.7, 2.2]) { beat in
+        OnboardingBeatLoop(isActive: isActive, delays: [1.1, 1.5, 2.2]) { beat in
             HeroScene(page: .paste, beat: beat) {
                 VStack(spacing: 10) {
                     if beat == 0 {
-                        KeyCapsule(label: "⇧ ⌘ V", pulsing: true, emphasized: true)
+                        KeyCapsule(label: ShortcutConfiguration.load(from: .standard).timeline?.display ?? "⇧⌘C", pulsing: true, emphasized: true)
                     }
 
                     HStack(alignment: .center, spacing: 14) {
@@ -136,15 +137,8 @@ private struct PasteHero: View {
                                 bodyText: beat >= 2 ? pasteResult : nil,
                                 placeholder: "Empty document"
                             )
-                            if beat >= 3 {
-                                KeyCapsule(label: "⌃ ⌘ V", pulsing: true, emphasized: true)
-                                Text("Paste without formatting")
-                                    .font(.system(size: 10, weight: .medium))
-                                    .foregroundStyle(.secondary)
-                            } else {
-                                KeyCapsule(label: "⌘ V", pulsing: beat == 2, emphasized: beat == 2)
-                                    .opacity(beat >= 2 ? 1 : 0.3)
-                            }
+                            KeyCapsule(label: "⌘ V", pulsing: beat == 2, emphasized: beat == 2)
+                                .opacity(beat >= 2 ? 1 : 0.3)
                         }
                         .demoFocus(beat >= 2)
                     }

@@ -5,16 +5,15 @@ import PasteItCore
 final class QuickPasteController {
     private let settings: AppSettings
     private let pasteController: PasteController
-    private let stack: PasteStackController
+    private var didPromptForAccessibility = false
     private let panel: TimelinePanelController
     private let state: AppState
     private var task: Task<Void, Never>?
 
-    init(settings: AppSettings, pasteController: PasteController, stack: PasteStackController,
+    init(settings: AppSettings, pasteController: PasteController,
          panel: TimelinePanelController, state: AppState) {
         self.settings = settings
         self.pasteController = pasteController
-        self.stack = stack
         self.panel = panel
         self.state = state
     }
@@ -51,12 +50,10 @@ final class QuickPasteController {
                 return
             }
             let snapshot = pasteController.snapshotGeneralPasteboard()
-            stack.suspendPasteIntercept()
-            defer { stack.resumePasteIntercept() }
             guard pasteController.writePlainTextToGeneralPasteboard(plain) else { return }
             let writtenCount = pasteController.pasteboardChangeCount
             guard SystemPasteSynthesizer.isAccessibilityTrusted else {
-                stack.ensureAccessibilityIfNeeded()
+                SystemPasteSynthesizer.ensureAccessibilityIfNeeded(didPrompt: &didPromptForAccessibility)
                 state.setStatus(L10n.tr("quickPaste.manual", default: "Plain text ready. Press ⌘V, or enable Accessibility for automatic pasting."))
                 return
             }

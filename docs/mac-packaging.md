@@ -1,11 +1,40 @@
-# Mac packaging (Developer ID + notarization)
+# macOS 本机打包与可选发布签名
 
-Direct distribution (GitHub Releases + Sparkle)，**不是** Mac App Store。产物：签名并公证的 `Pastel it！.app`，再打成 `PasteIt-{version}.dmg`。
+默认用于本机编译和个人使用，不需要 Apple Developer 账号、Developer ID 或公证。
+采用不带开发者身份的 ad-hoc 签名，不创建自签名证书，也不关闭 macOS 安全保护。
 
 一键脚本：[`scripts/package-release.sh`](../scripts/package-release.sh)  
 更新发版：[`mac-updates.md`](mac-updates.md)
 
-## 前置条件
+## 本机编译和运行（默认）
+
+```sh
+./scripts/package-release.sh --variant arm64 --local-test
+codesign --verify --deep --strict --verbose=2 "dist/local-test/arm64/Pastel it！.app"
+"dist/local-test/arm64/开始合成验证.command"
+```
+
+`--local-test` 使用 `codesign --sign -`，按由内到外的顺序签名 Sparkle 和主应用；
+不生成 DMG、不公证、不安装、不发布。文件同步可能为 Documents 下的文件补充 Finder 元数据，
+因此先在临时目录签名，再复制回项目，等待同步元数据落定后清理并严格校验，其他 `dist/` 产物保持不变。
+同时保留 `dist/local-test/Pastel-it-arm64-local.zip` 中的干净签名副本，方便存放到不受文件同步影响的位置。
+双击 `dist/local-test/arm64/开始合成验证.command` 可进入下述合成模式；启动器会解压干净签名副本到系统临时目录，校验后再启动，避免文件同步在校验后重新添加元数据。`开始普通验证.command` 使用真实历史。两个入口均不安装应用。
+
+`--validation-session` 启动真实应用界面，但历史使用内存数据库、48 条合成记录、临时附件和独立偏好；
+不修改真实历史或开机启动项，退出后清理测试附件和偏好。它仍使用系统剪贴板和快捷键，只复制合成内容进行验证。
+不带该参数启动则使用原有真实历史。未明确要求安装时，应用留在项目目录。
+按用户约定，agent 只做代码、编译、资源和签名校验，实际功能由用户按 [手动确认清单](manual-validation.md) 验收。
+
+ad-hoc 用于本机运行，不是 Apple 开发者身份认证；复制给其他人或下载后，Gatekeeper 仍可能要求对这个应用单独允许打开。
+参见 [Apple 的单应用打开流程](https://support.apple.com/en-us/102445)。不要全局关闭 Gatekeeper、SIP、AMFI 或重置系统权限。
+
+本机编译采用临时签名也是开源项目的常见选择之一，例如 [Ghostty 本机构建配置](https://github.com/ghostty-org/ghostty/blob/c7cbc9bfd44cb11a9c7eae00f1166624671e363b/macos/Ghostty.xcodeproj/project.pbxproj#L543)
+将签名身份设为 `-` 并留空开发团队。开源许可与代码签名是独立事项，其他项目仍可能为公开安装包使用 Developer ID。
+[Apple 对 Apple Silicon 代码签名的说明](https://support.apple.com/en-au/guide/security/secebb113be1/web) 说明本机 arm64 代码需要有效签名，ad-hoc 可以满足基础签名要求。
+
+## 可选：对外分发前置条件
+
+以下 Developer ID、公证和 DMG 流程仅在以后决定使用这些分发方式时启用；缺少证书不阻塞以上本机流程。
 
 本机 Keychain 需具备：
 
@@ -54,6 +83,18 @@ DMG 使用 UDZO（zlib）压缩，显式设置 `compression_level = 9`，避免�
 ./scripts/package-release.sh --skip-dmg
 ./scripts/package-release.sh --variant arm64
 ```
+
+没有 Developer ID 证书时，可以只编译并组装应用包：
+
+```sh
+./scripts/package-release.sh --variant arm64 --build-only
+```
+
+输出为 `dist/build-only/arm64/Pastel it！.app`，包含语言包、图标和依赖资源。
+此选项不做应用签名、公证、DMG、安装或发布，也不替代签名安装与真实交互验收；
+不要将该未签名应用安装到 `/Applications`。它只清理 `dist/build-only/`，保留其他打包产物。
+如需复用已有 SwiftPM 构建目录，设置 `PASTEIT_BUILD_PATH`；本机离线依赖仍需显式设置
+`PASTEL_USE_LOCAL_DEPENDENCIES=1`。
 
 DMG 使用紧凑的左右拖拽安装布局：应用在左、Applications 快捷方式在右，540 × 320 pt 窗口、96 pt 图标，隐藏侧栏和工具栏。不嵌入背景图或箭头。使用固定版本的 `dmgbuild` 直接生成 Finder 布局元数据；配置见 `scripts/dmg-settings.py`，工具安装在忽略的 `.tools/dmg-layout/`。
 

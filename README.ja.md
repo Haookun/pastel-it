@@ -13,4 +13,8 @@ swift build
 swift test
 ```
 
-Quick Paste starts disabled and attempts ⇧⌘V on first enablement. Its shortcut is separate from Open History; conflicts must be resolved before enabling it. Existing internal identifiers and the data directory are retained for compatibility; do not run both apps side by side. See [LICENSE](LICENSE) for upstream MIT attribution.
+Open History defaults to ⇧⌘C; Quick Paste defaults to ⇧⌘V and starts disabled. The standalone legacy plain-paste command is removed. Paste Stack and MCP are archived with all product entries and runtime activation disabled. Existing internal identifiers and the data directory are retained for compatibility; do not run both apps side by side. See [LICENSE](LICENSE) for upstream MIT attribution.
+
+設定の「クリップボード → 表示スタイル」でタイムラインと候補バーを切り替えられます。候補は縦に1ページ10件表示され、1–9と0で選択、Tabで次のページ、Shift-Tabで前のページへ移動します。画像はOCR概要、ファイルは名前を表示し、ホバーで画像やフルパスを確認できます。
+
+候補バーは文字入力カーソル付近に表示され、下側に空きがなければ上側へ移動します。アクセシビリティ権限または位置情報が利用できない場合は、ポインタ付近に表示して案内します。

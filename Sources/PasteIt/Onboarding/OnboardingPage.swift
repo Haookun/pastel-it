@@ -9,13 +9,13 @@ enum OnboardingFlow: String {
 enum OnboardingPageID: Int, CaseIterable, Identifiable {
     /// Copy in any app → history + menu-bar flash.
     case capture
-    /// ⇧⌘V open timeline → select → ⌘V paste → ⌃⌘V paste plain.
+    /// ⇧⌘C opens history; choose a clip to copy or paste.
     case paste
     /// Space preview bubble → click to edit in place.
     case browse
     /// ⌘-click multi-select → Return to paste in order.
     case organize
-    /// ⇧⌘C open stack → copy into the queue → ⌘V in the target app.
+    /// Archived queue tutorial, excluded from active install and update pages.
     case stack
 
     var id: Int { rawValue }
@@ -46,11 +46,7 @@ enum OnboardingPageID: Int, CaseIterable, Identifiable {
         case .paste: return L10n.tr("action.tutorial", default: "Select a clip, ⌘C to copy, then ⌘V in your app. Choose Direct Paste in Settings for one-step reuse.")
         case .browse: return L10n.tr("onboarding.browse.caption", default: "Press Space to preview above the timeline. Click the text to edit.")
         case .organize: return L10n.tr("onboarding.organize.caption", default: "⌘-click several clips, then press Return to paste them in order.")
-        case .stack:
-            guard let binding = ShortcutConfiguration.load(from: .standard).stack else {
-                return L10n.tr("shortcuts.stackTutorialWithoutBinding", default: "Open Paste Stack from the menu. Copy several things, then ⌘V in the target app to paste them one by one.")
-            }
-            return L10n.tr("shortcuts.stackTutorial", default: "%@ opens a queue on the right. Copy several things, then ⌘V in the target app to paste them one by one.", binding.display)
+        case .stack: return L10n.tr("onboarding.stack.caption", default: "Paste Stack is archived in this build.")
         }
     }
 
@@ -64,7 +60,6 @@ enum OnboardingPageID: Int, CaseIterable, Identifiable {
             L10n.tr("onboarding.step.open", default: "Open"),
             L10n.tr("onboarding.step.copy", default: "Copy"),
             L10n.tr("onboarding.step.paste", default: "Paste"),
-            L10n.tr("onboarding.step.plain", default: "Plain"),
         ]
         case .browse: return [
             L10n.tr("onboarding.step.space", default: "Space"),
@@ -76,7 +71,7 @@ enum OnboardingPageID: Int, CaseIterable, Identifiable {
             L10n.tr("onboarding.step.order", default: "Order"),
             L10n.tr("onboarding.step.return", default: "Return"),
         ]
-        case .stack: return [ShortcutConfiguration.load(from: .standard).stack?.display ?? L10n.tr("stack.open", default: "Open Paste Stack"), L10n.tr("onboarding.step.copy", default: "Copy"), "⌘V"]
+        case .stack: return [L10n.tr("stack.open", default: "Open Paste Stack"), L10n.tr("onboarding.step.copy", default: "Copy"), "⌘V"]
         }
     }
 
@@ -84,9 +79,9 @@ enum OnboardingPageID: Int, CaseIterable, Identifiable {
         // Install: full first-run. Update: only the new Stack loop.
         switch flow {
         case .install:
-            return [.capture, .paste, .browse, .organize, .stack]
+            return [.capture, .paste, .browse, .organize]
         case .update:
-            return [.stack]
+            return [.paste, .browse, .organize]
         }
     }
 }

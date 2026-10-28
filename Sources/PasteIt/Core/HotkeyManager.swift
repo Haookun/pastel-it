@@ -10,8 +10,6 @@ final class HotkeyManager: ObservableObject {
     @Published private(set) var errorMessage: String?
     private let defaults: UserDefaults
     private let showTimeline: () -> Void
-    private let togglePasteStack: () -> Void
-    private let pastePlain: () -> Bool
     private let editSelected: () -> Bool
     private let quickPaste: () -> Bool
     private var quickPasteEnabled: Bool
@@ -22,18 +20,15 @@ final class HotkeyManager: ObservableObject {
 
     init(defaults: UserDefaults = .standard,
          showTimeline: @escaping () -> Void,
-         togglePasteStack: @escaping () -> Void,
-         pastePlain: @escaping () -> Bool,
          editSelected: @escaping () -> Bool,
          quickPaste: @escaping () -> Bool = { false }) {
         self.defaults = defaults
         self.shortcuts = .load(from: defaults)
         self.showTimeline = showTimeline
-        self.togglePasteStack = togglePasteStack
-        self.pastePlain = pastePlain
         self.editSelected = editSelected
         self.quickPaste = quickPaste
         self.quickPasteEnabled = defaults.bool(forKey: "quickPasteEnabled")
+        self.shortcuts.save(to: defaults)
     }
 
     func start() {
@@ -196,8 +191,6 @@ final class HotkeyManager: ObservableObject {
     private func perform(_ action: ShortcutAction) -> Bool {
         switch action {
         case .timeline: showTimeline(); return true
-        case .stack: togglePasteStack(); return true
-        case .plainPaste: return pastePlain()
         case .quickPaste: return quickPasteEnabled ? quickPaste() : false
         }
     }

@@ -6,11 +6,11 @@ struct ShortcutBindingTests {
     @Test func defaultAndDuplicateValidation() throws {
         #expect(ShortcutConfiguration.defaults.isValid)
         var config = ShortcutConfiguration.defaults
-        config.stack = config.timeline
+        config.quickPaste = config.timeline
         #expect(!config.isValid)
         // Display text cannot hide a physical key conflict.
         let timeline = try #require(config.timeline)
-        config.stack = ShortcutBinding(keyCode: timeline.keyCode,
+        config.quickPaste = ShortcutBinding(keyCode: timeline.keyCode,
                                        modifiers: timeline.modifiers, key: "Different")
         #expect(!config.isValid)
     }
@@ -36,7 +36,7 @@ struct ShortcutBindingTests {
         #expect(ShortcutConfiguration.load(from: defaults) == .defaults)
         defaults.set(Data("bad json".utf8), forKey: "globalKeyboardShortcuts")
         #expect(ShortcutConfiguration.load(from: defaults) == .defaults)
-        changed.stack = changed.timeline
+        changed.quickPaste = changed.timeline
         defaults.set(try JSONEncoder().encode(changed), forKey: "globalKeyboardShortcuts")
         #expect(ShortcutConfiguration.load(from: defaults) == .defaults)
     }
@@ -61,14 +61,42 @@ struct ShortcutBindingTests {
     }
 
     @Test func clearingOneShortcutKeepsOtherActionsAndExistingPreferences() throws {
-        let legacy = try JSONEncoder().encode(ShortcutConfiguration.defaults)
-        var config = try JSONDecoder().decode(ShortcutConfiguration.self, from: legacy)
+        let data = try JSONEncoder().encode(ShortcutConfiguration.defaults)
+        var config = try JSONDecoder().decode(ShortcutConfiguration.self, from: data)
         config.timeline = nil
         #expect(config.isValid)
-        #expect(config.stack == ShortcutAction.stack.defaultBinding)
-        #expect(config.plainPaste == ShortcutAction.plainPaste.defaultBinding)
-        config.timeline = config.stack
+        #expect(config.quickPaste == ShortcutAction.quickPaste.defaultBinding)
+        config.timeline = config.quickPaste
         #expect(!config.isValid)
+    }
+
+    @Test func migratesOnlyTheLegacyFactoryShortcuts() throws {
+        let oldTimeline = ShortcutBinding(keyCode: 9, modifiers: [.command, .shift], key: "V")
+        let oldPlain = ShortcutBinding(keyCode: 9, modifiers: [.command, .control], key: "V")
+        struct Legacy: Encodable {
+            var timeline: ShortcutBinding?
+            var stack: ShortcutBinding?
+            var plainPaste: ShortcutBinding?
+            var quickPaste: ShortcutBinding?
+        }
+        let old = Legacy(timeline: oldTimeline, stack: ShortcutAction.timeline.defaultBinding,
+                         plainPaste: oldPlain, quickPaste: nil)
+        let migrated = try JSONDecoder().decode(ShortcutConfiguration.self, from: JSONEncoder().encode(old))
+        #expect(migrated == .defaults)
+        var customized = old
+        customized.timeline = ShortcutBinding(keyCode: 9, modifiers: [.option, .command], key: "V")
+        let kept = try JSONDecoder().decode(ShortcutConfiguration.self, from: JSONEncoder().encode(customized))
+        #expect(kept.timeline == customized.timeline)
+        #expect(kept.quickPaste == nil)
+        customized.timeline = nil
+        let cleared = try JSONDecoder().decode(ShortcutConfiguration.self, from: JSONEncoder().encode(customized))
+        #expect(cleared.timeline == nil)
+        #expect(cleared.quickPaste == nil)
+        let encoded = try JSONEncoder().encode(migrated)
+        let object = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        #expect(object["stack"] == nil)
+        #expect(object["plainPaste"] == nil)
+        #expect(object["schemaVersion"] as? Int == 2)
     }
 
     @Test func permissionPromptOnlyOnNewGrant() {

@@ -2,7 +2,7 @@ import Foundation
 import MCP
 import Network
 
-/// Loopback-only MCP HTTP acceptor. Default off; started from the menu / AppSettings.
+/// Loopback-only MCP HTTP acceptor. Archived in this build; production startup is disabled.
 /// Parses raw HTTP and forwards `POST /mcp` to `StatelessHTTPServerTransport`.
 final class AgentAPIServer: @unchecked Sendable {
     static let shared = AgentAPIServer()
@@ -29,6 +29,7 @@ final class AgentAPIServer: @unchecked Sendable {
     /// dead/half-open listener (after a failed render) is torn down and rebound.
     @MainActor
     func start(forceRestart: Bool = false) {
+        guard AppFeatures.mcpEnabled else { return }
         if forceRestart {
             stopListener()
         }

@@ -349,7 +349,7 @@ struct DemoStackRail: View {
                 Text("Stack")
                     .font(.system(size: 12, weight: .semibold))
                 Spacer(minLength: 4)
-                Text(ShortcutConfiguration.load(from: .standard).stack?.display ?? "")
+                Text("—")
                     .font(.system(size: 10, weight: .medium).monospaced())
                     .foregroundStyle(.secondary)
             }

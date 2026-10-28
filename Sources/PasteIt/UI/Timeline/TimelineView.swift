@@ -20,7 +20,6 @@ struct TimelineView: View {
     @State private var manualCopyReady = false
     @State private var isWorking = false
     @State private var deleteEverywhereItem: ClipItem?
-    @Namespace private var tabHighlightNamespace
 
     init(appState: AppState, pasteController: PasteController) {
         self.appState = appState
@@ -198,21 +197,18 @@ struct TimelineView: View {
 
     private var tabPicker: some View {
         HStack(spacing: 6) {
-            HStack(spacing: 2) {
+            Picker(L10n.tr("timeline.folders", default: "Collections"), selection: $appState.selectedTab) {
                 ForEach(TimelineTab.fixedTabs) { tab in
-                    tabButton(tab, title: tab.title, systemImage: tab.systemImage)
+                    Label(tab.title, systemImage: tab.systemImage).tag(tab)
                 }
                 ForEach(historyStore.customFolders) { folder in
-                    tabButton(
-                        .folder(folder.id),
-                        title: folder.name,
-                        systemImage: "folder"
-                    )
+                    Label(folder.name, systemImage: "folder").tag(TimelineTab.folder(folder.id))
                 }
             }
-            .padding(3)
-            .pasteItCapsuleGlass()
-            .animation(.easeOut(duration: 0.22), value: appState.selectedTab.id)
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .frame(maxWidth: 480)
+            .onChange(of: appState.selectedTab) { _, _ in appState.dismissPreview() }
 
             if historyStore.canCreateCustomFolder {
                 Button {
@@ -224,9 +220,8 @@ struct TimelineView: View {
                         .font(.system(size: 13, weight: .semibold))
                         .frame(width: 28, height: 28)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderless)
                 .foregroundStyle(.secondary)
-                .pasteItControlGlass()
                 .help(L10n.tr("timeline.newFolderHelp", default: "New Folder"))
                 .popover(isPresented: $isShowingCreateFolderPopover, arrowEdge: .bottom) {
                     CreateFolderPopover(
@@ -240,34 +235,6 @@ struct TimelineView: View {
                 }
             }
         }
-    }
-
-    private func tabButton(_ tab: TimelineTab, title: String, systemImage: String) -> some View {
-        let isSelected = appState.selectedTab == tab
-        return Button {
-            if isSelected {
-                appState.dismissPreview()
-            } else {
-                withAnimation(.easeOut(duration: 0.22)) {
-                    appState.selectedTab = tab
-                }
-            }
-        } label: {
-            Label(title, systemImage: systemImage)
-                .labelStyle(.titleAndIcon)
-                .font(.system(size: 12, weight: .semibold))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background {
-                    pasteItSegmentHighlight(
-                        isSelected: isSelected,
-                        in: tabHighlightNamespace
-                    )
-                }
-                .contentShape(Capsule())
-        }
-        .buttonStyle(.plain)
-        .foregroundStyle(isSelected ? Color.primary : Color.secondary.opacity(0.68))
     }
 
     private func createFolder() {
@@ -453,7 +420,7 @@ struct TimelineView: View {
         } else {
             guard appState.selectedCount == 1, let clip = item ?? appState.selectedClip else {
                 clearIssue()
-                actionIssue = L10n.tr("action.copySingle", default: "Select one clip to copy. Use ⇧Return to paste multiple clips as plain text.")
+                actionIssue = L10n.tr("action.copySingle", default: "Select one clip to copy, or press Return to paste the selected clips in order.")
                 return
             }
             stage(clip, trigger: trigger, dismissPanel: true)
@@ -461,7 +428,7 @@ struct TimelineView: View {
     }
 
     private func resolvedMode(_ mode: PasteController.PasteMode) -> PasteController.PasteMode {
-        settings.pasteAsPlainTextByDefault && mode == .normal ? .plainText : mode
+        mode
     }
 
     private func reportFailure(retry: @escaping () -> Void) {
@@ -509,7 +476,7 @@ struct TimelineView: View {
     private func copySelection(trigger: String) {
         guard appState.selectedCount == 1, let first = appState.selectedClip else {
             clearIssue()
-            actionIssue = L10n.tr("action.copySingle", default: "Select one clip to copy. Use ⇧Return to paste multiple clips as plain text.")
+            actionIssue = L10n.tr("action.copySingle", default: "Select one clip to copy, or press Return to paste the selected clips in order.")
             return
         }
         stage(first, trigger: trigger, dismissPanel: false)
@@ -543,9 +510,6 @@ struct TimelineView: View {
                 reportFailure { pasteSelectionSequentially(mode: mode, trigger: trigger) }
                 return
             }
-            let stack = appState.pasteStackController
-            stack?.suspendPasteIntercept()
-            defer { stack?.resumePasteIntercept() }
             await dismissTimelinePanel()
             try? await Task.sleep(nanoseconds: 100_000_000)
             for (index, item) in ordered.enumerated() {
@@ -627,11 +591,6 @@ struct TimelineView: View {
                 activate(trigger: "return")
             }
             .keyboardShortcut(.return, modifiers: [])
-
-            Button("") {
-                pasteSelectionSequentially(mode: .plainText, trigger: "shift_return")
-            }
-            .keyboardShortcut(.return, modifiers: [.shift])
 
             // Paste: ⌘C copies selected item to the clipboard and promotes it.
             Button("") {
@@ -882,11 +841,8 @@ private struct CreateFolderPopover: View {
                 .foregroundStyle(.secondary)
 
             TextField(L10n.tr("folders.namePlaceholder", default: "Folder name"), text: $name)
-                .textFieldStyle(.plain)
+                .textFieldStyle(.roundedBorder)
                 .focused($isNameFocused)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 7)
-                .pasteItControlGlass()
                 .onSubmit {
                     if canCreate { onCreate() }
                 }

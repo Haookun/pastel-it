@@ -1,3 +1,5 @@
+> 当前私人派生版已停用 MCP，保留本文件作为归档协议说明。菜单、设置及生产运行没有入口或监听器；旧开关为 true 也不能重新启用。下面的启用步骤仅描述上游/历史实现，当前构建不可用。
+
 # Paste It MCP
 
 Local [Model Context Protocol](https://modelcontextprotocol.io) server for agents. **Off by default** — enable from the menu bar **MCP** checkbox after opening Paste It normally.

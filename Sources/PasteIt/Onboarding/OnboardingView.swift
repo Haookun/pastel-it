@@ -1,4 +1,5 @@
 import SwiftUI
+import PasteItCore
 
 /// Shared between the onboarding window and SwiftUI view so close-without-button still reports.
 @MainActor
@@ -48,31 +49,29 @@ struct OnboardingView: View {
     private var currentPage: OnboardingPageID { pages[pageIndex] }
 
     private let footerHeight: CGFloat = 44
-    private let titleBlockHeight: CGFloat = 52
 
     var body: some View {
         VStack(spacing: 0) {
             titleBlock
                 .padding(.horizontal, 24)
-                .padding(.top, 14)
-                .frame(height: titleBlockHeight, alignment: .top)
-                .clipped()
+                .padding(.top, 20)
+                .padding(.bottom, 10)
+                .fixedSize(horizontal: false, vertical: true)
                 .layoutPriority(1)
 
             heroSection
                 .padding(.horizontal, 16)
-                .padding(.top, 6)
                 .padding(.bottom, 4)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .layoutPriority(0)
 
             footer
                 .padding(.horizontal, 20)
-                .padding(.top, 10)
+                .padding(.top, 12)
                 .padding(.bottom, 16)
                 .layoutPriority(1)
         }
-        .frame(width: 640, height: 500)
+        .frame(width: 640, height: 540)
         .background(Color(nsColor: .windowBackgroundColor))
         .onAppear {
             analytics.markStarted()
@@ -119,7 +118,7 @@ struct OnboardingView: View {
         // Back/Continue from shifting when Skip is narrow or Back is hidden.
         HStack(spacing: 0) {
             HStack(spacing: 0) {
-                Button("Skip") {
+                Button(L10n.tr("onboarding.skip", default: "Skip")) {
                     finish(outcome: "skipped")
                 }
                 .buttonStyle(.plain)
@@ -132,7 +131,7 @@ struct OnboardingView: View {
 
             HStack(spacing: 12) {
                 Spacer(minLength: 0)
-                Button("Back") {
+                Button(L10n.tr("onboarding.back", default: "Back")) {
                     go(to: pageIndex - 1, forward: false)
                 }
                 .keyboardShortcut(.leftArrow, modifiers: [])
@@ -140,7 +139,7 @@ struct OnboardingView: View {
                 .disabled(pageIndex == 0)
                 .allowsHitTesting(pageIndex > 0)
 
-                Button(isLastPage ? finishButtonTitle : "Continue") {
+                Button(isLastPage ? finishButtonTitle : L10n.tr("onboarding.continue", default: "Continue")) {
                     if isLastPage {
                         finish(outcome: "completed")
                     } else {
@@ -157,7 +156,9 @@ struct OnboardingView: View {
     }
 
     private var finishButtonTitle: String {
-        flow == .update ? "Done" : "Get Started"
+        flow == .update
+            ? L10n.tr("onboarding.done", default: "Done")
+            : L10n.tr("onboarding.getStarted", default: "Get Started")
     }
 
     private var pageIndicators: some View {

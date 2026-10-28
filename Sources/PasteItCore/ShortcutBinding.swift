@@ -1,14 +1,12 @@
 import Foundation
 
 public enum ShortcutAction: String, CaseIterable, Codable, Sendable, Identifiable {
-    case timeline, stack, plainPaste, quickPaste
+    case timeline, quickPaste
     public var id: String { rawValue }
 
     public var defaultBinding: ShortcutBinding {
         switch self {
-        case .timeline: ShortcutBinding(keyCode: 9, modifiers: [.command, .shift], key: "V")
-        case .stack: ShortcutBinding(keyCode: 8, modifiers: [.command, .shift], key: "C")
-        case .plainPaste: ShortcutBinding(keyCode: 9, modifiers: [.command, .control], key: "V")
+        case .timeline: ShortcutBinding(keyCode: 8, modifiers: [.command, .shift], key: "C")
         case .quickPaste: ShortcutBinding(keyCode: 9, modifiers: [.command, .shift], key: "V")
         }
     }
@@ -65,28 +63,58 @@ public struct ShortcutBinding: Codable, Equatable, Sendable {
 
 public struct ShortcutConfiguration: Codable, Equatable, Sendable {
     public var timeline: ShortcutBinding?
-    public var stack: ShortcutBinding?
-    public var plainPaste: ShortcutBinding?
-    public var quickPaste: ShortcutBinding? = nil
+    public var quickPaste: ShortcutBinding?
+
+    public init(timeline: ShortcutBinding?, quickPaste: ShortcutBinding? = nil) {
+        self.timeline = timeline
+        self.quickPaste = quickPaste
+    }
 
     public static let defaults = Self(timeline: ShortcutAction.timeline.defaultBinding,
-                                      stack: ShortcutAction.stack.defaultBinding,
-                                      plainPaste: ShortcutAction.plainPaste.defaultBinding)
+                                      quickPaste: ShortcutAction.quickPaste.defaultBinding)
+
+    private enum CodingKeys: String, CodingKey {
+        case schemaVersion, timeline, quickPaste, stack, plainPaste
+    }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        timeline = try values.decodeIfPresent(ShortcutBinding.self, forKey: .timeline)
+        quickPaste = try values.decodeIfPresent(ShortcutBinding.self, forKey: .quickPaste)
+        let version = try values.decodeIfPresent(Int.self, forKey: .schemaVersion) ?? 0
+        if version < 2 {
+            let stack = try values.decodeIfPresent(ShortcutBinding.self, forKey: .stack)
+            let plain = try values.decodeIfPresent(ShortcutBinding.self, forKey: .plainPaste)
+            let oldTimeline = ShortcutBinding(keyCode: 9, modifiers: [.command, .shift], key: "V")
+            let oldPlain = ShortcutBinding(keyCode: 9, modifiers: [.command, .control], key: "V")
+            // Migrate only the complete factory configuration. Preserve custom
+            // and explicitly cleared bindings, including a custom timeline ⇧⌘V.
+            if timeline?.matches(oldTimeline) == true,
+               stack?.matches(ShortcutAction.timeline.defaultBinding) == true,
+               plain?.matches(oldPlain) == true {
+                timeline = ShortcutAction.timeline.defaultBinding
+                if quickPaste == nil { quickPaste = ShortcutAction.quickPaste.defaultBinding }
+            }
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var values = encoder.container(keyedBy: CodingKeys.self)
+        try values.encode(2, forKey: .schemaVersion)
+        try values.encodeIfPresent(timeline, forKey: .timeline)
+        try values.encodeIfPresent(quickPaste, forKey: .quickPaste)
+    }
 
     public subscript(action: ShortcutAction) -> ShortcutBinding? {
         get {
             switch action {
             case .timeline: timeline
-            case .stack: stack
-            case .plainPaste: plainPaste
             case .quickPaste: quickPaste
             }
         }
         set {
             switch action {
             case .timeline: timeline = newValue
-            case .stack: stack = newValue
-            case .plainPaste: plainPaste = newValue
             case .quickPaste: quickPaste = newValue
             }
         }

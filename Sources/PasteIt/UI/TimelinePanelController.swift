@@ -1,6 +1,8 @@
 import AppKit
 import QuartzCore
 import SwiftUI
+import Combine
+import PasteItCore
 
 enum TimelinePanelOpenSource: String {
     case hotkey
@@ -15,7 +17,21 @@ private enum PanelAnimation {
 }
 
 @MainActor
-final class TimelinePanelController: NSObject, NSWindowDelegate {
+final class TimelinePanelController: NSObject, NSWindowDelegate, ObservableObject {
+    @Published private var requestedCandidatePage = 0
+    @Published private(set) var candidateSelectedID: UUID?
+    @Published private(set) var candidateMessage: String?
+    @Published private(set) var candidatePlacementNotice: String?
+    @Published private(set) var candidatePreviewDismissRequest = UUID()
+    private var candidateAnchor: CGRect?
+    private var candidateFallbackPoint = CGPoint.zero
+    private let candidateAnchorProvider: (@MainActor (pid_t) async -> CGRect?)?
+    private var candidateKeyMonitor: Any?
+    private var candidateActivationTask: Task<Void, Never>?
+    private var candidateDestination: NSRunningApplication?
+    private var settingsObservation: AnyCancellable?
+    private var lastPresentationStyle: ClipboardPresentationStyle?
+
     private let appState: AppState
     private let pasteController: PasteController
     private var panel: NSPanel?
@@ -30,21 +46,26 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
     private var pendingHideCompletions: [@Sendable () -> Void] = []
     /// True while we await clipboard ingest before the slide-in.
     private var isPreparingShow = false
+    private var showRequestID = UUID()
     var onShow: (() -> Void)?
-    /// Ingest any pending clipboard change so ⇧⌘V right after copy shows the new card.
+    /// Ingest any pending clipboard change so ⇧⌘C right after copy shows the new card.
     var ingestBeforeShow: (() async -> Void)?
-    /// Set by AppRuntime so outside-click dismiss can ignore detached preview / stack windows.
+    /// Set by AppRuntime so outside-click dismiss can ignore detached preview windows.
     weak var detachedWindowController: ClipDetachedWindowController?
-    weak var pasteStackPanelController: PasteStackPanelController?
 
     static let panelHeight: CGFloat = 380
     private let bottomInset: CGFloat = 12
     private let animationDuration: CFTimeInterval = 0.28
 
-    init(appState: AppState, pasteController: PasteController) {
+    init(appState: AppState, pasteController: PasteController, candidateAnchorProvider: (@MainActor (pid_t) async -> CGRect?)? = nil) {
+        self.candidateAnchorProvider = candidateAnchorProvider
         self.appState = appState
         self.pasteController = pasteController
         super.init()
+        lastPresentationStyle = appState.settings.clipboardPresentationStyle
+        settingsObservation = appState.settings.objectWillChange.sink { [weak self] _ in
+            DispatchQueue.main.async { [weak self] in self?.refreshPresentationStyle() }
+        }
     }
 
     func toggle(source: TimelinePanelOpenSource) {
@@ -60,7 +81,7 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
         panel?.isVisible == true
     }
 
-    /// Build the hosting view and force one off-screen layout so the first ⇧⌘V isn't a cold mount.
+    /// Build the hosting view and force one off-screen layout so the first ⇧⌘C isn't a cold mount.
     func prewarm() {
         guard panel == nil else { return }
         let panel = makePanel()
@@ -93,15 +114,32 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
     }
 
     func show(source: TimelinePanelOpenSource = .menu) {
-        onShow?()
         // Ignore re-entrant show; hide-in-flight keeps sliding out (toggle will
         // see isVisible and call hide again, which just waits for that animation).
         guard panelAnimation == .none else { return }
         if isPreparingShow { return }
         isPreparingShow = true
+        let requestID = UUID()
+        showRequestID = requestID
+        let destination = NSWorkspace.shared.frontmostApplication
+        let fallbackPoint = NSEvent.mouseLocation
+        let desktopTop = NSScreen.screens.first?.frame.maxY ?? 0
+        onShow?()
         Task { @MainActor in
+            if appState.settings.clipboardPresentationStyle == .candidateBar {
+                let anchor: CGRect?
+                if let pid = destination?.processIdentifier {
+                    if let candidateAnchorProvider { anchor = await candidateAnchorProvider(pid) }
+                    else { anchor = await CaretLocator.capture(processID: pid, primaryScreenTop: desktopTop) }
+                } else { anchor = nil }
+                guard self.isPreparingShow, self.showRequestID == requestID else { return }
+                self.candidateAnchor = anchor
+                self.candidateFallbackPoint = fallbackPoint
+                self.candidatePlacementNotice = anchor == nil ? L10n.tr("candidateBar.locationFallback", default: "Caret position unavailable. Showing near the pointer; Accessibility may be required.") : nil
+            }
+            self.candidateDestination = destination
             await ingestBeforeShow?()
-            guard self.isPreparingShow else { return }
+            guard self.isPreparingShow, self.showRequestID == requestID else { return }
             self.isPreparingShow = false
             // Store add() publishes on the next main turn. Pull the new clip in
             // now so the slide-in doesn't paint the old first card, then shuffle.
@@ -117,15 +155,24 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
 
     private func performShow(source: TimelinePanelOpenSource, preserveContext: Bool = false) {
         let wasVisible = panel?.isVisible == true
+        if !preserveContext {
+            requestedCandidatePage = 0
+            candidateMessage = nil
+            candidateSelectedID = candidateItems.first?.id
+        }
         let panel = self.panel ?? makePanel()
         self.panel = panel
         if !preserveContext && !appState.isReadyForInstantShow() {
             appState.resetFiltersForPanelShow()
         }
 
+        updatePanelChrome(panel)
         let finalFrame = targetFrame(for: panel)
         let startFrame: NSRect
-        if let screen = screenForCurrentFocus() {
+        let candidate = appState.settings.clipboardPresentationStyle == .candidateBar
+        if candidate {
+            startFrame = finalFrame
+        } else if let screen = screenForCurrentFocus() {
             startFrame = panelSlideOffscreenFrame(from: finalFrame, screen: screen)
         } else {
             var fallback = finalFrame
@@ -133,7 +180,7 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
             startFrame = fallback
         }
         panel.setFrame(startFrame, display: false)
-        panel.alphaValue = 1
+        panel.alphaValue = candidate ? 0 : 1
 
         // nonactivatingPanel + orderFrontRegardless keeps the previous app focused
         // so the user can immediately ⌘V after staging a clip (Paste-like).
@@ -155,13 +202,15 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
         let generation = animationGeneration
         panelAnimation = .showing
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = animationDuration
+            context.duration = candidate ? 0.12 : animationDuration
             context.timingFunction = CAMediaTimingFunction(name: .easeOut)
             panel.animator().setFrame(finalFrame, display: true)
+            panel.animator().alphaValue = 1
         }, completionHandler: { [weak self] in
             Task { @MainActor in
                 guard let self, generation == self.animationGeneration else { return }
                 self.panelAnimation = .none
+                self.resizeForPresentation()
                 // Defer out of the display-cycle flush — mutating @Published
                 // mid-layout was crashing under exclusivity checking.
                 DispatchQueue.main.async {
@@ -169,7 +218,7 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
                     self.panel?.makeFirstResponder(nil)
                     self.appState.searchBlurRequest += 1
                     self.appState.warmTabCaches()
-                    NSLog("PasteIt: timeline panel shown")
+                    NSLog("PasteIt: clipboard panel shown")
                 }
             }
         })
@@ -182,6 +231,7 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
         removalToastController.hide(animated: false)
         if panelAnimation != .hiding { preserveContextForHide = preserveContext }
         isPreparingShow = false
+        showRequestID = UUID()
         if let completion {
             pendingHideCompletions.append(completion)
         }
@@ -203,6 +253,7 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
     }
 
     private func beginHide() {
+        candidatePreviewDismissRequest = UUID()
         guard let panel else {
             panelAnimation = .none
             flushHideCompletions()
@@ -220,7 +271,9 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
         panelAnimation = .hiding
 
         let endFrame: NSRect
-        if let screen = panel.screen ?? screenForCurrentFocus() {
+        if appState.settings.clipboardPresentationStyle == .candidateBar {
+            endFrame = panel.frame
+        } else if let screen = panel.screen ?? screenForCurrentFocus() {
             endFrame = panelSlideOffscreenFrame(from: panel.frame, screen: screen)
         } else {
             var fallback = panel.frame
@@ -258,7 +311,7 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
     }
 
     private func makePanel() -> NSPanel {
-        let contentView = TimelineView(appState: appState, pasteController: pasteController)
+        let contentView = ClipboardPanelContent(appState: appState, pasteController: pasteController, controller: self)
         let hostingController = NSHostingController(rootView: contentView)
         hostingController.sizingOptions = []
 
@@ -268,10 +321,15 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
+        panel.onCandidateKey = { [weak self, weak panel] event in
+            guard let self, panel?.isVisible == true else { return false }
+            return self.handleCandidateKey(event)
+        }
         panel.title = "Pastel it！"
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
         panel.isFloatingPanel = true
+        panel.acceptsMouseMovedEvents = true
         panel.level = .floating
         panel.hidesOnDeactivate = false
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
@@ -291,19 +349,144 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
         return panel
     }
 
+    private func updatePanelChrome(_ panel: NSPanel) {
+        let candidate = appState.settings.clipboardPresentationStyle == .candidateBar
+        panel.hasShadow = candidate
+        panel.contentView?.layer?.cornerRadius = candidate ? 12 : PanelCornerMask.radius
+        panel.contentViewController?.view.layer?.cornerRadius = candidate ? 12 : PanelCornerMask.radius
+    }
+
     private func targetFrame(for panel: NSPanel) -> NSRect {
-        guard let screen = screenForCurrentFocus() else {
-            return panel.frame
-        }
-        // Sit just above the Dock / menu-safe area with a small breathing gap.
+        let candidate = appState.settings.clipboardPresentationStyle == .candidateBar
+        let point = candidateAnchor.map { CGPoint(x: $0.midX, y: $0.midY) } ?? candidateFallbackPoint
+        let screen = candidate ? (NSScreen.screens.first { $0.frame.contains(point) } ?? screenForCurrentFocus()) : screenForCurrentFocus()
+        guard let screen else { return panel.frame }
         let visibleFrame = screen.visibleFrame
-        let width = min(1120, max(640, visibleFrame.width - 32))
-        let height = Self.panelHeight
-        let origin = NSPoint(
-            x: visibleFrame.midX - width / 2,
-            y: visibleFrame.minY + bottomInset
-        )
-        return NSRect(origin: origin, size: NSSize(width: width, height: height))
+        let width = min(candidate ? 420 : 1120, max(1, visibleFrame.width - 32))
+        let candidateHeight: CGFloat = candidatePageItems.isEmpty ? 153 : CandidateBarView.topBarHeight + 1 + CGFloat(candidatePageItems.count) * CandidateBarView.rowHeight
+        let height = min(candidate ? candidateHeight + (candidateMessage == nil ? 0 : 44) : Self.panelHeight, max(1, visibleFrame.height - 24))
+        if candidate {
+            let anchor = candidateAnchor ?? CGRect(origin: candidateFallbackPoint, size: .zero)
+            return CandidatePanelPlacement.frame(anchor: anchor, size: CGSize(width: width, height: height), visibleFrame: visibleFrame)
+        }
+        return NSRect(x: visibleFrame.midX - width / 2, y: visibleFrame.minY + bottomInset, width: width, height: height)
+    }
+
+    var candidateItems: [ClipItem] {
+        // Candidate mode always shows recent history, independent of timeline
+        // search, folders or a previously retained type filter.
+        appState.historyStore.clips.filter { !$0.isHiddenFromTimeline }
+    }
+
+    var candidatePageIndex: Int {
+        CandidatePagination.clampedPage(requestedCandidatePage, itemCount: candidateItems.count)
+    }
+
+    var candidatePageCount: Int { CandidatePagination.pageCount(itemCount: candidateItems.count) }
+
+    var candidatePageItems: [ClipItem] {
+        let items = candidateItems
+        return Array(items[CandidatePagination.range(page: requestedCandidatePage, itemCount: items.count)])
+    }
+
+    func nextCandidatePage() { changeCandidatePage(by: 1) }
+    func previousCandidatePage() { changeCandidatePage(by: -1) }
+
+    private func changeCandidatePage(by delta: Int) {
+        let next = CandidatePagination.clampedPage(candidatePageIndex + delta, itemCount: candidateItems.count)
+        guard next != candidatePageIndex else { return }
+        requestedCandidatePage = next
+        candidateSelectedID = candidatePageItems.first?.id
+        candidateMessage = nil
+        resizeForPresentation()
+    }
+
+    private func refreshPresentationStyle() {
+        let style = appState.settings.clipboardPresentationStyle
+        guard style != lastPresentationStyle else { return }
+        lastPresentationStyle = style
+        requestedCandidatePage = 0
+        candidateMessage = nil
+        candidateSelectedID = candidateItems.first?.id
+        appState.dismissPreview()
+        objectWillChange.send()
+        resizeForPresentation()
+    }
+
+    private func resizeForPresentation() {
+        guard let panel, panel.isVisible, panelAnimation == .none else { return }
+        updatePanelChrome(panel)
+        panel.setFrame(targetFrame(for: panel), display: true)
+        panel.makeFirstResponder(nil)
+    }
+
+    @discardableResult
+    func handleCandidateKey(_ event: NSEvent) -> Bool {
+        guard appState.settings.clipboardPresentationStyle == .candidateBar,
+              let action = CandidateKeyAction.resolve(keyCode: event.keyCode,
+                characters: event.charactersIgnoringModifiers ?? "", modifiers: ShortcutBinding(event: event).modifiers) else { return false }
+        let items = candidatePageItems
+        switch action {
+        case .choose(let index):
+            if items.indices.contains(index) { activateCandidate(items[index]) }
+        case .activate:
+            if let item = items.first(where: { $0.id == candidateSelectedID }) ?? items.first { activateCandidate(item) }
+        case .nextPage: nextCandidatePage()
+        case .previousPage: previousCandidatePage()
+        case .close: hide()
+        case .move(let delta):
+            let current = items.firstIndex { $0.id == candidateSelectedID }
+            if let index = CandidateKeyAction.movedIndex(current: current, delta: delta, count: items.count) {
+                candidateSelectedID = items[index].id
+            }
+        }
+        return true
+    }
+
+    func activateCandidate(_ item: ClipItem) {
+        guard candidateActivationTask == nil else { return }
+        candidateSelectedID = item.id
+        appState.selectOnly(item.id)
+        candidateMessage = nil
+        let target = candidateDestination ?? NSWorkspace.shared.frontmostApplication
+        let shouldPaste = appState.settings.timelinePrimaryAction.shouldPaste
+        candidateActivationTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            defer { self.candidateActivationTask = nil }
+            guard await self.pasteController.copyToPasteboardAsync(item) else {
+                self.candidateMessage = L10n.tr("action.writeFailed", default: "Could not copy this clip. Its content or attachment may be unavailable. Restore the file, then retry.")
+                self.resizeForPresentation()
+                return
+            }
+            let writtenCount = self.pasteController.pasteboardChangeCount
+            if shouldPaste && !SystemPasteSynthesizer.isAccessibilityTrusted {
+                self.candidateMessage = L10n.tr("action.copiedManual", default: "Copied. Return to your app and press ⌘V. Enable Accessibility for direct paste.")
+                self.resizeForPresentation()
+                return
+            }
+            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                self.hide(preserveContext: true) { continuation.resume() }
+            }
+            if shouldPaste {
+                if NSWorkspace.shared.frontmostApplication?.processIdentifier == ProcessInfo.processInfo.processIdentifier,
+                   let target, target.processIdentifier != ProcessInfo.processInfo.processIdentifier, !target.isTerminated {
+                    target.activate(options: [])
+                }
+                try? await Task.sleep(for: .milliseconds(100))
+                guard !Task.isCancelled, SystemPasteSynthesizer.isAccessibilityTrusted,
+                      let target, !target.isTerminated,
+                      target.processIdentifier != ProcessInfo.processInfo.processIdentifier,
+                      NSWorkspace.shared.frontmostApplication?.processIdentifier == target.processIdentifier,
+                      self.pasteController.pasteboardChangeCount == writtenCount else {
+                    self.candidateMessage = L10n.tr("action.focusChanged", default: "Paste stopped because the destination or permission changed. Focus your destination and try the remaining clips again.")
+                    self.showPreservingContext()
+                    return
+                }
+                await SystemPasteSynthesizer.pasteWrittenItem()
+            }
+            self.appState.promoteAccessedClip(item, scroll: false)
+            self.appState.setStatus(L10n.tr("action.copied", default: "Copied to Clipboard"))
+        }
     }
 
     private func screenForCurrentFocus() -> NSScreen? {
@@ -321,6 +504,13 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
             Task { @MainActor in
                 self?.hideIfMouseIsOutsidePanel()
             }
+        }
+
+        candidateKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self, let panel = self.panel, panel.isVisible,
+                  event.window?.parent === panel,
+                  self.appState.settings.clipboardPresentationStyle == .candidateBar else { return event }
+            return self.handleCandidateKey(event) ? nil : event
         }
 
         localOutsideClickMonitor = NSEvent.addLocalMonitorForEvents(matching: mask) { [weak self] event in
@@ -361,6 +551,8 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
     }
 
     private func stopOutsideClickMonitoring() {
+        if let candidateKeyMonitor { NSEvent.removeMonitor(candidateKeyMonitor) }
+        candidateKeyMonitor = nil
         if let globalOutsideClickMonitor {
             NSEvent.removeMonitor(globalOutsideClickMonitor)
         }
@@ -376,16 +568,11 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
         let mouse = NSEvent.mouseLocation
         if panel.frame.contains(mouse) { return }
         if removalToastController.visibleFrame?.contains(mouse) == true { return }
-        // Clicks on detached preview / Paste Stack should not dismiss the timeline.
+        // Clicks on detached preview should not dismiss the timeline.
         // Only count *visible* windows — ordered-out panels keep their last frame and would
         // otherwise swallow outside clicks (especially a centered preview bubble).
         if let detached = detachedWindowController {
             for window in NSApp.windows where detached.owns(window) && window.isVisible && window.frame.contains(mouse) {
-                return
-            }
-        }
-        if let stackPanel = pasteStackPanelController, stackPanel.isVisible {
-            for window in NSApp.windows where stackPanel.owns(window) && window.isVisible && window.frame.contains(mouse) {
                 return
             }
         }
@@ -399,9 +586,6 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
         if let window = event.window, detachedWindowController?.owns(window) == true {
             return true
         }
-        if let window = event.window, pasteStackPanelController?.owns(window) == true {
-            return true
-        }
         guard let window = event.window else { return false }
         if window === panel { return false }
         if window.sheetParent === panel { return true }
@@ -412,6 +596,13 @@ final class TimelinePanelController: NSObject, NSWindowDelegate {
 }
 
 private final class FloatingTimelinePanel: NSPanel {
+    var onCandidateKey: ((NSEvent) -> Bool)?
+
+    override func sendEvent(_ event: NSEvent) {
+        if event.type == .keyDown, onCandidateKey?(event) == true { return }
+        super.sendEvent(event)
+    }
+
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
 }

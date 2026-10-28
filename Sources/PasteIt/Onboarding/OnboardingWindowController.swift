@@ -33,9 +33,9 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
         let title = "Pastel it！"
         if let existing = window {
             existing.title = title
-            existing.setContentSize(NSSize(width: 640, height: 500))
-            existing.minSize = NSSize(width: 640, height: 500)
-            existing.maxSize = NSSize(width: 640, height: 500)
+            existing.setContentSize(NSSize(width: 640, height: 540))
+            existing.minSize = NSSize(width: 640, height: 540)
+            existing.maxSize = NSSize(width: 640, height: 540)
             existing.contentViewController = makeHostingController(
                 settings: settings,
                 flow: flow,
@@ -65,7 +65,7 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
     ) -> NSWindow {
         let hosting = makeHostingController(settings: settings, flow: flow, analytics: analytics)
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 640, height: 500),
+            contentRect: NSRect(x: 0, y: 0, width: 640, height: 540),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -76,9 +76,9 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
         window.delegate = self
         window.isOpaque = true
         window.backgroundColor = .windowBackgroundColor
-        window.setContentSize(NSSize(width: 640, height: 500))
-        window.minSize = NSSize(width: 640, height: 500)
-        window.maxSize = NSSize(width: 640, height: 500)
+        window.setContentSize(NSSize(width: 640, height: 540))
+        window.minSize = NSSize(width: 640, height: 540)
+        window.maxSize = NSSize(width: 640, height: 540)
         return window
     }
 

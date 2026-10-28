@@ -12,13 +12,11 @@ final class AppRuntime: NSObject {
     let searchService: SearchService
     let appState: AppState
     let pasteController: PasteController
-    let pasteStackController: PasteStackController
     let pasteboardMonitor: PasteboardMonitor
     let hotkeyManager: HotkeyManager
     let quickPasteController: QuickPasteController
     let panelController: TimelinePanelController
     let detachedWindowController: ClipDetachedWindowController
-    let pasteStackPanelController: PasteStackPanelController
 
     var state: AppState { appState }
 
@@ -26,11 +24,23 @@ final class AppRuntime: NSObject {
     private var keycapsIcon: MenuBarTartIcon?
     private var cmdCVFlashMonitor: CmdCVKeyFlashMonitor?
     private var didStart = false
+    private let validationSession: AppValidationSession?
 
     private override init() {
-        settings = AppSettings()
-        blobStore = BlobStore()
-        historyStore = HistoryStore(blobStore: blobStore, settings: settings)
+        // An explicitly requested native UI review must use the same isolated
+        // history and preferences as a validation launch, including shortcuts.
+        let isUIReview = ProcessInfo.processInfo.arguments.contains("--ui-review")
+        let validation = (ProcessInfo.processInfo.arguments.contains("--validation-session") || isUIReview)
+            ? AppValidationSession() : nil
+        validationSession = validation
+        settings = validation?.settings ?? AppSettings()
+        if let validation {
+            historyStore = validation.historyStore
+            blobStore = validation.historyStore.blobStore
+        } else {
+            blobStore = BlobStore()
+            historyStore = HistoryStore(blobStore: blobStore, settings: settings)
+        }
         settings.migratePrimaryAction()
         searchService = SearchService()
         appState = AppState(
@@ -39,75 +49,55 @@ final class AppRuntime: NSObject {
             searchService: searchService
         )
         pasteController = PasteController(blobStore: blobStore)
-        pasteStackController = PasteStackController(
-            pasteController: pasteController,
-            settings: settings
-        )
         pasteboardMonitor = PasteboardMonitor(
             settings: settings,
             blobStore: blobStore,
-            historyStore: historyStore,
-            pasteStackController: pasteStackController
+            historyStore: historyStore
         )
         pasteController.onPasteboardMutation = { [pasteboardMonitor] changeCount in
             pasteboardMonitor.suppress(changeCount: changeCount)
         }
         panelController = TimelinePanelController(appState: appState, pasteController: pasteController)
         detachedWindowController = ClipDetachedWindowController(appState: appState)
-        pasteStackPanelController = PasteStackPanelController(
-            stack: pasteStackController,
-            historyStore: historyStore
-        )
         quickPasteController = QuickPasteController(settings: settings, pasteController: pasteController,
-            stack: pasteStackController, panel: panelController, state: appState)
+            panel: panelController, state: appState)
         hotkeyManager = HotkeyManager(
+            defaults: validation?.defaults ?? .standard,
             showTimeline: { [panelController] in panelController.toggle(source: .hotkey) },
-            togglePasteStack: { [pasteStackController, appState] in
-                pasteStackController.toggle()
-                if pasteStackController.isCollecting {
-                    appState.setStatus("Paste Stack open — copy, then ⌘V to paste in order")
-                } else {
-                    appState.setStatus("Paste Stack closed")
-                }
-            },
-            pastePlain: { [pasteController, pasteStackController, panelController, appState] in
-                AppRuntime.performPasteWithoutFormatting(
-                    pasteController: pasteController,
-                    pasteStackController: pasteStackController,
-                    panelController: panelController,
-                    appState: appState
-                )
-            },
             editSelected: { [appState, panelController] in
                 guard panelController.isVisible else { return false }
                 return appState.beginEditingSelectedClip()
             },
             quickPaste: { [quickPasteController] in quickPasteController.perform() }
         )
-        appState.pasteStackController = pasteStackController
         appState.panelController = panelController
         panelController.detachedWindowController = detachedWindowController
         detachedWindowController.timelinePanelController = panelController
-        panelController.pasteStackPanelController = pasteStackPanelController
-        let stackPanel = pasteStackPanelController
-        panelController.onShow = { [weak stackPanel] in
-            DispatchQueue.main.async {
-                stackPanel?.attentionPulse()
-            }
-        }
         panelController.ingestBeforeShow = { [pasteboardMonitor] in
             await pasteboardMonitor.flushPendingCapture()
         }
         super.init()
-
-        pasteStackController.onChange = { [weak self] in
-            self?.refreshStatusItem()
-        }
     }
 
     func start() {
         guard !didStart else { return }
         didStart = true
+
+        let arguments = ProcessInfo.processInfo.arguments
+        if let index = arguments.firstIndex(of: "--ui-review") {
+            guard arguments.indices.contains(index + 1) else { NSApp.terminate(nil); return }
+            let directory = URL(fileURLWithPath: arguments[index + 1], isDirectory: true)
+            Task { @MainActor in
+                do {
+                    try await NativeUIReview().run(directory: directory)
+                } catch {
+                    try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                    try? String(describing: error).write(to: directory.appendingPathComponent("failure.txt"), atomically: true, encoding: .utf8)
+                }
+                NSApp.terminate(nil)
+            }
+            return
+        }
 
         historyStore.load()
         pasteboardMonitor.start()
@@ -116,7 +106,9 @@ final class AppRuntime: NSObject {
         detachedWindowController.start()
         configureStatusItem()
         startCmdCVFlashMonitor()
-        LaunchAtLoginManager.syncAtStartup(enabled: settings.launchAtLogin)
+        if validationSession == nil {
+            LaunchAtLoginManager.syncAtStartup(enabled: settings.launchAtLogin)
+        }
         // Retain Sparkle updater for automatic background checks.
         _ = UpdateChecker.shared
         Analytics.start(enabled: settings.analyticsEnabled)
@@ -145,28 +137,20 @@ final class AppRuntime: NSObject {
             }
         }
 
-        applyAgentAPIEnabled(settings.agentAPIEnabled)
+        if validationSession != nil {
+            DispatchQueue.main.async { [panelController] in panelController.show() }
+        }
     }
 
     func stop() {
         Analytics.stop()
-        AgentAPIServer.shared.stop()
         pasteboardMonitor.stop()
         hotkeyManager.stop()
         quickPasteController.stop()
         PermissionRestartMonitor.shared.stop()
         cmdCVFlashMonitor?.stop()
         cmdCVFlashMonitor = nil
-        pasteStackController.close()
-    }
-
-    func applyAgentAPIEnabled(_ enabled: Bool) {
-        if enabled {
-            // Force rebind so a dead listener after a stuck render can come back.
-            AgentAPIServer.shared.start(forceRestart: true)
-        } else {
-            AgentAPIServer.shared.stop()
-        }
+        validationSession?.tearDown()
     }
 
     private func configureStatusItem() {
@@ -210,12 +194,7 @@ final class AppRuntime: NSObject {
     }
 
     private func refreshStatusItem() {
-        let stack = pasteStackController.statusTitle
-        let stackLine = stack == L10n.tr("stack.paste", default: "Paste") ? nil : stack
         var tip = L10n.tr("menu.statusTooltip", default: "Pastel it！ — Clipboard history")
-        if let stackLine {
-            tip += "\n\(stackLine)"
-        }
         tip += "\n" + L10n.tr("menu.statusClickHint", default: "Left-click: timeline · Right-click: menu")
         statusItem?.button?.toolTip = tip
     }
@@ -224,21 +203,6 @@ final class AppRuntime: NSObject {
     func makeAppMenu() -> NSMenu {
         let menu = NSMenu()
         menu.addItem(makeShortcutMenuItem(title: L10n.tr("menu.openPaste", default: "Open Paste"), action: #selector(openTimeline), shortcut: .timeline))
-        menu.addItem(makeShortcutMenuItem(
-            title: pasteStackController.toggleMenuTitle,
-            action: #selector(togglePasteStack), shortcut: .stack
-        ))
-        if !pasteStackController.items.isEmpty {
-            menu.addItem(makeMenuItem(
-                title: L10n.tr("menu.clearStack", default: "Clear Paste Stack"),
-                action: #selector(clearPasteStack),
-                keyEquivalent: ""
-            ))
-        }
-        menu.addItem(makeShortcutMenuItem(
-            title: L10n.tr("menu.pastePlain", default: "Paste Without Formatting"),
-            action: #selector(pasteWithoutFormattingMenu), shortcut: .plainPaste
-        ))
         if settings.quickPasteEnabled {
             menu.addItem(makeShortcutMenuItem(
                 title: L10n.tr("quickPaste.title", default: "Quick Paste"),
@@ -259,12 +223,6 @@ final class AppRuntime: NSObject {
             ? L10n.tr("menu.resumeCapture", default: "Resume Capture")
             : L10n.tr("menu.pauseCapture", default: "Pause Capture")
         menu.addItem(makeMenuItem(title: pauseTitle, action: #selector(togglePause), keyEquivalent: "t", shiftCommand: true))
-        let agentItem = makeMenuItem(title: L10n.tr("menu.mcp", default: "MCP"), action: #selector(toggleAgentAPI), keyEquivalent: "")
-        agentItem.state = settings.agentAPIEnabled ? .on : .off
-        menu.addItem(agentItem)
-        if settings.agentAPIEnabled {
-            menu.addItem(makeMenuItem(title: L10n.tr("menu.copyMcpURL", default: "Copy MCP URL"), action: #selector(copyAgentAPIURL), keyEquivalent: ""))
-        }
         menu.addItem(makeMenuItem(title: L10n.tr("menu.preferences", default: "Preferences…"), action: #selector(openSettings), keyEquivalent: ","))
         if AppBrand.updatesEnabled {
             menu.addItem(makeMenuItem(
@@ -288,16 +246,11 @@ final class AppRuntime: NSObject {
     // MARK: - Actions (also used by the SwiftUI toolbar Menu)
 
     func openTimelineAction() { openTimeline() }
-    func togglePasteStackAction() { togglePasteStack() }
     func togglePauseCaptureAction() { togglePause() }
     func openSettingsAction() { openSettings() }
     func quitAction() { quit() }
-    func clearPasteStackAction() { clearPasteStack() }
 
     var isCapturePaused: Bool { settings.capturePaused }
-    var pasteStackToggleTitle: String { pasteStackController.toggleMenuTitle }
-    var pasteStackItemCount: Int { pasteStackController.items.count }
-    var isPasteStackCollecting: Bool { pasteStackController.isCollecting }
 
     private func makeShortcutMenuItem(title: String, action: Selector, shortcut: ShortcutAction) -> NSMenuItem {
         guard let binding = hotkeyManager.shortcuts[shortcut] else {
@@ -366,121 +319,10 @@ final class AppRuntime: NSObject {
         panelController.show(source: .menu)
     }
 
-    @objc private func togglePasteStack() {
-        pasteStackController.toggle()
-        refreshStatusItem()
-        if pasteStackController.isCollecting {
-            appState.setStatus("Paste Stack open — copy, then ⌘V to paste in order")
-        } else {
-            appState.setStatus("Paste Stack closed")
-        }
-    }
-
-    @objc private func pasteWithoutFormattingMenu() {
-        _ = pasteWithoutFormatting()
-    }
-
     @objc private func quickPasteMenu() { quickPasteController.perform() }
-
-    @objc private func clearPasteStack() {
-        pasteStackController.close()
-        refreshStatusItem()
-    }
-
-    /// ⌃⌘V — strip the current clipboard to plain text and synthesize ⌘V.
-    @discardableResult
-    func pasteWithoutFormatting() -> Bool {
-        Self.performPasteWithoutFormatting(
-            pasteController: pasteController,
-            pasteStackController: pasteStackController,
-            panelController: panelController,
-            appState: appState
-        )
-    }
-
-    @discardableResult
-    private static func performPasteWithoutFormatting(
-        pasteController: PasteController,
-        pasteStackController: PasteStackController,
-        panelController: TimelinePanelController,
-        appState: AppState
-    ) -> Bool {
-        pasteStackController.ensureAccessibilityIfNeeded()
-
-        guard let plain = pasteController.plainTextFromGeneralPasteboard() else {
-            Analytics.plainPaste(success: false, failReason: "empty")
-            appState.setStatus("Nothing to paste as plain text")
-            return false
-        }
-
-        // Keep the original rich clipboard so a later ⌘V is unchanged.
-        let snapshot = pasteController.snapshotGeneralPasteboard()
-        guard pasteController.writePlainTextToGeneralPasteboard(plain, markTransient: true) else {
-            Analytics.plainPaste(success: false, failReason: "empty")
-            appState.setStatus("Nothing to paste as plain text")
-            return false
-        }
-
-        let accessibilityTrusted = SystemPasteSynthesizer.isAccessibilityTrusted
-        pasteStackController.suspendPasteIntercept()
-        Task { @MainActor in
-            defer { pasteStackController.resumePasteIntercept() }
-
-            // Wait until the panel has dismissed so the previous app is key.
-            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-                if panelController.isVisible {
-                    panelController.hide {
-                        continuation.resume()
-                    }
-                } else {
-                    continuation.resume()
-                }
-            }
-            try? await Task.sleep(nanoseconds: 50_000_000)
-
-            if accessibilityTrusted {
-                // 80ms settle → ⌘V → 300ms for the target app to read plain text.
-                await SystemPasteSynthesizer.pasteWrittenItem()
-                if let snapshot {
-                    _ = pasteController.restoreGeneralPasteboard(snapshot)
-                }
-                Analytics.plainPaste(success: true, failReason: nil)
-                appState.setStatus("Pasted as plain text")
-            } else {
-                // Can't auto-paste; leave plain so a manual ⌘V still works.
-                Analytics.plainPaste(success: false, failReason: "accessibility")
-                appState.setStatus("Plain text ready — grant Accessibility to auto-paste, or press ⌘V")
-            }
-        }
-        return true
-    }
 
     @objc private func togglePause() {
         settings.capturePaused.toggle()
-    }
-
-    @objc private func toggleAgentAPI() {
-        settings.agentAPIEnabled.toggle()
-        applyAgentAPIEnabled(settings.agentAPIEnabled)
-        if settings.agentAPIEnabled {
-            copyAgentAPIURLToPasteboard()
-            appState.setStatus("MCP on — URL copied")
-        } else {
-            appState.setStatus("MCP off")
-        }
-    }
-
-    @objc private func copyAgentAPIURL() {
-        copyAgentAPIURLToPasteboard()
-        appState.setStatus("Copied MCP URL — \(AgentAPIServer.defaultBaseURL)")
-    }
-
-    private func copyAgentAPIURLToPasteboard() {
-        let pasteboard = NSPasteboard.general
-        pasteboard.clearContents()
-        pasteboard.setString(AgentAPIServer.defaultBaseURL, forType: .string)
-        // Don't capture our own "copy URL" into clipboard history.
-        pasteboardMonitor.suppress(changeCount: pasteboard.changeCount)
     }
 
     @objc private func openSettings() {

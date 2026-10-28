@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import PasteItCore
 
 /// Space-bar preview bubble: bottom sits on the timeline panel, height grows with content.
 /// Content-only glass bubble (no caret, no "space to close" chrome).
@@ -276,27 +277,18 @@ struct ClipQuickPreview: View {
         }
     }
 
+    /// Native small segmented control (same family as Finder's view switcher).
     private var imageTabPicker: some View {
-        HStack(spacing: 2) {
+        Picker(selection: $imageTab) {
             ForEach(ImageTab.allCases) { tab in
-                Button {
-                    imageTab = tab
-                } label: {
-                    Text(tab.rawValue)
-                        .font(.system(size: 12, weight: .semibold))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background {
-                            pasteItSegmentHighlight(isSelected: imageTab == tab)
-                        }
-                        .contentShape(Capsule())
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(imageTab == tab ? .primary : .secondary)
+                Text(tab.rawValue).tag(tab)
             }
+        } label: {
+            Text(L10n.tr("preview.content", default: "Preview content"))
         }
-        .padding(3)
-        .pasteItCapsuleGlass()
+        .labelsHidden()
+        .pickerStyle(.segmented)
+        .controlSize(.small)
     }
 
     private var imageViewport: some View {
@@ -329,25 +321,18 @@ struct ClipQuickPreview: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 10) {
                 Spacer(minLength: 0)
+                // Native accessory-bar buttons: recessed chrome, system disabled states.
                 if isEditingOCR {
-                    Button("Cancel") { cancelOCREditing() }
-                        .buttonStyle(.plain)
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(.secondary)
-                    Button("Save") { saveOCREditing() }
-                        .buttonStyle(.plain)
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(Color.accentColor)
+                    Button("Cancel", action: cancelOCREditing)
+                        .buttonStyle(.accessoryBar)
+                    Button("Save", action: saveOCREditing)
+                        .buttonStyle(.accessoryBar)
                 } else {
-                    Button("Copy") { copyOCRText() }
-                        .buttonStyle(.plain)
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(.secondary)
+                    Button("Copy", action: copyOCRText)
+                        .buttonStyle(.accessoryBar)
                         .disabled(!hasOCRText)
-                    Button("Edit") { beginOCREditing() }
-                        .buttonStyle(.plain)
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(.secondary)
+                    Button("Edit", action: beginOCREditing)
+                        .buttonStyle(.accessoryBar)
                     Button {
                         rerunOCR()
                     } label: {
@@ -357,12 +342,11 @@ struct ClipQuickPreview: View {
                             Text("Re-run")
                         }
                     }
-                    .buttonStyle(.plain)
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.secondary)
+                    .buttonStyle(.accessoryBar)
                     .disabled(isRerunningOCR || !canRerunOCR)
                 }
             }
+            .controlSize(.small)
 
             if isEditingOCR {
                 TextEditor(text: $ocrDraft)
