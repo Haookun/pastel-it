@@ -42,7 +42,7 @@
 - 旧 `/Applications/Paste It.app` 已删除；旧历史、附件、偏好、缓存、HTTP 存储、测试偏好及应用专属崩溃报告已清理，共 64 项目录或文件。新版已创建全新历史，进入首次使用状态。
 - 旧登录启动登记已通过应用专属的 ServiceManagement 接口撤销；现有登录项已指向 `/Applications/Pastel it！.app`，不再引用旧应用或临时版。不重置全局登录项数据库或系统隐私权限。
 - 旧应用、被清空的数据另存回退压缩包，位于项目同级隐藏目录 `.Pastel-it-backups/` 下的本次时间戳子目录。备份不供新版读取，不进入 Git。
-- 项目由 `Paste It` 迁移到 `/Users/haoo/Documents/Codex/Pastel it`；旧路径已移除，不留副本或软链接。迁移前后核对 204 个源码和文档文件、Git HEAD 及全部未提交修改，一致。
+- 项目由旧 `Paste It` 目录迁移到当前 `Pastel it` 项目目录；旧路径已移除，不留副本或软链接。迁移前后核对 204 个源码和文档文件、Git HEAD 及全部未提交修改，一致。
 - 已移除含旧绝对路径的构建缓存与过期打包产物，保留当前签名产物、本机依赖和检查记录。
 - 内部 bundle ID `app.paste-it.mac` 和新建数据目录 `~/Library/Application Support/PasteIt/` 继续沿用兼容命名；这些名称不代表旧数据被保留。
 

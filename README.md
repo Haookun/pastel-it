@@ -1,54 +1,90 @@
 # Pastel it！
 
-<img src="Resources/AppIcon.png" width="144" alt="Pastel it！蛋挞图标">
+<img src="Resources/AppIcon.png" width="128" alt="Pastel it！蛋挞图标">
 
-基于 [Paste It](https://github.com/yipeng-git/paste-it) 的私人 macOS 剪贴板工具。当前重点是历史记录、本地 OCR、表格识别和快捷粘贴。
+**原生 macOS 剪贴板与本地 OCR 工具：按时间浏览，也可以在输入光标旁挑选最近复制的内容。**
 
-[English](README.en.md) · [功能说明](docs/features.md) · [原生界面与系统能力](docs/native-ui-and-architecture.md) · [手动确认](docs/manual-validation.md)
+[English](README.en.md) · [使用指南](docs/getting-started.md) · [文档导航](docs/README.md) · [开发与 AI 协作](docs/development.md) · [来源及依赖致谢](THIRD_PARTY_NOTICES.md)
 
-## 当前功能
+> 基于 [Yipeng Zhang 及贡献者的 Paste It](https://github.com/yipeng-git/paste-it)。本派生版本的主要新增代码、修改和整合由 **OpenAI Codex** 完成，维护者负责需求与验收；**Kimi Code** 参与部分界面设计与实现。上游代码及第三方组件分别保留原作者署名和许可证。
 
-| 功能 | 行为 |
+## 能做什么
+
+| 功能 | 使用方式 |
 | --- | --- |
-| 剪贴板历史 | 文字、富文本、链接、图片和文件引用；搜索、类型筛选、置顶、文件夹及预览 |
-| 文字 OCR | Apple Vision 本地识别；自动或指定中、英、日等语言 |
-| 表格 OCR | macOS 26+ 使用系统文档识别，输出 Markdown 表格 |
-| 时间轴 | 鼠标滚轮横向浏览，悬停查看时间，点击/拖动定位记录 |
-| 候选栏 | 可与时间轴切换；纵向每页 10 项、数字选择、Tab 翻页、图片 OCR 摘要与文件名、悬停预览 |
-| 快捷粘贴 | 当前系统剪贴板转纯文本；文字、图片 OCR、文件名可多选；默认关闭 |
-| 原生界面 | SwiftUI 分组表单、原生菜单和分段控件、SF Symbols；保留必要的浮动面板 |
+| 剪贴板历史 | 文字、富文本、链接、图片和文件引用；搜索、筛选、置顶、文件夹与预览 |
+| 时间轴 | 屏幕底部横向卡片；鼠标滚轮浏览，沿复制时间定位 |
+| 候选列表 | 输入光标附近显示，纵向每页 10 项；数字选取、Tab 翻页，长内容首行省略 |
+| 本地文字 OCR | Apple Vision 自动识别中、英、日等系统支持的语言，也可手动选择 |
+| 表格 OCR | macOS 26+ 将识别出的表格整理为 Markdown，保留周围文字 |
+| 快捷粘贴 | 将**当前系统剪贴板**转为纯文本；可选文字、图片 OCR、文件名，默认关闭 |
+| 隐私与日志 | 不收集或上传使用统计；本机日志可单独删除，保留配置和历史 |
+| 语言资源恢复 | 缺包时继续以英文运行并提示修复；支持校验后下载或导入语言包 |
 
-**默认快捷键：打开剪贴板 `⇧⌘C`，快捷粘贴 `⇧⌘V`。** 可分别修改或清空，冲突时保留原配置并提示。旧版完整默认配置会自动迁移，自定义和明确清空的快捷键保持不变。
+两种展示共用同一份历史：**时间轴适合回看和整理，候选列表适合输入时快速取用。** 候选定位需要辅助功能权限与目标应用支持；取不到光标位置时，在鼠标附近显示。
 
-在设置 → 剪贴板 → 显示样式中选择时间轴或候选栏，默认时间轴。两者共用 ⇧⌘C 和现有复制／直接粘贴设置。候选栏在文字插入光标旁显示，下方空间不足时翻到上方；无辅助功能权限或应用不提供光标位置时，在鼠标旁显示，位置说明收在信息图标中。候选栏选择后保留原内容类型；图片 OCR 文字用于摘要，转纯文本仍使用快捷粘贴。
+<details>
+<summary>查看候选列表示例（合成数据）</summary>
 
-独立的旧“粘贴为纯文本”命令、`⌃⌘V`、`⇧Return` 纯文本粘贴及全局默认纯文本选项已移除。历史卡片仍可“复制为纯文本”，只写入选中项，不是另一套全局粘贴命令。
+<img src="docs/images/candidate-list.png" width="520" alt="纵向十项候选列表，长文本只显示首行并在末尾省略">
 
-Paste Stack 和 MCP **停用并保留源码**：没有菜单、设置、快捷键或引导入口，启动时不创建队列、不安装队列拦截器，也不启动 MCP 监听器。旧的已启用设置不能恢复它们。MCP Swift SDK 等依赖仍保留以编译归档代码。
+截图来自隔离验证，使用合成文字，不包含用户的真实剪贴板。
 
-## 编译和本机使用
+</details>
 
-要求 macOS 14+、Swift tools 6.2+。macOS 15+ 使用现代文字 OCR，macOS 14 保留 Vision 兼容路径；表格识别要求 macOS 26+。
+## 开始使用
+
+| 操作 | 默认快捷键 |
+| --- | --- |
+| 打开剪贴板 | `⇧⌘C` |
+| 快捷粘贴 | `⇧⌘V`，需先在设置中开启 |
+| 候选列表选取 | 当前页 `1`–`9`、`0` |
+| 候选列表翻页 | `Tab` 下一页，`Shift-Tab` 上一页；首尾停止 |
+
+在“设置 → 剪贴板 → 显示样式”选择时间轴或候选栏，默认时间轴。选取条目沿用复制／直接粘贴设置；图片仍按图片取用，图片转文字请使用快捷粘贴。两组全局快捷键可分别修改、清空，并检查冲突。[使用指南](docs/getting-started.md)
+
+## 安装与构建
+
+**目前没有正式安装包或自动更新渠道。** 可从源码构建；私有仓库需要先具备访问权限。2026-10-29 的维护约定是只整理文档，暂不开展任何对外分发打包工作，待项目公开后再讨论。
+
+- 最低部署目标：macOS 14；现代文字 OCR 使用 macOS 15+，表格识别需要 macOS 26+。
+- 构建工具：Swift 6.2+、相应 Xcode／Command Line Tools、Python 3。
+- 本机已验证：Apple Silicon、macOS 27.0.1。旧系统与 Intel 的完整使用体验尚未验收。
+
+以下命令是读者将来自行构建的说明，不是本轮已执行的操作：
 
 ```sh
 git clone https://github.com/Haookun/pastel-it.git
 cd pastel-it
-swift test
-./scripts/package-release.sh --variant arm64 --local-test
+swift test --scratch-path /private/tmp/pastel-it-build
+PASTEIT_BUILD_PATH=/private/tmp/pastel-it-build \
+  ./scripts/package-release.sh --variant arm64 --local-test
 ```
 
-本机采用无需账号或证书的 ad-hoc 签名，不做公证或发布。已有 `work/dependencies/` 的本机可显式设置 `PASTEL_USE_LOCAL_DEPENDENCIES=1`，这些依赖副本不进入 Git。固定依赖为 Sparkle 2.9.4、MCP SDK 0.12.1。
+产物为 `dist/local-test/arm64/Pastel it！.app`。本机使用 ad-hoc 临时签名，无需 Developer ID 或公证；构建不自动安装或发布。当前 128 项测试与 App 验证来自本机修复依赖副本，**公共依赖的新克隆完整构建仍待验证**。[开发指南](docs/development.md)
 
-代码检查与编译由 agent 负责，实际界面和功能由用户按 [确认清单](docs/manual-validation.md) 验收。测试版可双击 `dist/local-test/arm64/开始合成验证.command`，使用独立合成历史；`开始普通验证.command` 使用真实历史。启动器从干净签名压缩包解压到临时目录，避免文件同步元数据影响签名。
+以后分发暂参考“未公证应用 + macOS 对单个应用的‘仍要打开’流程”，现在仅记录，不制作分发包。此提示与签名、公证及来源有关，不是开源软件专属，也不表示 Apple 审核通过。[分发约定](docs/distribution.md)
 
-## 数据、设计与来源
+本版沿用原版 `app.paste-it.mac` 标识及数据目录。已有 Paste It 用户应退出旧版、备份后替换，避免并行运行两个实例。
 
-保持内部目标 `PasteIt` / `PasteItCore`、bundle ID `app.paste-it.mac` 和数据目录 `~/Library/Application Support/PasteIt/`。本版替代原应用，不能同时独立运行。此前全新安装和项目迁移见 [安装记录](docs/installation.md)，后续功能更新不再清空数据。
+## 数据与联网
 
-蛋挞图标由用户参考图矢量化生成，见 [设计说明](docs/design.md)。上游自动更新已停用；没有配置自己的更新源时不发布。不收集或上传使用信息；仅保留本机诊断日志，可在“设置 → 隐私 → 删除过去日志”清理，配置与剪贴板历史保持不变。见 [日志与隐私说明](docs/analytics.md)。
+历史及附件保存在本机 `~/Library/Application Support/PasteIt/`，OCR 由系统 Vision 在设备上执行。没有使用统计 SDK，也不通过 OpenAI／Kimi 服务识别剪贴板。
 
-基于 Yipeng Zhang 及 Paste It contributors 的上游 0.2.9（`904287f6f80e791ea347938582a3550775627927`），保留 [MIT License](LICENSE)。GitHub 仓库为保留上游历史的独立私有派生库，见 [来源](docs/origin.md)。
+链接预览可能请求对应网站或图标；点击修复语言资源时会访问 GitHub。私有仓库需浏览器登录下载后导入，公开仓库可直接下载。本地 OCR 和无使用统计不代表整个应用从不联网。[隐私与日志](docs/analytics.md)
 
-设置采用标准 macOS 标题栏，分为应用、数据与关于；OCR 和快捷粘贴各有独立栏目。显示样式下的矢量动画演示时间轴与候选列表的差别；候选模式提供辅助功能权限状态与获取权限按钮。候选列表按 1–9、0 选择当前页，Tab 下一页、Shift-Tab 上一页，到首尾停止。
+## 来源、依赖与边界
 
-界面语言资源缺失时会回退英文并提示修复；“设置 → 关于 → 语言资源”支持下载或导入校验包。当前私人仓库需在浏览器登录后下载导入，将来公开后可直接下载；不改配置或历史。见 [语言恢复说明](docs/language-recovery.md)。
+- 上游：[Paste It](https://github.com/yipeng-git/paste-it)，基线 0.2.9；保留 [MIT 许可证及版权](LICENSE)。
+- 直接依赖：**Sparkle 2.9.4**、**MCP Swift SDK 0.12.1**。当前自动更新和 MCP 服务均停用，依赖仍用于编译保留代码。
+- 本机依赖树还包含 **Swift System、SwiftLog、EventSource**；完整署名与许可文本见 [第三方致谢](THIRD_PARTY_NOTICES.md)。
+- OCR、界面和存储主要使用 **Vision、SwiftUI、AppKit、SwiftData** 等 macOS 能力；Codex／Kimi 是开发工具，不是 App 的运行时依赖。
+- Paste Stack 已归档停用，旧的独立“粘贴为纯文本”命令已移除；快捷粘贴是现行纯文本转换入口。
+
+OCR 受系统模型和图片质量影响；稀疏中英混排、复杂表格可能需要校正。截至 2026-10-28 的 128 项测试保留了 1 项既有 Vision 已知限制，真实权限与跨应用粘贴仍需用户确认。[功能细节](docs/features.md) · [验证记录](docs/validation.md)
+
+## 参与与设计
+
+欢迎提出可复现的问题和建议。[贡献指南](CONTRIBUTING.md)说明反馈和验证方式；截图及测试请使用合成内容。
+
+蛋挞图标来自维护者提供的参考图，经矢量化后用于应用；设置优先采用系统控件，保留时间轴、候选面板等必要自绘。[设计与素材](docs/design.md) · [项目来源](docs/origin.md)

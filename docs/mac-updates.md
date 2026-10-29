@@ -1,5 +1,7 @@
 # Pastel it！更新策略
 
+> 2026-10-29：当前不执行对外打包、发布或自动更新配置。本文是保留的工程参考，不是本轮操作指令；待项目公开后再讨论。[当前分发约定](distribution.md)。
+
 本私人派生版尚未配置自己的签名更新源。`AppBrand.updatesEnabled` 为 false，Sparkle 不会启动；`Info.plist` 已移除原项目的 `SUFeedURL` 和 `SUPublicEDKey`，自动检查与下载均关闭。已有偏好中的上游更新开关不会使本版重新连接原源。
 
 当前仓库没有安装包或 Release。应由维护者先配置自己的 Developer ID、公证凭据、Sparkle 更新签名密钥和经授权的分发方式，再启用更新。不要复用原作者的签名公钥或把私人构建指向公开上游下载地址。

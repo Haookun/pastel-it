@@ -1,20 +1,18 @@
 # Pastel it！
 
-<img src="Resources/AppIcon.png" width="144" alt="Pastel it！">
+macOS용 클립보드 기록 및 기기 내 OCR 도구입니다. [Paste It](https://github.com/yipeng-git/paste-it)을 기반으로 **OpenAI Codex**가 주요 추가·수정 코드를 작성하고 통합했으며, **Kimi Code**가 일부 UI 설계와 구현에 참여했습니다. 원본 프로젝트와 라이브러리의 저작권 및 라이선스는 유지됩니다.
 
-네이티브 macOS 클립보드 도구입니다. 텍스트·이미지 기록, 다국어 OCR, macOS 26 이상 표 OCR, 가로 휠 탐색, 복사 시간축, 현재 클립보드를 변환하는 빠른 붙여넣기를 제공합니다.
+[English](README.en.md) · [中文](README.md) · [문서 안내](docs/README.md) · [출처와 의존성](THIRD_PARTY_NOTICES.md)
 
-[English](README.en.md) · [中文 / 功能说明](README.md) · [Design](docs/design.md) · [Validation](docs/validation.md)
+- 텍스트, 이미지, 링크와 파일 참조의 기록을 검색하고 정리합니다.
+- 화면 아래 시간축 또는 입력 커서 근처의 세로 후보 목록을 선택합니다.
+- 후보는 페이지당 10개이며 `1`–`9`, `0`으로 선택하고 `Tab`／`Shift-Tab`으로 넘깁니다.
+- Vision으로 기기 내 OCR을 수행하며 macOS 26 이상에서는 Markdown 표를 출력할 수 있습니다.
+- 빠른 붙여넣기는 현재 시스템 클립보드를 변환하며 기본적으로 꺼져 있습니다.
+- 사용 통계를 전송하지 않고 로컬 로그만 따로 지울 수 있습니다. 링크 미리보기와 직접 요청한 언어 복구는 네트워크를 사용할 수 있습니다.
 
-This is a private derivative of [Paste It](https://github.com/yipeng-git/paste-it), not an upstream release. No installer has been published. Automatic updates from the original project are disabled. macOS 14+ and Swift tools 6.2+ are required.
+기록 열기는 `⇧⌘C`, 빠른 붙여넣기는 `⇧⌘V`입니다. 최소 배포 대상은 macOS 14, 빌드 도구는 Swift 6.2 이상입니다. 실제 검증은 Apple Silicon／macOS 27.0.1에서 수행했으며 다른 환경은 미검증입니다.
 
-```sh
-swift build
-swift test
-```
+공식 바이너리와 자동 업데이트는 없습니다. 2026-10-29에는 문서만 정리하며 외부 배포용 패키지는 프로젝트 공개 후 다시 논의합니다. 향후 앱별 Open Anyway 방안은 [분发约定](docs/distribution.md)에 기록했습니다. 빌드 절차와 로컬 의존성 사본의 검증 범위는 [개발 안내](docs/development.md)를 참고하세요.
 
-Open History defaults to ⇧⌘C; Quick Paste defaults to ⇧⌘V and starts disabled. The standalone legacy plain-paste command is removed. Paste Stack and MCP are archived with all product entries and runtime activation disabled. Existing internal identifiers and the data directory are retained for compatibility; do not run both apps side by side. See [LICENSE](LICENSE) for upstream MIT attribution.
-
-설정의 클립보드 → 표시 스타일에서 타임라인과 후보 막대를 선택할 수 있습니다. 페이지당 10개 항목을 세로로 표시하며 1–9와 0으로 선택하고 Tab으로 다음 페이지, Shift-Tab으로 이전 페이지로 이동합니다. 이미지 OCR 요약과 파일 이름을 표시하고 마우스를 올리면 이미지나 전체 경로를 미리 봅니다.
-
-후보 막대는 텍스트 커서 옆에 표시되고 아래 공간이 부족하면 위로 이동합니다. 손쉬운 사용 권한이나 커서 위치를 사용할 수 없으면 안내와 함께 포인터 근처에 표시합니다.
+직접 의존성은 Sparkle 2.9.4와 MCP Swift SDK 0.12.1이며 업데이트와 MCP 서비스 시작은 비활성화되어 있습니다. 원본 앱과 데이터 식별자를 공유하므로 동시에 실행하지 마세요. [LICENSE](LICENSE) · [전체 라이선스 기록](LICENSES/README.md)
