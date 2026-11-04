@@ -130,7 +130,7 @@ final class DiagnosticLogs {
             || Bundle.main.bundleURL.pathExtension != "app"
         let root = isolated
             ? FileManager.default.temporaryDirectory.resolvingSymlinksInPath().appendingPathComponent("PastelIt-Diagnostics-\(UUID())")
-            : FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Logs/PastelIt")
+            : FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Logs/PastelItPublic")
         store = DiagnosticLogStore(directory: root)
     }
 

@@ -33,7 +33,7 @@ public struct LanguagePack: Codable, Equatable, Sendable {
         guard sha256(data) == LanguagePackManifest.sha256 else { throw ValidationError.integrityMismatch }
         let pack = try JSONDecoder().decode(Self.self, from: data)
         guard pack.schemaVersion == 1,
-              pack.applicationIdentifier == "app.paste-it.mac",
+              pack.applicationIdentifier == "io.github.haookun.pastel-it",
               pack.appVersion == LanguagePackManifest.appVersion,
               pack.appBuild == LanguagePackManifest.appBuild else { throw ValidationError.incompatibleVersion }
         guard Set(pack.localizations.keys) == Set(LanguagePackManifest.translationDigests.keys),

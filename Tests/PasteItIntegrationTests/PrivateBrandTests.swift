@@ -16,13 +16,13 @@ struct PrivateBrandTests {
         #expect(!checker.automaticallyDownloadsUpdates)
     }
 
-    @Test func renamedBundleKeepsDataIdentityAndRemovesUpstreamFeed() throws {
+    @Test func independentBundleUsesNewIdentityAndRemovesUpstreamFeed() throws {
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
             .deletingLastPathComponent().deletingLastPathComponent()
         let data = try Data(contentsOf: root.appendingPathComponent("Info.plist"))
         let info = try #require(PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any])
         #expect(info["CFBundleDisplayName"] as? String == AppBrand.displayName)
-        #expect(info["CFBundleIdentifier"] as? String == "app.paste-it.mac")
+        #expect(info["CFBundleIdentifier"] as? String == "io.github.haookun.pastel-it")
         #expect(info["SUFeedURL"] == nil)
         #expect(info["SUPublicEDKey"] == nil)
         #expect(info["SUEnableAutomaticChecks"] as? Bool == false)

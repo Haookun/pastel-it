@@ -13,8 +13,8 @@
 | Feature | Behavior |
 | --- | --- |
 | Clipboard history | Text, rich text, links, images and file references; search, filtering, pins, folders and previews |
-| Timeline | Horizontal cards at the bottom of the screen, wheel navigation and copy-time selection |
 | Candidate list | Up to ten vertical rows beside the caret; number selection, Tab paging and single-line summaries |
+| Timeline | Horizontal cards at the bottom of the screen, wheel navigation and copy-time selection |
 | Text OCR | Apple Vision recognition with automatic or selected supported languages, including Chinese, English and Japanese |
 | Table OCR | Markdown tables with surrounding text on macOS 26+ |
 | Quick Paste | Converts the **current system clipboard** to plain text; selectable text, image OCR and file-name scopes; off by default |
@@ -40,15 +40,30 @@ This screenshot contains synthetic data from an isolated review, not a user’s 
 
 Choose Timeline or Candidate Bar under Settings → Clipboard → Display Style. Candidate selection retains the original item type and follows Copy/Direct Paste settings. Image-to-text conversion belongs to Quick Paste. Global shortcuts can be changed or cleared independently, with conflict checks.
 
-## Build and run
+## Added in this derivative
 
-**No official binary release or automatic update channel is currently published.** The maintainer’s 2026-10-29 instruction is documentation only: no distribution packaging or releases until the project is public and the plan is revisited. The future reference is ad-hoc / unnotarized distribution with macOS’s per-app **Open Anyway** flow; it is not an Apple approval or a promise of identical alerts on all Macs. See [the deferred distribution plan](docs/distribution.md). Build from source; a private repository requires GitHub access first.
+- Default caret-side vertical candidates: ten items, number selection, Tab paging, single-line summaries and image/file hover previews.
+- Copy-time navigation and wheel browsing in the alternative timeline.
+- Local Vision table OCR to Markdown (macOS 26+), OCR settings, and Quick Paste for current clipboard text, images or file names.
+- Missing-language recovery without launch crashes; no usage analytics; separately clearable local diagnostic logs.
+- Simplified native settings and permissions. Paste Stack, MCP and automatic updating remain disabled.
 
-- Deployment target: macOS 14. Modern text OCR uses macOS 15+; table recognition requires macOS 26+.
-- Tools: Swift 6.2+, matching Xcode / Command Line Tools, and Python 3.
-- Locally verified on Apple Silicon with macOS 27.0.1. Full behavior on older systems and Intel has not been accepted.
+<img src="docs/images/features-overview.svg" width="900" alt="Schematic comparison of default candidates and timeline">
+<img src="docs/images/ocr-workflow.svg" width="900" alt="Schematic local OCR workflow">
 
-The following commands document a manual local build; they are not being executed for this documentation update.
+The illustrations use synthetic examples, not real clipboard contents.
+
+## Download and install
+
+Get the **v0.3.0 Apple Silicon (arm64) DMG** from [Releases](https://github.com/Haookun/pastel-it/releases/latest). Drag the app into Applications. There is no Intel binary or automatic updater in this release.
+
+The app is ad-hoc signed and **not Apple notarized**. For a trusted download blocked by Gatekeeper, follow macOS’s per-app **Open Anyway** flow in System Settings → Privacy & Security. Do not disable system protection. [Distribution guide](docs/distribution.md).
+
+Version 0.3.0 has an independent identity, `io.github.haookun.pastel-it`, and new data in `~/Library/Application Support/PastelIt/`. It does not read, migrate or remove the upstream/old private build’s history or preferences. Grant Accessibility separately for the new app.
+
+## Build from source
+
+Deployment target: macOS 14. Modern text OCR requires macOS 15+, tables macOS 26+. Swift 6.4+, matching Xcode/Command Line Tools and Python 3 are required. Apple Silicon is the first supported binary target; older systems and Intel have not had full manual acceptance.
 
 ```sh
 git clone https://github.com/Haookun/pastel-it.git
@@ -56,17 +71,16 @@ cd pastel-it
 swift test --scratch-path /private/tmp/pastel-it-build
 PASTEIT_BUILD_PATH=/private/tmp/pastel-it-build \
   ./scripts/package-release.sh --variant arm64 --local-test
+# Ad-hoc signed DMG, without automatic upload
+PASTEIT_BUILD_PATH=/private/tmp/pastel-it-build \
+  ./scripts/package-release.sh --variant arm64 --adhoc-release
 ```
 
-The App is written to `dist/local-test/arm64/Pastel it！.app`. Local packaging uses ad-hoc signing without a Developer ID or notarization. It does not install or publish anything. The adjacent normal-validation launcher extracts the clean signed archive to a temporary directory before launch.
-
-The **128-test record dated 2026-10-28 used local repair dependency copies**. A complete fresh-clone build using only public dependency manifests is still pending verification; the commands above describe that standard path, not a claim that every environment has passed. See [development notes](docs/development.md).
-
-This derivative keeps the original bundle identifier and data directory. Quit the original app and back up existing data before replacement; do not run both versions side by side.
+See [development](docs/development.md) and [release validation](docs/release-0.3.0.md) for evidence and limitations.
 
 ## Privacy and networking
 
-History and attachments stay in `~/Library/Application Support/PasteIt/`. OCR runs through Apple Vision. There is no usage analytics SDK, and runtime OCR does not call OpenAI or Kimi.
+History and attachments stay in `~/Library/Application Support/PastelIt/`. OCR runs through Apple Vision. There is no usage analytics SDK, and runtime OCR does not call OpenAI or Kimi.
 
 Link previews may contact the destination website or fetch its icon. Language repair contacts GitHub only after an explicit request. Private repositories require browser sign-in and file import; public repositories support direct download. On-device OCR does not mean every feature is network-free. [Privacy details](docs/analytics.md).
 

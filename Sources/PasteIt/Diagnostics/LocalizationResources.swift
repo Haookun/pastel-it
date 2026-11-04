@@ -15,7 +15,7 @@ enum LocalizationResources {
             return FileManager.default.temporaryDirectory.appendingPathComponent("PastelIt-LanguageValidation-\(ProcessInfo.processInfo.processIdentifier)")
         }
         return FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Application Support/PasteIt/LanguagePacks", isDirectory: true)
+            .appendingPathComponent("Library/Application Support/PastelIt/LanguagePacks", isDirectory: true)
     }
 
     static func resolve(mainBundle: Bundle = .main, cache: URL? = nil) -> Resolution {

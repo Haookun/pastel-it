@@ -13,8 +13,8 @@
 | 功能 | 使用方式 |
 | --- | --- |
 | 剪贴板历史 | 文字、富文本、链接、图片和文件引用；搜索、筛选、置顶、文件夹与预览 |
-| 时间轴 | 屏幕底部横向卡片；鼠标滚轮浏览，沿复制时间定位 |
 | 候选列表 | 输入光标附近显示，纵向每页 10 项；数字选取、Tab 翻页，长内容首行省略 |
+| 时间轴 | 屏幕底部横向卡片；鼠标滚轮浏览，沿复制时间定位 |
 | 本地文字 OCR | Apple Vision 自动识别中、英、日等系统支持的语言，也可手动选择 |
 | 表格 OCR | macOS 26+ 将识别出的表格整理为 Markdown，保留周围文字 |
 | 快捷粘贴 | 将**当前系统剪贴板**转为纯文本；可选文字、图片 OCR、文件名，默认关闭 |
@@ -41,17 +41,37 @@
 | 候选列表选取 | 当前页 `1`–`9`、`0` |
 | 候选列表翻页 | `Tab` 下一页，`Shift-Tab` 上一页；首尾停止 |
 
-在“设置 → 剪贴板 → 显示样式”选择时间轴或候选栏，默认时间轴。选取条目沿用复制／直接粘贴设置；图片仍按图片取用，图片转文字请使用快捷粘贴。两组全局快捷键可分别修改、清空，并检查冲突。[使用指南](docs/getting-started.md)
+在“设置 → 剪贴板 → 显示样式”选择时间轴或候选栏，默认候选栏。选取条目沿用复制／直接粘贴设置；图片仍按图片取用，图片转文字请使用快捷粘贴。两组全局快捷键可分别修改、清空，并检查冲突。[使用指南](docs/getting-started.md)
 
-## 安装与构建
+## 相比原项目 Paste It 增加了什么
 
-**目前没有正式安装包或自动更新渠道。** 可从源码构建；私有仓库需要先具备访问权限。2026-10-29 的维护约定是只整理文档，暂不开展任何对外分发打包工作，待项目公开后再讨论。
+在原版剪贴板历史、搜索和卡片管理基础上，本派生版着重改善输入时的取用与图片转文字：
 
-- 最低部署目标：macOS 14；现代文字 OCR 使用 macOS 15+，表格识别需要 macOS 26+。
-- 构建工具：Swift 6.2+、相应 Xcode／Command Line Tools、Python 3。
-- 本机已验证：Apple Silicon、macOS 27.0.1。旧系统与 Intel 的完整使用体验尚未验收。
+- **光标旁候选栏（默认）**：纵向10项，数字选取、Tab翻页，长内容单行省略，图片／文件悬停预览。
+- **复制时间轴**：横向滚轮浏览，按复制时间定位；可随时切回候选栏。
+- **表格 OCR 与快捷粘贴**：本机 Vision 将图片转为文字或 Markdown 表格；当前剪贴板的文字、图片、文件名可按范围转成纯文本。
+- **资源与隐私修复**：语言资源缺失不再导致启动崩溃；校验后恢复语言包；移除使用统计，仅保留可清理的本机诊断日志。
+- **精简原生设置**：独立快捷键、权限入口与显示样式预览；归档停用 Paste Stack、MCP 和自动更新。
 
-以下命令是读者将来自行构建的说明，不是本轮已执行的操作：
+<img src="docs/images/features-overview.svg" width="900" alt="候选栏与时间轴功能示意，两种展示共用历史">
+
+<img src="docs/images/ocr-workflow.svg" width="900" alt="图片经本机 Vision 转为文字或 Markdown 表格的流程示意">
+
+以上为功能示意，非真实剪贴板截图；原版能力与新增能力的来源见 [项目来源](docs/origin.md)。
+
+## 下载安装
+
+从 [GitHub Releases](https://github.com/Haookun/pastel-it/releases/latest) 下载 **v0.3.0 Apple Silicon（arm64）DMG**，打开后将 App 拖入 Applications。首版不提供 Intel 安装包；自动更新停用，后续版本手动下载。
+
+使用 ad-hoc 临时签名，**没有 Developer ID 签名或 Apple 公证**。下载后如被 Gatekeeper 拦截，确认来源可信后，按“系统设置 → 隐私与安全性 → 仍要打开”允许单个应用。不要关闭系统安全保护。[分发与安装说明](docs/distribution.md)
+
+v0.3.0 起为独立应用：标识 `io.github.haookun.pastel-it`，历史存放在 `~/Library/Application Support/PastelIt/`，不会自动读取或迁移原版及旧私人版本的数据，也不会删除它们。辅助功能权限需要为新版单独授权。
+
+## 从源码构建
+
+- 最低部署目标 macOS 14；现代文字 OCR 为 macOS 15+，表格识别 macOS 26+。
+- Swift 6.4+、相应 Xcode／Command Line Tools、Python 3；Apple Silicon 为首版验证平台。
+- 老系统和 Intel 的完整体验未验收；本机测试不能代替所有第三方应用的权限／粘贴测试。
 
 ```sh
 git clone https://github.com/Haookun/pastel-it.git
@@ -59,17 +79,16 @@ cd pastel-it
 swift test --scratch-path /private/tmp/pastel-it-build
 PASTEIT_BUILD_PATH=/private/tmp/pastel-it-build \
   ./scripts/package-release.sh --variant arm64 --local-test
+# 制作无公证、临时签名 DMG（不自动上传）
+PASTEIT_BUILD_PATH=/private/tmp/pastel-it-build \
+  ./scripts/package-release.sh --variant arm64 --adhoc-release
 ```
 
-产物为 `dist/local-test/arm64/Pastel it！.app`。本机使用 ad-hoc 临时签名，无需 Developer ID 或公证；构建不自动安装或发布。当前 128 项测试与 App 验证来自本机修复依赖副本，**公共依赖的新克隆完整构建仍待验证**。[开发指南](docs/development.md)
-
-以后分发暂参考“未公证应用 + macOS 对单个应用的‘仍要打开’流程”，现在仅记录，不制作分发包。此提示与签名、公证及来源有关，不是开源软件专属，也不表示 Apple 审核通过。[分发约定](docs/distribution.md)
-
-本版沿用原版 `app.paste-it.mac` 标识及数据目录。已有 Paste It 用户应退出旧版、备份后替换，避免并行运行两个实例。
+本机测试 App 在 `dist/local-test/arm64/`，DMG 在 `dist/`；不自动安装。[开发指南](docs/development.md)
 
 ## 数据与联网
 
-历史及附件保存在本机 `~/Library/Application Support/PasteIt/`，OCR 由系统 Vision 在设备上执行。没有使用统计 SDK，也不通过 OpenAI／Kimi 服务识别剪贴板。
+历史及附件保存在本机 `~/Library/Application Support/PastelIt/`，OCR 由系统 Vision 在设备上执行。没有使用统计 SDK，也不通过 OpenAI／Kimi 服务识别剪贴板。
 
 链接预览可能请求对应网站或图标；点击修复语言资源时会访问 GitHub。私有仓库需浏览器登录下载后导入，公开仓库可直接下载。本地 OCR 和无使用统计不代表整个应用从不联网。[隐私与日志](docs/analytics.md)
 

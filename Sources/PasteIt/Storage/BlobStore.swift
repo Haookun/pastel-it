@@ -22,7 +22,7 @@ final class BlobStore: @unchecked Sendable {
 
     convenience init() {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        self.init(rootURL: appSupport.appendingPathComponent("PasteIt", isDirectory: true))
+        self.init(rootURL: appSupport.appendingPathComponent("PastelIt", isDirectory: true))
     }
 
     /// Custom root (used by Agent API ephemeral screenshot sessions).

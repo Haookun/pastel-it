@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="840" viewBox="0 0 1200 840">
+  <rect width="1200" height="840" fill="#F5F5F7"/>
+  <text x="64" y="76" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="34" font-weight="600" fill="#1D1D1F">两种展示方式，同一份剪贴板历史</text>
+  <text x="64" y="112" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="17" fill="#6E6E73">候选栏（默认）跟随文字光标，时间轴停靠屏幕底部；按 ⇧⌘C 随时打开</text>
+
+  <!-- Mock screen -->
+  <rect x="64" y="150" width="1072" height="620" rx="18" fill="#FFFFFF" stroke="#E5E5EA"/>
+
+  <!-- Editor placeholder text -->
+  <rect x="104" y="192" width="520" height="14" rx="7" fill="#ECECEF"/>
+  <rect x="104" y="224" width="610" height="14" rx="7" fill="#ECECEF"/>
+  <rect x="104" y="256" width="440" height="14" rx="7" fill="#ECECEF"/>
+  <rect x="104" y="298" width="180" height="14" rx="7" fill="#ECECEF"/>
+  <rect x="288" y="294" width="2.5" height="22" rx="1.25" fill="#1D1D1F"/>
+  <rect x="104" y="344" width="560" height="14" rx="7" fill="#ECECEF"/>
+  <rect x="104" y="376" width="380" height="14" rx="7" fill="#ECECEF"/>
+  <rect x="104" y="408" width="610" height="14" rx="7" fill="#ECECEF"/>
+  <rect x="104" y="440" width="300" height="14" rx="7" fill="#ECECEF"/>
+
+  <!-- Candidate bar panel -->
+  <rect x="220" y="262" width="372" height="404" rx="14" fill="#FFFFFF" stroke="#E0E0E4"/>
+  <text x="240" y="288" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="13" font-weight="600" fill="#1D1D1F">候选栏 · 剪贴板历史</text>
+  <rect x="536" y="272" width="44" height="20" rx="10" fill="#D9A441"/>
+  <text x="558" y="286" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" font-weight="600" fill="#FFFFFF">默认</text>
+
+  <!-- Row 1 (selected) -->
+  <rect x="228" y="300" width="356" height="30" rx="8" fill="#FBF3E2" stroke="#EBCF9B"/>
+  <circle cx="248" cy="315" r="10" fill="#D9A441"/>
+  <text x="248" y="319" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" font-weight="600" fill="#FFFFFF">1</text>
+  <text x="266" y="320" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="14" fill="#1D1D1F">会议纪要：Q3 目标与排期</text>
+  <!-- Row 2 -->
+  <circle cx="248" cy="349" r="10" fill="#F0F0F3"/>
+  <text x="248" y="353" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" fill="#6E6E73">2</text>
+  <text x="266" y="354" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="14" fill="#1D1D1F">https://pastel-it.example/docs</text>
+  <text x="576" y="353" text-anchor="end" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" fill="#86868B">链接</text>
+  <!-- Row 3 -->
+  <circle cx="248" cy="383" r="10" fill="#F0F0F3"/>
+  <text x="248" y="387" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" fill="#6E6E73">3</text>
+  <text x="266" y="388" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="14" fill="#1D1D1F">设计稿-首页-v3.png</text>
+  <text x="576" y="387" text-anchor="end" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" fill="#86868B">图片</text>
+  <!-- Row 4 -->
+  <circle cx="248" cy="417" r="10" fill="#F0F0F3"/>
+  <text x="248" y="421" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" fill="#6E6E73">4</text>
+  <text x="266" y="422" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="14" fill="#1D1D1F">func clampedPage(_:itemCount:)</text>
+  <!-- Row 5 -->
+  <circle cx="248" cy="451" r="10" fill="#F0F0F3"/>
+  <text x="248" y="455" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" fill="#6E6E73">5</text>
+  <text x="266" y="456" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="14" fill="#1D1D1F">发票编号 INV-2026-1042</text>
+  <!-- Row 6 -->
+  <circle cx="248" cy="485" r="10" fill="#F0F0F3"/>
+  <text x="248" y="489" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" fill="#6E6E73">6</text>
+  <text x="266" y="490" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="14" fill="#1D1D1F">明天上午十点一起过方案</text>
+  <!-- Row 7 -->
+  <circle cx="248" cy="519" r="10" fill="#F0F0F3"/>
+  <text x="248" y="523" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" fill="#6E6E73">7</text>
+  <text x="266" y="524" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="14" fill="#1D1D1F">Package.swift</text>
+  <text x="576" y="523" text-anchor="end" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" fill="#86868B">文件</text>
+  <!-- Row 8 -->
+  <circle cx="248" cy="553" r="10" fill="#F0F0F3"/>
+  <text x="248" y="557" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" fill="#6E6E73">8</text>
+  <text x="266" y="558" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="14" fill="#1D1D1F">亲爱的王律师：您好！</text>
+  <!-- Row 9 -->
+  <circle cx="248" cy="587" r="10" fill="#F0F0F3"/>
+  <text x="248" y="591" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" fill="#6E6E73">9</text>
+  <text x="266" y="592" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="14" fill="#1D1D1F">会议室地址：张江路 88 号</text>
+  <!-- Row 10 -->
+  <circle cx="248" cy="621" r="10" fill="#F0F0F3"/>
+  <text x="248" y="625" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" fill="#6E6E73">0</text>
+  <text x="266" y="626" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="14" fill="#1D1D1F">蛋挞食谱：220°C 烤 18 分钟</text>
+
+  <text x="240" y="654" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" fill="#86868B">第 1 页，共 3 页 · Tab 下一页 · ⇧Tab 上一页</text>
+
+  <!-- Candidate callout -->
+  <line x1="592" y1="340" x2="716" y2="340" stroke="#D9A441" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <circle cx="592" cy="340" r="3.5" fill="#D9A441"/>
+  <text x="724" y="336" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="15" font-weight="600" fill="#1D1D1F">候选栏 · 跟随文字光标</text>
+  <text x="724" y="360" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="12.5" fill="#6E6E73">每页最多 10 项，数字键快速选取</text>
+  <text x="724" y="380" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="12.5" fill="#6E6E73">无辅助功能权限时在鼠标旁显示</text>
+
+  <!-- Timeline band -->
+  <text x="1088" y="658" text-anchor="end" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="13" fill="#6E6E73">时间轴 · 屏幕底部（可在设置中切换）</text>
+  <rect x="88" y="668" width="1024" height="84" rx="14" fill="#F7F7F9" stroke="#E5E5EA"/>
+  <g>
+    <rect x="104" y="682" width="176" height="56" rx="10" fill="#FFFFFF" stroke="#E5E5EA"/>
+    <circle cx="120" cy="698" r="4" fill="#D9A441"/>
+    <rect x="132" y="693" width="120" height="9" rx="4.5" fill="#ECECEF"/>
+    <rect x="116" y="712" width="148" height="8" rx="4" fill="#F3F3F5"/>
+    <rect x="292" y="682" width="176" height="56" rx="10" fill="#FFFFFF" stroke="#E5E5EA"/>
+    <rect x="304" y="693" width="120" height="9" rx="4.5" fill="#ECECEF"/>
+    <rect x="304" y="712" width="148" height="8" rx="4" fill="#F3F3F5"/>
+    <rect x="480" y="682" width="176" height="56" rx="10" fill="#FFFFFF" stroke="#E5E5EA"/>
+    <rect x="492" y="693" width="120" height="9" rx="4.5" fill="#ECECEF"/>
+    <rect x="492" y="712" width="148" height="8" rx="4" fill="#F3F3F5"/>
+    <rect x="668" y="682" width="176" height="56" rx="10" fill="#FFFFFF" stroke="#E5E5EA"/>
+    <rect x="680" y="693" width="120" height="9" rx="4.5" fill="#ECECEF"/>
+    <rect x="680" y="712" width="148" height="8" rx="4" fill="#F3F3F5"/>
+    <rect x="856" y="682" width="176" height="56" rx="10" fill="#FFFFFF" stroke="#E5E5EA" opacity="0.55"/>
+    <rect x="868" y="693" width="120" height="9" rx="4.5" fill="#ECECEF"/>
+    <rect x="868" y="712" width="148" height="8" rx="4" fill="#F3F3F5"/>
+  </g>
+
+  <path d="M211 240v20" stroke="#1D1D1F" stroke-width="2"/>
+  <!-- Footer -->
+  <text x="64" y="812" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="13" fill="#6E6E73">两种视图读取同一份本机历史记录</text>
+  <text x="1136" y="812" text-anchor="end" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="13" fill="#86868B">功能示意图，非真实截图；内容为合成示例</text>
+</svg>

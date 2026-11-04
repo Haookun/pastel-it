@@ -13,9 +13,9 @@ Pastel it！基于 [Paste It](https://github.com/yipeng-git/paste-it)，原作�
 
 “Codex编写”描述派生部分的开发过程，不表示上游代码、第三方库或系统API由Codex原创，也不表示OpenAI或Kimi对本项目提供官方背书。运行时OCR不调用这些开发工具。
 
-本仓库最初为独立私人派生库，保留上游Git历史；并非GitHub公开fork网络中的子仓库。当前可见性以GitHub权限为准，本次文档整理不将仓库公开。对外分发工作暂停，待项目公开后再讨论，见 [分发约定](distribution.md)。
+本仓库最初为独立私人派生库，保留上游 Git 历史，并非 GitHub fork 网络中的子仓库。2026-11-04 维护者授权公开并发布 v0.3.0，见 [分发说明](distribution.md)。
 
-内部可执行文件和Swift目标仍名为 `PasteIt` / `PasteItCore`。bundle ID与偏好域为 `app.paste-it.mac`，数据位于 `~/Library/Application Support/PasteIt/`。本版应替代原安装，不应与原版并行使用同一存储。
+内部可执行文件和Swift目标仍名为 `PasteIt` / `PasteItCore`。v0.3.0 的 bundle ID 与偏好域为 `io.github.haookun.pastel-it`，数据位于 `~/Library/Application Support/PastelIt/`，与原版及早期私人版本独立，不自动迁移旧数据。
 
 当前能力、停用功能和验证范围分别见 [功能](features.md)、[开发指南](development.md)和 [验证记录](validation.md)。第三方依赖各自保留许可，见 [完整致谢](../THIRD_PARTY_NOTICES.md)；图标参考由维护者提供，来源记录见 [设计](design.md)。
 

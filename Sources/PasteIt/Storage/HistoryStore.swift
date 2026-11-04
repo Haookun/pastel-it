@@ -1004,7 +1004,7 @@ final class HistoryStore: ObservableObject {
 
         guard isFreshStore, clips.isEmpty else { return }
 
-        let bundleID = Bundle.main.bundleIdentifier ?? "app.paste-it.mac"
+        let bundleID = Bundle.main.bundleIdentifier ?? "io.github.haookun.pastel-it"
         let now = Date()
 
         let welcome = ClipItem(

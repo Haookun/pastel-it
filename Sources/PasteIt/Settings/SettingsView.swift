@@ -344,10 +344,10 @@ struct SettingsView: View {
         Form {
             Section(L10n.tr("settings.group.displayStyle", default: "Display Style")) {
                 Picker(L10n.tr("clipboard.style.picker", default: "Presentation"), selection: $settings.clipboardPresentationStyle) {
-                    Text(L10n.tr("clipboard.style.timeline", default: "Timeline"))
-                        .tag(ClipboardPresentationStyle.timeline)
                     Text(L10n.tr("clipboard.style.candidateBar", default: "Candidate Bar"))
                         .tag(ClipboardPresentationStyle.candidateBar)
+                    Text(L10n.tr("clipboard.style.timeline", default: "Timeline"))
+                        .tag(ClipboardPresentationStyle.timeline)
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()

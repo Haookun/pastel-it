@@ -157,7 +157,7 @@ enum RenderScreenshotHandler {
         }
 
         let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-            .appendingPathComponent("PasteIt", isDirectory: true)
+            .appendingPathComponent("PastelIt", isDirectory: true)
             .appendingPathComponent("AgentScreenshots", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
 

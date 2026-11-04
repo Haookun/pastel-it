@@ -104,3 +104,7 @@ swift scripts/generate-app-icon.swift
 <img src="images/clipboard-style-settings.png" width="720" alt="原生剪贴板设置与时间轴样式示意，使用隔离设置">
 
 后者是设置内的矢量示意画面，不是实际历史卡片截图。旧工程记录中的截图不一定反映当前UI，以首页、功能说明和最近验证记录为准。
+
+## v0.3.0 功能示意
+
+`images/features-overview.svg` 与 `images/ocr-workflow.svg` 为 Kimi Code 制作、Codex 整合的静态矢量说明，使用合成内容、系统字体，无外部图片或脚本，不作为真实运行截图。维护者于2026-11-04确认蛋挞参考图可用于公开改编与分发。

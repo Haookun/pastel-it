@@ -16,3 +16,16 @@ Sparkle and MCP snapshots were fetched from their pinned upstream tags on 2026-1
 The local dependency graph contains Sparkle, MCP, Swift System, SwiftLog and EventSource. A fresh clone uses the public manifests in Package.swift; its resolver may also fetch build/documentation dependencies declared upstream. See [the third-party notices](../THIRD_PARTY_NOTICES.md).
 
 The Sparkle snapshot normalizes trailing spaces only; its copyright and license wording are unchanged. Hashes describe the files stored here. Other verbatim snapshot descriptions above are unchanged.
+
+## v0.3.0 公共依赖快照
+
+来自本次实际解析的公共依赖 checkout，完整文本随 App 附带。版本与修订以根目录 Package.resolved 为准。
+
+| 依赖 | 文本 | SHA-256 |
+| --- | --- | --- |
+| swift-atomics | [swift-atomics-public.txt](swift-atomics-public.txt) | `770af8291f708538d8ff885a0bbc4e045cd700531741c4f99528d435c14d7f55` |
+| swift-collections | [swift-collections-public.txt](swift-collections-public.txt) | `770af8291f708538d8ff885a0bbc4e045cd700531741c4f99528d435c14d7f55` |
+| swift-nio | [swift-nio-public.txt](swift-nio-public.txt) | `cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30` |
+| swift-log | [swift-log-public.txt](swift-log-public.txt) | `cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30` |
+| swift-system | [swift-system-public.txt](swift-system-public.txt) | `2245a990b635558be210fb3eb4f8a6f7a49aebc0fefbf5859146a65ddc7ddcf3` |
+| eventsource | [eventsource-public.txt](eventsource-public.txt) | `2f9b695627d569a3ce452b2c03fdd34310df78c8ea94edfafd9ce38381e5b502` |

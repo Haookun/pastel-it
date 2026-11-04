@@ -23,6 +23,7 @@ SKIP_DMG=0
 REPACK_DMG=0
 BUILD_ONLY=0
 LOCAL_TEST=0
+ADHOC_RELEASE=0
 CONFIGURATION=release
 # both | arm64 | universal
 VARIANT=both
@@ -35,6 +36,7 @@ Usage: package-release.sh [options]
   --skip-dmg        Stop after signed (and optionally notarized) .app
   --repack-dmg      Reuse existing signed, notarized apps; rebuild only DMGs
   --build-only      Assemble unsigned .app in dist/build-only (no signing or DMG)
+  --adhoc-release   Build an ad-hoc signed, unnotarized distribution DMG
   --local-test      Ad-hoc sign for local testing in dist/local-test (no install)
   --variant NAME    both (default) | arm64 | universal
   -h, --help        Show this help
@@ -53,6 +55,7 @@ while [[ $# -gt 0 ]]; do
     --repack-dmg) REPACK_DMG=1; shift ;;
     --build-only) BUILD_ONLY=1; shift ;;
     --local-test) LOCAL_TEST=1; shift ;;
+    --adhoc-release) ADHOC_RELEASE=1; shift ;;
     --variant)
       VARIANT="${2:-}"
       [[ "$VARIANT" == "both" || "$VARIANT" == "arm64" || "$VARIANT" == "universal" ]] \
@@ -63,6 +66,11 @@ while [[ $# -gt 0 ]]; do
     *) echo "Unknown option: $1" >&2; usage >&2; exit 1 ;;
   esac
 done
+
+if [[ "$ADHOC_RELEASE" -eq 1 ]]; then
+  [[ "$LOCAL_TEST" -eq 0 && "$BUILD_ONLY" -eq 0 && "$REPACK_DMG" -eq 0 && "$SKIP_DMG" -eq 0 ]] || { echo "--adhoc-release cannot combine with local-test, build-only, repack-dmg or skip-dmg" >&2; exit 1; }
+  SKIP_NOTARIZE=1
+fi
 
 if [[ "$LOCAL_TEST" -eq 1 ]]; then
   [[ "$BUILD_ONLY" -eq 0 && "$REPACK_DMG" -eq 0 ]] || { echo "--local-test cannot be combined with --build-only or --repack-dmg" >&2; exit 1; }
@@ -113,7 +121,10 @@ resolve_identity() {
 }
 
 IDENTITY=""
-if [[ "$LOCAL_TEST" -eq 1 ]]; then
+if [[ "$ADHOC_RELEASE" -eq 1 ]]; then
+  IDENTITY="-"
+  echo "Distribution: ad-hoc signature; no Developer ID or Apple notarization."
+elif [[ "$LOCAL_TEST" -eq 1 ]]; then
   IDENTITY="-"
   echo "Local test build: ad-hoc signing only; not a Developer ID release or installation."
 elif [[ "$BUILD_ONLY" -eq 0 ]]; then
@@ -158,7 +169,7 @@ build_arch() {
 }
 
 sign() {
-  if [[ "$LOCAL_TEST" -eq 1 ]]; then
+  if [[ "$LOCAL_TEST" -eq 1 || "$ADHOC_RELEASE" -eq 1 ]]; then
     codesign --force --sign "$IDENTITY" "$@"
   else
     codesign --force --timestamp --options runtime --sign "$IDENTITY" "$@"
@@ -251,6 +262,9 @@ assemble_app() {
   mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources" "$app/Contents/Frameworks"
   cp "$binary" "$app/Contents/MacOS/PasteIt"
   cp "$ROOT/Info.plist" "$app/Contents/Info.plist"
+  mkdir -p "$app/Contents/Resources/Legal"
+  cp "$ROOT/LICENSE" "$ROOT/THIRD_PARTY_NOTICES.md" "$app/Contents/Resources/Legal/"
+  cp -R "$ROOT/LICENSES" "$app/Contents/Resources/Legal/"
   if [[ -f "$ICON" ]]; then
     cp "$ICON" "$app/Contents/Resources/AppIcon.icns"
   fi
@@ -345,6 +359,17 @@ EOF
     return 0
   fi
 
+  if [[ "$ADHOC_RELEASE" -eq 1 ]]; then
+    local release_stage
+    release_stage="$(mktemp -d "${TMPDIR:-/private/tmp}/PastelItRelease.XXXXXX")"
+    assemble_app "$release_stage/$label" "$binary" "$sparkle_src" "$label"
+    sign_app_bundle "$release_stage/$label/$APP_NAME"
+    create_dmg "$release_stage/$label/$APP_NAME" "$dmg"
+    hdiutil verify "$dmg"
+    rm -rf "$release_stage"
+    return 0
+  fi
+
   assemble_app "$app_dir" "$binary" "$sparkle_src" "$label"
   if [[ "$BUILD_ONLY" -eq 1 ]]; then
     # The linker emits a temporary arm64 signature. Assembly/stripping changes
@@ -427,11 +452,11 @@ fi
 echo ""
 echo "Application artifacts:"
 if [[ "$VARIANT" == "both" || "$VARIANT" == "arm64" ]]; then
-  echo "  App (arm64):     $DIST/arm64/$APP_NAME"
+  [[ "$ADHOC_RELEASE" -eq 1 ]] || echo "  App (arm64):     $DIST/arm64/$APP_NAME"
   [[ "$SKIP_DMG" -eq 0 ]] && echo "  DMG (arm64):     $DIST/PasteIt-${SHORT_VERSION}-arm64.dmg"
 fi
 if [[ "$VARIANT" == "both" || "$VARIANT" == "universal" ]]; then
-  echo "  App (universal): $DIST/universal/$APP_NAME"
+  [[ "$ADHOC_RELEASE" -eq 1 ]] || echo "  App (universal): $DIST/universal/$APP_NAME"
   [[ "$SKIP_DMG" -eq 0 ]] && echo "  DMG (universal): $DIST/PasteIt-${SHORT_VERSION}-universal.dmg"
 fi
 echo ""
@@ -439,6 +464,8 @@ if [[ "$LOCAL_TEST" -eq 1 ]]; then
   echo "Local test build only. No app was installed or released."
 elif [[ "$BUILD_ONLY" -eq 1 ]]; then
   echo "Unsigned build only. No app was installed or released."
+elif [[ "$ADHOC_RELEASE" -eq 1 ]]; then
+  echo "Ad-hoc DMG ready. No installation, notarization, upload or automatic-update feed. See docs/distribution.md."
 else
   echo "Next: copy DMGs to updates/, run generate-appcast.sh, upload GitHub Release mac-v${SHORT_VERSION}."
 fi

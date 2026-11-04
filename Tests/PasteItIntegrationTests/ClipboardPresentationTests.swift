@@ -11,13 +11,15 @@ struct ClipboardPresentationTests {
         let defaults = try #require(UserDefaults(suiteName: name))
         defer { defaults.removePersistentDomain(forName: name) }
         let settings = AppSettings(defaults: defaults)
-        #expect(settings.clipboardPresentationStyle == .timeline)
+        #expect(settings.clipboardPresentationStyle == .candidateBar)
+        settings.clipboardPresentationStyle = .timeline
+        #expect(AppSettings(defaults: defaults).clipboardPresentationStyle == .timeline)
         let primary = settings.timelinePrimaryAction
         settings.clipboardPresentationStyle = .candidateBar
         #expect(AppSettings(defaults: defaults).clipboardPresentationStyle == .candidateBar)
         #expect(settings.timelinePrimaryAction == primary)
         defaults.set("unknown-future-value", forKey: "clipboardPresentationStyle")
-        #expect(AppSettings(defaults: defaults).clipboardPresentationStyle == .timeline)
+        #expect(AppSettings(defaults: defaults).clipboardPresentationStyle == .candidateBar)
     }
     @Test func candidateNumbersUseTheSuppressedWriterAndIgnoreTimelineFilters() async throws {
         let name = "PastelIt-Candidate-\(UUID())"

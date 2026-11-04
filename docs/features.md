@@ -48,7 +48,7 @@
 
 包含九种界面语言资源，缺译项可回退英文。资源缺失或损坏时，尝试校验后的匹配缓存，再使用代码内置英文继续启动并提示修复。“设置 → 关于 → 语言资源”可下载或导入语言包；私有仓库需浏览器登录后下载导入，公开仓库可直接下载。校验版本和 SHA-256 后只安装语言缓存，配置、历史与 App 签名保持不变。这不是 OCR 模型下载。见 [语言恢复](language-recovery.md)。
 
-原有 bundle ID、内部 Swift 目标名和 `~/Library/Application Support/PasteIt/` 保持不变，以兼容已有历史与权限身份。Pastel it！应替代原安装，不能同时作为独立应用运行。本派生版尚未配置自己的更新源，已移除上游更新地址和公钥，并停用 Sparkle 启动。
+v0.3.0 起使用独立标识 `io.github.haookun.pastel-it` 及全新 `~/Library/Application Support/PastelIt/`，不迁移原版历史。内部 Swift 目标名保持不变。本派生版尚未配置自己的更新源，已移除上游更新地址和公钥，并停用 Sparkle 启动。
 
 ## 精简后的功能边界
 
@@ -82,4 +82,4 @@ Paste Stack 源码归档，不创建控制器、收集队列、显示面板或�
 
 链接预览可能请求链接或图标，语言资源修复由用户点击后访问GitHub。OCR仍在设备上执行，无统计不等于整个应用不联网。见 [隐私与日志](analytics.md)。
 
-正式安装包尚未发布；2026-10-29起暂不进行对外打包，项目公开后再议。见 [分发约定](distribution.md)。
+v0.3.0 提供 Apple Silicon ad-hoc 签名 DMG，无 Apple 公证，自动更新关闭。见 [分发约定](distribution.md)。

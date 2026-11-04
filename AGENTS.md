@@ -1,22 +1,21 @@
 # Agent notes — Pastel it！ (macOS)
 
-## 当前维护边界（2026-10-29）
+## 当前发布授权（2026-11-04）
 
-本轮仅更新README、相关文档和署名许可。不编译、不安装、不制作任何对外分发包、不上传二进制、不创建Release、不启用自动更新、不申请Developer ID或公证，也不改变仓库可见性。以后暂参考ad-hoc／未公证应用与macOS针对单个应用的“仍要打开”流程；项目公开后须另行讨论，公开本身不等于发版授权。以 [分发约定](docs/distribution.md) 为准。下方保留的构建、签名与发布说明是技术参考，不构成本轮执行指令。
-
+维护者已明确授权完成候选栏默认调整、README 配图和功能说明、构建验证、ad-hoc 签名 DMG、GitHub Release 及仓库公开。旧文档中的“只记录、不分发”限制已被本次请求取代。保留无 Developer ID／无公证路线，不启用自动更新，不安装或清除用户本机数据。公开前先检查历史中的凭据、私人数据及素材授权；未确认的人工验收应明确记录，不宣称全部通过。当前发布说明见 [分发说明](docs/distribution.md)。
 
 适用于整个仓库。优先遵循用户当前任务要求；以下约定用于避免破坏剪贴板行为、用户数据和 macOS 签名身份。
 
 仓库根目录以当前checkout为准。历史目录名由 `Paste It` 迁移为 `Pastel it`；不要依赖维护者的绝对路径，也不在旧路径创建副本或软链接。
 
-剪贴板展示可选择时间轴或候选栏（默认时间轴）；候选栏在文字插入光标旁显示，纵向每页最多10项，Tab下一页、Shift-Tab上一页，首尾停止，数字仅在面板内处理。候选定位只读取辅助功能范围坐标，不读取输入正文；不可用时在鼠标旁回退并提示。翻页沿用原光标矩形，时间轴保持底部位置。
+剪贴板展示可选择时间轴或候选栏（默认候选栏）；候选栏在文字插入光标旁显示，纵向每页最多10项，Tab下一页、Shift-Tab上一页，首尾停止，数字仅在面板内处理。候选定位只读取辅助功能范围坐标，不读取输入正文；不可用时在鼠标旁回退并提示。翻页沿用原光标矩形，时间轴保持底部位置。
 
 当前仅保留两个全局操作：打开剪贴板默认 ⇧⌘C，快捷粘贴默认 ⇧⌘V。旧独立“粘贴为纯文本”及相关快捷键已移除，历史卡片的“复制为纯文本”仅为复制操作。
 
 ## 项目与代码入口
 
 - 原生 macOS 菜单栏剪贴板管理器，使用 SwiftUI、AppKit、SwiftData，通过 Swift Package Manager 构建；不是 Web 项目，也不依赖 Xcode 工程文件。
-- Swift tools version 为 **6.2**，最低支持 **macOS 14**。使用较新系统 API 时保留 availability 检查与旧系统回退；玻璃样式统一复用 `Utilities/LiquidGlass.swift`。
+- 项目 manifest tools version 为 **6.2**（当前公共锁定依赖需要 **Swift 6.4+**，验证工具链6.4.2），最低支持 **macOS 14**。使用较新系统 API 时保留 availability 检查与旧系统回退；玻璃样式统一复用 `Utilities/LiquidGlass.swift`。
 - `Package.swift` 定义应用 `PasteIt`、共享库 `PasteItCore`、测试 `PasteItTests`；外部依赖包括 Sparkle、MCP Swift SDK（归档MCP代码编译使用）。
 
 | 路径（相对于仓库根目录） | 职责 |
@@ -47,10 +46,10 @@
 - 区分“写入系统剪贴板”和“向前台应用自动粘贴”：前者无需 Accessibility，后者需要。保持无权限时的可用路径和提示。
 - 应用自己写入剪贴板时，保留 `onPasteboardMutation` → `PasteboardMonitor.suppress(changeCount:)` 链路，避免把自身写入重复采集进历史或 Paste Stack。
 - 保留暂停采集、忽略应用和受保护 pasteboard 类型过滤；测试使用合成内容，不使用真实密码或敏感剪贴板内容。
-- 持久化目录为 `~/Library/Application Support/PasteIt/`，数据库为 `history.store`，附件在 `Blobs/` 和 `Thumbnails/`。**不要改用 SwiftData 默认的 `Application Support/default.store`**，它可能与其他未沙盒化应用冲突。
+- 持久化目录为 `~/Library/Application Support/PastelIt/`，数据库为 `history.store`，附件在 `Blobs/` 和 `Thumbnails/`。**不要改用 SwiftData 默认的 `Application Support/default.store`**，它可能与其他未沙盒化应用冲突。
 - 不要通过删除真实历史、附件、偏好设置或重置系统权限来让测试通过。模型、清理或迁移改动需考虑现有数据兼容性；测试优先使用临时目录和内存存储，复用已有 ephemeral 支持。
-- 不收集或上传用户使用信息；不得重新引入统计 SDK、行为事件、会话计数或设备标识。诊断日志仅在本机，固定事件码，不接受剪贴板正文、OCR、文件内容、私人路径或 error.description。见 [日志与隐私说明](docs/analytics.md)。清理只能删除 `~/Library/Logs/PastelIt/` 中三个已知普通日志文件，不删除配置、历史、附件或系统日志；测试使用临时目录，拒绝软链接、硬链接和递归删除。
-- MCP 在当前私人派生版中完全停用，保留源码；启动不创建监听器，也不提供开关或 URL 入口，旧设置不得恢复运行。归档实现仅绑定 `127.0.0.1:17321`，不暴露主时间线、采集或设置的修改能力。截图工具使用临时历史；保持其与真实存储隔离。接口变化同步 [MCP 文档](docs/mcp.md)。
+- 不收集或上传用户使用信息；不得重新引入统计 SDK、行为事件、会话计数或设备标识。诊断日志仅在本机，固定事件码，不接受剪贴板正文、OCR、文件内容、私人路径或 error.description。见 [日志与隐私说明](docs/analytics.md)。清理只能删除 `~/Library/Logs/PastelItPublic/` 中三个已知普通日志文件，不删除配置、历史、附件或系统日志；测试使用临时目录，拒绝软链接、硬链接和递归删除。
+- MCP 在当前派生版中完全停用，保留源码；启动不创建监听器，也不提供开关或 URL 入口，旧设置不得恢复运行。归档实现仅绑定 `127.0.0.1:17321`，不暴露主时间线、采集或设置的修改能力。截图工具使用临时历史；保持其与真实存储隔离。接口变化同步 [MCP 文档](docs/mcp.md)。
 - 不打印或提交旧的 `Secrets/posthog.env`、签名私钥、公证凭据；旧统计凭据不再读取或注入应用。
 
 ## 本地化与资源
@@ -104,7 +103,7 @@ codesign -dv "dist/local-test/arm64/Pastel it！.app"
 
 只编译组装时可用 `--build-only`，输出到 `dist/build-only/`，但未签名产物不能作为启动和交互已通过的证据。Apple Silicon 本机运行优先使用 ad-hoc 签名。
 
-用户未明确要求安装时，交付产物留在项目目录，可由手动启动器在系统临时目录解压运行，**不替换 `/Applications` 下的现有应用**。用户明确要求安装时，可安装已校验的本机临时签名版本；先备份现有应用，保持 bundle ID，不在打包失败时删除原安装。签名身份或路径变化可能影响辅助功能授权，需提示用户检查，不擅自重置权限。
+用户未明确要求安装时，交付产物留在项目目录，可由手动启动器在系统临时目录解压运行，**不替换 `/Applications` 下的现有应用**。用户明确要求安装时，可安装已校验的本机临时签名版本；先备份现有应用，保持当前独立 bundle ID，不在打包失败时删除原安装。签名身份或路径变化可能影响辅助功能授权，需提示用户检查，不擅自重置权限。
 
 不关闭系统 Gatekeeper、SIP 或 AMFI，不添加宽泛信任规则。若下载的未公证应用被拦截，按 Apple 的单个应用允许打开流程处理，不全局降低系统保护。若系统权限或环境阻止验证，完成其他检查，明确未验证行为，不把 ad-hoc 签名说成 Developer ID 签名或公证通过。
 
@@ -121,10 +120,10 @@ codesign -dv "dist/local-test/arm64/Pastel it！.app"
 ## 打包、发布与交付
 
 - 日常本地验证使用 `package-release.sh --variant arm64 --local-test`；不需要 Developer ID、提升版本、生成 appcast 或发布。`--build-only` 仅用于不启动的组装检查。
-- 发布按 [mac-updates.md](docs/mac-updates.md) 和 `scripts/release.sh` 执行；版本由脚本管理，保持 `CFBundleVersion` 单调递增，不手工拼装更新签名。
+- 当前发布使用 `package-release.sh --variant arm64 --adhoc-release`，再单独上传 Release；保持 `CFBundleVersion` 单调递增并重新生成语言包。旧 `scripts/release.sh` 为停用的 Developer ID／Sparkle 工作流参考，不能用于本次路线。
 - **`release.sh` 是有副作用的发布流程，不是构建检查命令。** 默认会改版本、签名、公证、创建 GitHub Release、更新 `docs/appcast.xml`、提交、打 tag 和 push，仅在任务已授权发布时使用。
 - `--dry-run` 仍会修改 `Info.plist`、打包/公证和更新本地 appcast；`--no-push` 仍会创建 GitHub Release、提交和 tag。不要把这些选项当成只读或仅本地构建的保证。
-- 保持现有 bundle ID；本机默认 ad-hoc，未来具备证书时才使用 Developer ID 发布流程。`PasteIt.entitlements` 不添加 XML 注释。签名、Sparkle 嵌套组件和资源拷贝沿用打包脚本，不用临时命令替代发布实现。
+- 保持 v0.3.0 的独立 bundle ID；本机默认 ad-hoc，未来具备证书时才使用 Developer ID 发布流程。`PasteIt.entitlements` 不添加 XML 注释。签名、Sparkle 嵌套组件和资源拷贝沿用打包脚本，不用临时命令替代发布实现。
 - 不提交 `.build/`、`dist/`、`updates/` 下的发布二进制、`.tools/` 或本地凭据；生成的本地化资源是需要提交的项目资源。
 - 结束前检查 `git diff --check`、`git diff --stat` 和 `git status --short`，确认没有无关修改。交付时简要说明代码检查结果、本机签名类型、App 路径和待用户确认的功能；用户反馈前不声称实际功能验收通过。
 

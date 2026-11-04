@@ -18,7 +18,7 @@ def outputs():
         for language in LANGUAGES:
             localizations[language][key] = entry['localizations'].get(language, entry['localizations']['en'])['stringUnit']['value']
     info = plistlib.loads((ROOT / 'Info.plist').read_bytes())
-    payload = {'schemaVersion': 1, 'applicationIdentifier': 'app.paste-it.mac',
+    payload = {'schemaVersion': 1, 'applicationIdentifier': 'io.github.haookun.pastel-it',
                'appVersion': info['CFBundleShortVersionString'], 'appBuild': info['CFBundleVersion'],
                'localizations': localizations}
     data = (json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(',', ':')) + '\n').encode()

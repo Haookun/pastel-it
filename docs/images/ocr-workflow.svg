@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <rect width="1200" height="700" fill="#F5F5F7"/>
+  <text x="64" y="76" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="34" font-weight="600" fill="#1D1D1F">图片识别：从截图到可粘贴的文字</text>
+  <text x="64" y="112" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="17" fill="#6E6E73">由 Apple Vision 在本机完成识别，内容不离开这台 Mac</text>
+
+  <!-- Step 1: image -->
+  <rect x="64" y="180" width="300" height="290" rx="16" fill="#FFFFFF" stroke="#E5E5EA"/>
+  <circle cx="214" cy="214" r="14" fill="#D9A441"/>
+  <text x="214" y="219" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">1</text>
+  <text x="214" y="254" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="18" font-weight="600" fill="#1D1D1F">复制图片</text>
+  <rect x="114" y="276" width="200" height="120" rx="12" fill="#F5F5F7" stroke="#E5E5EA"/>
+  <polygon points="134,376 184,316 216,350 246,306 294,376" fill="#D9A441" opacity="0.85"/>
+  <circle cx="266" cy="302" r="10" fill="#EBCF9B"/>
+  <text x="214" y="430" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="13" fill="#6E6E73">截图 · 照片 · 扫描件</text>
+
+  <!-- Arrow 1 -->
+  <line x1="380" y1="325" x2="434" y2="325" stroke="#D9A441" stroke-width="2.5"/>
+  <polygon points="434,325 422,318 422,332" fill="#D9A441"/>
+
+  <!-- Step 2: Apple Vision -->
+  <rect x="450" y="180" width="300" height="290" rx="16" fill="#FFFFFF" stroke="#E5E5EA"/>
+  <circle cx="600" cy="214" r="14" fill="#D9A441"/>
+  <text x="600" y="219" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">2</text>
+  <text x="600" y="254" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="18" font-weight="600" fill="#1D1D1F">Apple Vision 识别</text>
+  <rect x="520" y="276" width="160" height="120" rx="12" fill="#F5F5F7" stroke="#E5E5EA"/>
+  <path d="M534 292 v-6 a6 6 0 0 1 6 -6 h6" fill="none" stroke="#D9A441" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M654 280 h6 a6 6 0 0 1 6 6 v6" fill="none" stroke="#D9A441" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M534 380 v6 a6 6 0 0 0 6 6 h6" fill="none" stroke="#D9A441" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M654 392 h6 a6 6 0 0 0 6 -6 v-6" fill="none" stroke="#D9A441" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="560" y="310" width="80" height="9" rx="4.5" fill="#D8D8DC"/>
+  <rect x="552" y="332" width="96" height="9" rx="4.5" fill="#D8D8DC"/>
+  <rect x="566" y="354" width="68" height="9" rx="4.5" fill="#D8D8DC"/>
+  <text x="600" y="430" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="13" fill="#6E6E73">OCR 在本机完成</text>
+
+  <!-- Arrow 2 -->
+  <line x1="766" y1="325" x2="820" y2="325" stroke="#D9A441" stroke-width="2.5"/>
+  <polygon points="820,325 808,318 808,332" fill="#D9A441"/>
+
+  <!-- Step 3: results -->
+  <rect x="836" y="180" width="300" height="290" rx="16" fill="#FFFFFF" stroke="#E5E5EA"/>
+  <circle cx="986" cy="214" r="14" fill="#D9A441"/>
+  <text x="986" y="219" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">3</text>
+  <text x="986" y="254" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="18" font-weight="600" fill="#1D1D1F">得到文字</text>
+  <rect x="862" y="272" width="248" height="52" rx="10" fill="#F5F5F7" stroke="#E5E5EA"/>
+  <text x="874" y="292" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="12" font-weight="600" fill="#1D1D1F">纯文本</text>
+  <rect x="874" y="302" width="180" height="8" rx="4" fill="#D8D8DC"/>
+  <rect x="862" y="336" width="248" height="86" rx="10" fill="#F5F5F7" stroke="#E5E5EA"/>
+  <text x="874" y="358" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="12" font-weight="600" fill="#1D1D1F">Markdown 表格</text>
+  <rect x="1000" y="346" width="96" height="20" rx="10" fill="#D9A441"/>
+  <text x="1048" y="360" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="11" font-weight="600" fill="#FFFFFF">macOS 26+</text>
+  <line x1="874" y1="376" x2="1098" y2="376" stroke="#E0E0E4"/>
+  <line x1="874" y1="392" x2="1098" y2="392" stroke="#E0E0E4"/>
+  <line x1="874" y1="408" x2="1098" y2="408" stroke="#E0E0E4"/>
+  <line x1="948" y1="370" x2="948" y2="414" stroke="#E0E0E4"/>
+  <line x1="1024" y1="370" x2="1024" y2="414" stroke="#E0E0E4"/>
+  <text x="986" y="452" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="13" fill="#6E6E73">结果可复制或用于快捷粘贴</text>
+
+  <!-- Quick paste note -->
+  <rect x="64" y="510" width="1072" height="64" rx="14" fill="#FBF3E2" stroke="#EBCF9B"/>
+  <text x="92" y="538" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="15" font-weight="600" fill="#1D1D1F">快捷粘贴 ⇧⌘V：复制文件后可直接粘贴为文件名</text>
+  <text x="92" y="560" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="13" fill="#6E6E73">图片中的表格在 macOS 26 及以上识别为 Markdown 表格，旧系统输出纯文本</text>
+
+  <!-- Footer -->
+  <text x="64" y="640" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="13" fill="#6E6E73">OCR 不上传图片；其他联网用途见隐私说明</text>
+  <text x="1136" y="640" text-anchor="end" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif" font-size="13" fill="#86868B">功能示意图，非真实截图</text>
+</svg>

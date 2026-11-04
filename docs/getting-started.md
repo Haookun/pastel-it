@@ -1,3 +1,5 @@
+> v0.3.0 安装与首次运行以 [分发说明](distribution.md) 为准；默认候选栏，数据与原版完全独立。
+
 # 开始使用 Pastel it！
 
 [返回首页](../README.md) · [功能细节](features.md) · [隐私说明](analytics.md)
@@ -26,7 +28,7 @@ PASTEIT_BUILD_PATH=/private/tmp/pastel-it-build \
 
 1. 启动后在菜单栏找到蛋挞图标，复制一段测试文字或图片。
 2. 按 `⇧⌘C` 打开历史。也可通过菜单栏入口打开。
-3. 在“设置 → 剪贴板 → 显示样式”选择时间轴或候选栏，默认时间轴。
+3. 在“设置 → 剪贴板 → 显示样式”选择时间轴或候选栏，默认候选栏。
 4. 时间轴可用鼠标滚轮横向浏览，底部刻度定位复制时间；候选列表每页最多十项，按 `1`–`9`、`0` 选取，`Tab` 下一页、`Shift-Tab` 上一页。
 5. 在“设置 → OCR”调整识别参数；需要当前剪贴板的纯文本转换时，再开启独立“快捷粘贴”栏目。
 
@@ -56,9 +58,9 @@ PASTEIT_BUILD_PATH=/private/tmp/pastel-it-build \
 
 ## 历史、升级和清理
 
-- 历史、图片附件、缩略图及修复语言资源：`~/Library/Application Support/PasteIt/`。
-- 配置：macOS 偏好域 `app.paste-it.mac`。
-- 本机诊断日志：`~/Library/Logs/PastelIt/`。
+- 历史、图片附件、缩略图及修复语言资源：`~/Library/Application Support/PastelIt/`。
+- 配置：macOS 偏好域 `io.github.haookun.pastel-it`。
+- 本机诊断日志：`~/Library/Logs/PastelItPublic/`。
 
 本派生版沿用上游身份和存储目录。升级前备份已有数据，退出原版后替换 App；不要同时运行原版与本版。文件条目保存的是文件引用，不等同于给原文件做备份。
 

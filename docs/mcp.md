@@ -50,7 +50,7 @@ Builds a **throwaway** history (does not write main history), shows a temporary 
 
 Default output directory:
 
-`~/Library/Application Support/PasteIt/AgentScreenshots/`
+`~/Library/Application Support/PastelIt/AgentScreenshots/`
 
 Arguments:
 

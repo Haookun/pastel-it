@@ -5,10 +5,10 @@ import SwiftUI
 @MainActor
 final class AppSettings: ObservableObject {
     @AppStorage("timelinePrimaryAction") private var timelinePrimaryActionRaw = ""
-    @AppStorage("clipboardPresentationStyle") private var clipboardPresentationStyleRaw = ClipboardPresentationStyle.timeline.rawValue
+    @AppStorage("clipboardPresentationStyle") private var clipboardPresentationStyleRaw = ClipboardPresentationStyle.defaultStyle.rawValue
 
     var clipboardPresentationStyle: ClipboardPresentationStyle {
-        get { ClipboardPresentationStyle(rawValue: clipboardPresentationStyleRaw) ?? .timeline }
+        get { ClipboardPresentationStyle(rawValue: clipboardPresentationStyleRaw) ?? .defaultStyle }
         set {
             guard clipboardPresentationStyle != newValue else { return }
             objectWillChange.send()
@@ -80,7 +80,7 @@ final class AppSettings: ObservableObject {
     /// Injectable preferences keep integration tests out of the user's defaults domain.
     init(defaults: UserDefaults = .standard) {
         _timelinePrimaryActionRaw = AppStorage(wrappedValue: "", "timelinePrimaryAction", store: defaults)
-        _clipboardPresentationStyleRaw = AppStorage(wrappedValue: ClipboardPresentationStyle.timeline.rawValue, "clipboardPresentationStyle", store: defaults)
+        _clipboardPresentationStyleRaw = AppStorage(wrappedValue: ClipboardPresentationStyle.defaultStyle.rawValue, "clipboardPresentationStyle", store: defaults)
         _clipboardCheckInterval = AppStorage(wrappedValue: 0.35, "clipboardCheckInterval", store: defaults)
         _capturePaused = AppStorage(wrappedValue: false, "capturePaused", store: defaults)
         _keepHistoryRaw = AppStorage(wrappedValue: KeepHistory.forever.rawValue, "keepHistory", store: defaults)

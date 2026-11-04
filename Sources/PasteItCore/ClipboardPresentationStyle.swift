@@ -1,10 +1,13 @@
 import Foundation
 
 public enum ClipboardPresentationStyle: String, CaseIterable, Codable, Identifiable, Sendable {
-    case timeline
     case candidateBar
+    case timeline
     public var id: String { rawValue }
     public static let candidatePageSize = 10
+    /// Default for fresh installs and for unrecognized saved values. Users who
+    /// explicitly chose Timeline keep the stored "timeline" preference.
+    public static let defaultStyle: ClipboardPresentationStyle = .candidateBar
 }
 
 /// Candidate keys are local to the visible panel. Never consume application

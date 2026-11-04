@@ -1,12 +1,22 @@
 # macOS 本机打包与可选发布签名
 
-> **2026-10-29约定：当前只整理文档，不执行本文命令，不重编译、不安装，也不进行任何对外分发打包。** 以后暂参考未公证App与单应用“仍要打开”流程，项目公开后再议。见 [分发约定](distribution.md)。
 
 默认用于本机编译和个人使用，不需要 Apple Developer 账号、Developer ID 或公证。
 采用不带开发者身份的 ad-hoc 签名，不创建自签名证书，也不关闭 macOS 安全保护。
 
 一键脚本：[`scripts/package-release.sh`](../scripts/package-release.sh)  
 更新发版：[`mac-updates.md`](mac-updates.md)
+
+## 公开 DMG（v0.3.0）
+
+```sh
+PASTEIT_BUILD_PATH=/private/tmp/pastel-it-build \
+  ./scripts/package-release.sh --variant arm64 --adhoc-release
+```
+
+此模式生成 `dist/PasteIt-0.3.0-arm64.dmg`，在非同步临时目录组装并临时签名，镜像中包含许可、9种语言与 Applications 快捷链接。脚本核验签名和镜像，不安装、不公证、不上传、不启用更新。发行文件可另命名为 `Pastel-it-0.3.0-arm64.dmg`，提供 SHA-256。版本由 Info.plist 管理，改版本后运行语言恢复包生成器。
+
+安装与系统安全提示见 [分发说明](distribution.md)。以下 Developer ID 章节仅为以后具备证书时的可选参考。
 
 ## 本机编译和运行（默认）
 

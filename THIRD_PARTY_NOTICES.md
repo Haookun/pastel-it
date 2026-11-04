@@ -33,7 +33,7 @@ Declarations are in [Package.swift](Package.swift).
 | [SwiftLog](https://github.com/apple/swift-log) / contributors | Logging abstraction through MCP; not usage analytics | [Apache-2.0](LICENSES/SwiftLog.txt) and [NOTICE](LICENSES/SwiftLog-NOTICE.txt) |
 | [EventSource](https://github.com/mattt/EventSource) / Mattt and contributors | Event-stream transport support in the retained dependency graph | [MIT terms](LICENSES/EventSource.txt) |
 
-This table describes the local verification graph, not every resolver result. Local repair copies are ignored by Git. Fresh clones use public manifests; the MCP upstream manifest additionally declares SwiftNIO and a DocC plugin for its wider build/documentation targets. Transitive versions can differ because `Package.resolved` is not committed. Inspect the selected graph with `swift package show-dependencies`. [Snapshot provenance and hashes](LICENSES/README.md).
+This table describes the local verification graph, not every resolver result. Local repair copies are ignored by Git. Fresh clones use public manifests; the MCP upstream manifest additionally declares SwiftNIO and a DocC plugin for its wider build/documentation targets. For v0.3.0, the public dependency graph is pinned by the committed `Package.resolved`; the local-repair table is retained as historical context. Inspect the selected graph with `swift package show-dependencies`. [Snapshot provenance and hashes](LICENSES/README.md).
 
 PostHog has been removed from dependency declarations and event collection. Old cached checkouts do not imply that a library is linked or running.
 
@@ -46,10 +46,14 @@ SwiftUI, AppKit, Vision, SwiftData, Foundation, CryptoKit, Core Graphics, Access
 - [Rime / Squirrel](https://github.com/rime/squirrel) informed candidate interaction and positioning. It is not a linked package. The clipboard-specific approach and reference links are in [the architecture notes](docs/native-ui-and-architecture.md).
 - Optional disk-image tooling: [dmgbuild](https://github.com/dmgbuild/dmgbuild), ds-store and mac-alias; pins in [scripts/dmg-layout-requirements.txt](scripts/dmg-layout-requirements.txt).
 - Optional artwork tooling: [Pillow](https://github.com/python-pillow/Pillow) and [vtracer](https://github.com/visioncortex/vtracer); pins in [scripts/artwork-requirements.txt](scripts/artwork-requirements.txt).
-- These optional tools are not App runtime dependencies; their own terms apply. No distribution packaging is being performed under the [current documentation-only plan](docs/distribution.md).
+- These optional tools are not App runtime dependencies; their own terms apply. Current ad-hoc distribution is described in the [distribution guide](docs/distribution.md).
 
 ## Artwork and documentation images
 
-The maintainer supplied the tart reference images. Vector sources and generated icon assets are listed in [the design notes](docs/design.md). Repository presence alone is not a statement about third-party rights in an externally supplied reference image.
+The maintainer supplied the tart reference images. Vector sources and generated icon assets are listed in [the design notes](docs/design.md). On 2026-11-04 the maintainer confirmed the right to use, adapt and distribute these supplied references with the public project and application.
 
 Documentation screenshots use synthetic records and isolated settings, not user clipboard contents. Source-image provenance is listed in the design notes.
+
+## v0.3.0 public dependency graph
+
+The public build also resolves SwiftNIO, Swift Atomics and Swift Collections (Apache-2.0 terms and their included exceptions/notices). Full public-build snapshots are in [LICENSES](LICENSES/README.md); selected revisions are pinned in [Package.resolved](Package.resolved). The old local-repair graph above is historical. All license files are included in the application Resources/Legal directory.
