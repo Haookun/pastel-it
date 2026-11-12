@@ -31,7 +31,10 @@ public actor ClipSearchIndex {
     }
     private var entries: [UUID: Entry] = [:]
     private let cacheLimit = 20_000
-    public init() {}
+    private(set) var cachedTextBytes = 0
+    private let textCostLimit: Int
+    public init() { textCostLimit = 16 * 1024 * 1024 }
+    init(textCostLimit: Int) { self.textCostLimit = max(0, textCostLimit) }
 
     public func search(_ documents: [ClipSearchDocument], query: String,
                        filter: FilterCategory, sourceApp: String?) throws -> [UUID] {
@@ -74,8 +77,18 @@ public actor ClipSearchIndex {
         }
         let entry = Entry(revision: document.revision, foldedText: Self.fold(document.searchText), category: category)
         // Bound retention even when a user searches many different historical records.
-        if entries.count >= cacheLimit { entries.removeAll(keepingCapacity: true) }
+        let cost = entry.foldedText.utf8.count
+        if let previous = entries.removeValue(forKey: document.id) {
+            cachedTextBytes -= previous.foldedText.utf8.count
+        }
+        // Oversized records remain searchable without being retained in the cache.
+        guard cost <= textCostLimit else { return entry }
+        if entries.count >= cacheLimit || cachedTextBytes > textCostLimit - cost {
+            entries.removeAll(keepingCapacity: true)
+            cachedTextBytes = 0
+        }
         entries[document.id] = entry
+        cachedTextBytes += cost
         return entry
     }
 

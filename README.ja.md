@@ -2,6 +2,8 @@
 
 macOS 向けのクリップボード履歴とローカル OCR。既定は入力カーソル付近の縦型候補リスト（10件）で、タイムラインにも切り替えられます。
 
+候補を右クリックすると、貼り付け・プレーンテキストで貼り付け・プレーンテキストをコピーを選べます。画像のテキスト操作はクリック時に元画像をOCRで認識します。自動OCRが無効でも実行できます。
+
 [中文完整说明](README.md) · [Full English guide](README.en.md) · [Download v0.3.0](https://github.com/Haookun/pastel-it/releases/latest)
 
 - Apple Silicon (arm64) DMG; macOS14+ deployment target, modern OCR15+, table OCR26+.

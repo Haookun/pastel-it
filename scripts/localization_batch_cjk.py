@@ -775,6 +775,29 @@ BATCH_CJK.update({
 
 BATCH_CJK["candidateBar.list"] = {"zh-Hant": "剪貼簿候選清單", "ko": "클립보드 후보"}
 
+# Candidate row context menu and quick-paste explanation.
+BATCH_CJK.update({
+    "candidateBar.menu.paste": {"zh-Hant": "貼上", "ko": "붙여넣기"},
+    "candidateBar.menu.pastePlain": {"zh-Hant": "貼上為純文字", "ko": "일반 텍스트로 붙여넣기"},
+    "candidateBar.menu.copyPlain": {"zh-Hant": "複製純文字", "ko": "일반 텍스트로 복사"},
+    "candidateBar.noPlainText": {
+        "zh-Hant": "未識別到文字，或內容無法使用。",
+        "ko": "인식된 텍스트가 없거나 콘텐츠를 사용할 수 없습니다."
+    },
+    "candidateBar.recognizingImage": {
+        "zh-Hant": "正在識別圖片中的文字…",
+        "ko": "이미지에서 텍스트를 인식하는 중…"
+    },
+    "candidateBar.ocrCancelled": {
+        "zh-Hant": "識別已中斷，剪貼簿未更改。",
+        "ko": "인식이 중단되었습니다. 클립보드는 변경되지 않았습니다."
+    },
+    "quickPaste.behavior": {
+        "zh-Hant": "快速貼上會將複製的文字去除格式、圖片經 OCR 轉換為純文字，並直接貼到輸入框。效果受已選內容類型、OCR 設定與輔助使用權限限制。",
+        "ko": "빠른 붙여넣기는 복사한 텍스트의 서식을 제거하고 이미지는 OCR로 일반 텍스트로 변환한 뒤 입력란에 바로 붙여넣습니다. 결과는 선택한 유형, OCR 설정, 손쉬운 사용 권한에 따라 달라집니다."
+    }
+})
+
 
 # Local diagnostics only; no product analytics.
 BATCH_CJK.update({

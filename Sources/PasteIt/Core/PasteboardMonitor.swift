@@ -11,7 +11,6 @@ final class PasteboardMonitor: NSObject {
 
     private var timer: Timer?
     private var lastChangeCount: Int
-    private var suppressedChangeCounts = Set<Int>()
     private var isCapturing = false
 
     init(
@@ -27,7 +26,7 @@ final class PasteboardMonitor: NSObject {
 
     func start() {
         stop()
-        let interval = settings.clipboardCheckInterval
+        let interval = ClipboardPollingPolicy.interval(settings.clipboardCheckInterval)
         // Block timer avoids @objc → @MainActor isolation checks that were crashing
         // (EXC_BAD_ACCESS in swift_task_isCurrentExecutor / objc_opt_class).
         let t = Timer(timeInterval: interval, repeats: true) { [weak self] _ in
@@ -46,7 +45,8 @@ final class PasteboardMonitor: NSObject {
     }
 
     func suppress(changeCount: Int) {
-        suppressedChangeCounts.insert(changeCount)
+        // changeCount advances monotonically: the latest count is sufficient.
+        // Keeping every self-write in a Set retained unreachable counts forever.
         lastChangeCount = changeCount
     }
 
@@ -66,9 +66,6 @@ final class PasteboardMonitor: NSObject {
         guard current != lastChangeCount else { return }
         lastChangeCount = current
 
-        if suppressedChangeCounts.remove(current) != nil {
-            return
-        }
         guard !settings.capturePaused, !isCapturing else { return }
 
         // Snapshot pasteboard on the main thread (NSPasteboard is main-thread affinity),

@@ -29,11 +29,17 @@
 "candidateBar.footer" = "1–5 选择 · Tab 展开或收起";
 "candidateBar.list" = "剪贴板候选列表";
 "candidateBar.locationFallback" = "未能获取插入光标位置，暂在鼠标旁显示；请检查辅助功能权限。";
+"candidateBar.menu.copyPlain" = "复制纯文本";
+"candidateBar.menu.paste" = "粘贴";
+"candidateBar.menu.pastePlain" = "快捷粘贴纯文本";
 "candidateBar.moreFiles" = "另 %lld 个";
 "candidateBar.nextPage" = "下一页";
+"candidateBar.noPlainText" = "未识别到文字，或内容不可用。";
 "candidateBar.noPreview" = "无法预览";
+"candidateBar.ocrCancelled" = "识别已中断，剪贴板未更改。";
 "candidateBar.page" = "%lld/%lld";
 "candidateBar.previousPage" = "上一页";
+"candidateBar.recognizingImage" = "正在识别图片中的文字…";
 "candidatePlacement.granted" = "已授权";
 "candidatePlacement.help" = "授权后可在输入光标旁显示候选列表；无法定位时在鼠标旁显示。";
 "candidatePlacement.notGranted" = "未授权";
@@ -183,6 +189,7 @@
 "privacy.protectedFooter" = "忽略的应用会跳过整个应用的所有内容。受保护内容仅跳过任何应用中标记为敏感的剪贴板数据。";
 "privacy.removeApp" = "移除应用";
 "privacy.search" = "搜索";
+"quickPaste.behavior" = "快捷粘贴会将复制的文字去除格式、图片经 OCR 转换为纯文本，并直接粘贴到输入框。效果受已选内容类型、OCR 设置与辅助功能权限约束。";
 "quickPaste.changed" = "剪贴板或目标应用已变化，已取消快捷粘贴";
 "quickPaste.done" = "已粘贴为纯文本";
 "quickPaste.emptyScope" = "请至少选择一种需要转换的类型。";

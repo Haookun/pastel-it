@@ -15917,6 +15917,316 @@
         }
       }
     },
+    "candidateBar.menu.paste": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "粘贴"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ペースト"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "貼上"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "붙여넣기"
+          }
+        }
+      }
+    },
+    "candidateBar.menu.pastePlain": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste as Plain Text"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快捷粘贴纯文本"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プレーンテキストでペースト"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "貼上為純文字"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일반 텍스트로 붙여넣기"
+          }
+        }
+      }
+    },
+    "candidateBar.menu.copyPlain": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy as Plain Text"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复制纯文本"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プレーンテキストでコピー"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "複製純文字"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일반 텍스트로 복사"
+          }
+        }
+      }
+    },
+    "candidateBar.noPlainText": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No text recognized, or the content is unavailable."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未识别到文字，或内容不可用。"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "テキストを認識できませんでした。コンテンツが利用できない可能性があります。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun texte reconnu, ou contenu indisponible."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Text erkannt oder Inhalt nicht verfügbar."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se reconoció texto o el contenido no está disponible."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie rozpoznano tekstu lub zawartość jest niedostępna."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未識別到文字，或內容無法使用。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인식된 텍스트가 없거나 콘텐츠를 사용할 수 없습니다."
+          }
+        }
+      }
+    },
+    "candidateBar.recognizingImage": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recognizing text in the image…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在识别图片中的文字…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画像内のテキストを認識しています…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconnaissance du texte de l’image…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text im Bild wird erkannt…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconociendo texto en la imagen…"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rozpoznawanie tekstu na obrazie…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在識別圖片中的文字…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이미지에서 텍스트를 인식하는 중…"
+          }
+        }
+      }
+    },
+    "candidateBar.ocrCancelled": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recognition was interrupted; the clipboard was left unchanged."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "识别已中断，剪贴板未更改。"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "認識が中断されました。クリップボードは変更されていません。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconnaissance interrompue ; le presse-papiers n’a pas été modifié."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erkennung unterbrochen; die Zwischenablage wurde nicht geändert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconocimiento interrumpido; el portapapeles no se modificó."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rozpoznawanie przerwane; schowek nie został zmieniony."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "識別已中斷，剪貼簿未更改。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인식이 중단되었습니다. 클립보드는 변경되지 않았습니다."
+          }
+        }
+      }
+    },
+    "quickPaste.behavior": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quick paste removes formatting from copied text and turns images into plain text via OCR, then pastes it straight into the input field. The result depends on the selected content types, OCR settings, and Accessibility permission."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快捷粘贴会将复制的文字去除格式、图片经 OCR 转换为纯文本，并直接粘贴到输入框。效果受已选内容类型、OCR 设置与辅助功能权限约束。"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クイックペーストはコピーしたテキストの書式を取り除き、画像はOCRでプレーンテキストに変換して、入力欄へ直接ペーストします。結果は選択した種類・OCR設定・アクセシビリティ権限に依存します。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快速貼上會將複製的文字去除格式、圖片經 OCR 轉換為純文字，並直接貼到輸入框。效果受已選內容類型、OCR 設定與輔助使用權限限制。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "빠른 붙여넣기는 복사한 텍스트의 서식을 제거하고 이미지는 OCR로 일반 텍스트로 변환한 뒤 입력란에 바로 붙여넣습니다. 결과는 선택한 유형, OCR 설정, 손쉬운 사용 권한에 따라 달라집니다."
+          }
+        }
+      }
+    },
     "privacy.logs.title": {
       "localizations": {
         "en": {

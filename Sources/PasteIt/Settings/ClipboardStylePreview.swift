@@ -2,17 +2,33 @@ import SwiftUI
 import PasteItCore
 
 /// Minimal vector preview of the two clipboard presentations, drawn with
-/// SwiftUI shapes only — no real history, no new dependencies. Animates with
-/// TimelineView while the preview is on screen; with Reduce Motion enabled the
-/// periodic clock is not started and a static frame is shown.
+/// SwiftUI shapes only — no real history, no new dependencies. The highlight
+/// motion plays for a fixed, finite duration, then the preview settles into a
+/// static frame so the settings window does not keep a live timer forever;
+/// picking a style replays it. With Reduce Motion enabled the periodic clock
+/// never starts and a static frame is shown.
 struct ClipboardStylePreview: View {
     let style: ClipboardPresentationStyle
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// Start of the current finite playback; changing it replays the animation.
+    @State private var animationStart = Date()
+    /// Flips to false at the end of the finite run, swapping the live
+    /// TimelineView for a static Canvas so no timer keeps ticking.
+    @State private var animating = true
+
     /// Fixed design canvas; everything is drawn in these coordinates and the
     /// whole canvas is scaled once (uniformly) to fit the actual view size.
     private let designSize = CGSize(width: 480, height: 300) // 8:5
+
+    /// One full out-and-back loop of the highlight motion, in seconds.
+    private let cycleLength: Double = 4.0
+    /// Total playback time; the loop length divides it so the final frame is
+    /// exactly the loop origin (phase 0), which is also the static frame.
+    private let animationDuration: Double = 8.0
+    /// Settled frame once the finite playback ends (loop origin = seamless stop).
+    private let settledPhase: Double = 0
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -21,14 +37,24 @@ struct ClipboardStylePreview: View {
                     Canvas { context, size in
                         draw(context: &context, size: size, phase: 0.35)
                     }
-                } else {
-                    // Pauses automatically when the view leaves the window.
+                } else if animating {
+                    // Pauses automatically when the view leaves the window, and
+                    // is torn down entirely once `animating` flips to false.
                     SwiftUI.TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
                         Canvas { context, size in
-                            let phase = timeline.date.timeIntervalSinceReferenceDate
-                                .truncatingRemainder(dividingBy: cycleLength) / cycleLength
+                            let elapsed = min(timeline.date.timeIntervalSince(animationStart), animationDuration)
+                            let phase = elapsed.truncatingRemainder(dividingBy: cycleLength) / cycleLength
                             draw(context: &context, size: size, phase: phase)
                         }
+                    }
+                    .task(id: animationStart) {
+                        try? await Task.sleep(for: .seconds(animationDuration))
+                        guard !Task.isCancelled else { return }
+                        animating = false
+                    }
+                } else {
+                    Canvas { context, size in
+                        draw(context: &context, size: size, phase: settledPhase)
                     }
                 }
             }
@@ -39,6 +65,11 @@ struct ClipboardStylePreview: View {
             .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
             .frame(maxWidth: .infinity)
             .accessibilityHidden(true)
+            // Re-selecting a style replays the finite animation.
+            .onChange(of: style) { _, _ in
+                animationStart = Date()
+                animating = true
+            }
 
             Text(style == .timeline
                  ? L10n.tr("clipboard.style.previewTimeline", default: "Cards along the bottom of the screen.")
@@ -48,9 +79,6 @@ struct ClipboardStylePreview: View {
                 .animation(nil, value: style)
         }
     }
-
-    /// One full out-and-back loop of the highlight motion, in seconds.
-    private var cycleLength: Double { 4.0 }
 
     // MARK: - Drawing
 

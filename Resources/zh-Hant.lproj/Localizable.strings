@@ -29,11 +29,17 @@
 "candidateBar.footer" = "1–5 選取 · Tab 展開或收合";
 "candidateBar.list" = "剪貼簿候選清單";
 "candidateBar.locationFallback" = "無法取得插入游標位置，暫在滑鼠旁顯示；請檢查輔助使用權限。";
+"candidateBar.menu.copyPlain" = "複製純文字";
+"candidateBar.menu.paste" = "貼上";
+"candidateBar.menu.pastePlain" = "貼上為純文字";
 "candidateBar.moreFiles" = "另 %lld 個";
 "candidateBar.nextPage" = "下一頁";
+"candidateBar.noPlainText" = "未識別到文字，或內容無法使用。";
 "candidateBar.noPreview" = "無法預覽";
+"candidateBar.ocrCancelled" = "識別已中斷，剪貼簿未更改。";
 "candidateBar.page" = "%lld/%lld";
 "candidateBar.previousPage" = "上一頁";
+"candidateBar.recognizingImage" = "正在識別圖片中的文字…";
 "candidatePlacement.granted" = "已授權";
 "candidatePlacement.help" = "授權後可在文字游標旁顯示候選清單；無法定位時在滑鼠旁顯示。";
 "candidatePlacement.notGranted" = "未授權";
@@ -183,6 +189,7 @@
 "privacy.protectedFooter" = "「忽略的 App」會略過整個 App 的所有內容；「受保護內容」只略過任何 App 中標記為敏感的剪貼簿資料。";
 "privacy.removeApp" = "移除 App";
 "privacy.search" = "搜尋";
+"quickPaste.behavior" = "快速貼上會將複製的文字去除格式、圖片經 OCR 轉換為純文字，並直接貼到輸入框。效果受已選內容類型、OCR 設定與輔助使用權限限制。";
 "quickPaste.changed" = "Clipboard or destination changed; quick paste cancelled";
 "quickPaste.done" = "Pasted as plain text";
 "quickPaste.emptyScope" = "Select at least one content type to use quick paste.";

@@ -70,6 +70,21 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     }
 
     func windowWillClose(_ notification: Notification) {
+        guard let window, (notification.object as? NSWindow) === window else { return }
+
+        // Teardown the closed window: dropping the hosting controller stops any
+        // still-running hidden SwiftUI animations and frees the view hierarchy
+        // instead of keeping a closed window alive until the next open.
+        // Clear the delegate first so nothing re-enters during teardown.
+        window.delegate = nil
+        // Keep the frame autosave explicit: save before the content goes away.
+        let autosaveName = window.frameAutosaveName
+        if !autosaveName.isEmpty {
+            window.saveFrame(usingName: autosaveName)
+        }
+        window.contentViewController = nil
+        self.window = nil
+
         guard wasAccessory else { return }
         if OnboardingWindowController.shared.isVisible { return }
         NSApp.setActivationPolicy(.accessory)

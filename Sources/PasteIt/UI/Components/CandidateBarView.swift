@@ -21,6 +21,14 @@ struct CandidateBarView: View {
     var statusText: String? = nil
     var placementNotice: String? = nil
     var dismissPreviewRequest: UUID? = nil
+    /// Native right-click menu actions. Optional so existing call sites (e.g.
+    /// NativeUIReview previews) keep compiling unchanged.
+    var onPaste: ((ClipItem) -> Void)? = nil
+    var onPastePlainText: ((ClipItem) -> Void)? = nil
+    var onCopyPlainText: ((ClipItem) -> Void)? = nil
+    /// Lets the host panel suspend outside-click dismissal while the native
+    /// context menu tracks.
+    var onContextMenuVisibilityChange: ((Bool) -> Void)? = nil
 
     static let panelWidth: CGFloat = 420
     static let rowHeight: CGFloat = 36
@@ -123,7 +131,11 @@ struct CandidateBarView: View {
                 blobStore: blobStore,
                 pageIndex: pageIndex,
                 dismissPreviewRequest: dismissPreviewRequest,
-                onActivate: onActivate
+                onActivate: onActivate,
+                onPaste: onPaste,
+                onPastePlainText: onPastePlainText,
+                onCopyPlainText: onCopyPlainText,
+                onContextMenuVisibilityChange: onContextMenuVisibilityChange
             )
             .frame(maxWidth: Self.panelWidth)
             // Ideal height follows the row count so short pages leave no blank

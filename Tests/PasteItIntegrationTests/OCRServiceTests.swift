@@ -39,6 +39,29 @@ private struct OCRTableSample: Sendable {
 @MainActor
 @Suite("OCR image indexing", .serialized)
 struct OCRServiceTests {
+    @Test func explicitCandidateOCRRecognizesOriginalImageWithAutomaticOCROff() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("PasteItEphemeral-OnDemand-\(UUID())")
+        let store = BlobStore(rootURL: root)
+        let board = NSPasteboard.withUniqueName()
+        defer { board.releaseGlobally(); try? FileManager.default.removeItem(at: root) }
+        let data = try png(text: "Clipboard 4821", fontName: "Helvetica")
+        let path = try store.store(data: data, preferredExtension: "png", id: UUID())
+        let item = ClipItem(title: "Synthetic image", primaryType: .image, pasteboardTypes: [],
+                            blobRelativePath: path, contentHash: "on-demand")
+        let writer = PasteController(blobStore: store, pasteboard: board)
+        board.setString("Synthetic untouched clipboard", forType: .string)
+        let originalCount = board.changeCount
+        var configuration = OCRConfiguration()
+        configuration.enabled = false
+        configuration.detectsTables = false
+        configuration.languages = ["en-US"]
+        let text = try #require(await writer.candidatePlainText(for: item, configuration: configuration))
+        #expect(text.contains("4821"))
+        #expect(board.changeCount == originalCount)
+        #expect(board.string(forType: .string) == "Synthetic untouched clipboard")
+        #expect(item.ocrText == nil)
+    }
+
     /// Draw a deterministic, high-contrast raster without reading the clipboard or user files.
     private func png(text: String, fontName: String = "PingFangSC-Regular") throws -> Data {
         let size = NSSize(width: 1200, height: 180)

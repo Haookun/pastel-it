@@ -29,11 +29,17 @@
 "candidateBar.footer" = "1–5で選択 · Tabで展開／折りたたみ";
 "candidateBar.list" = "クリップボード候補";
 "candidateBar.locationFallback" = "カーソル位置を取得できないため、ポインタ付近に表示します。アクセシビリティ権限をご確認ください。";
+"candidateBar.menu.copyPlain" = "プレーンテキストでコピー";
+"candidateBar.menu.paste" = "ペースト";
+"candidateBar.menu.pastePlain" = "プレーンテキストでペースト";
 "candidateBar.moreFiles" = "ほか%lld件";
 "candidateBar.nextPage" = "次のページ";
+"candidateBar.noPlainText" = "テキストを認識できませんでした。コンテンツが利用できない可能性があります。";
 "candidateBar.noPreview" = "プレビューできません";
+"candidateBar.ocrCancelled" = "認識が中断されました。クリップボードは変更されていません。";
 "candidateBar.page" = "%lld/%lld";
 "candidateBar.previousPage" = "前のページ";
+"candidateBar.recognizingImage" = "画像内のテキストを認識しています…";
 "candidatePlacement.granted" = "許可済み";
 "candidatePlacement.help" = "権限を許可すると文字カーソル付近に表示します。位置を取得できない場合はポインタ付近に表示します。";
 "candidatePlacement.notGranted" = "未許可";
@@ -183,6 +189,7 @@
 "privacy.protectedFooter" = "無視するアプリはアプリ全体をスキップします。保護されたコンテンツは、任意のアプリで機密とマークされたペーストボードデータのみをスキップします。";
 "privacy.removeApp" = "アプリを削除";
 "privacy.search" = "検索";
+"quickPaste.behavior" = "クイックペーストはコピーしたテキストの書式を取り除き、画像はOCRでプレーンテキストに変換して、入力欄へ直接ペーストします。結果は選択した種類・OCR設定・アクセシビリティ権限に依存します。";
 "quickPaste.changed" = "Clipboard or destination changed; quick paste cancelled";
 "quickPaste.done" = "Pasted as plain text";
 "quickPaste.emptyScope" = "Select at least one content type to use quick paste.";

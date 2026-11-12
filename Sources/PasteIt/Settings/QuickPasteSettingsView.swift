@@ -37,8 +37,16 @@ struct QuickPasteSettingsView: View {
             } header: {
                 Text(L10n.tr("quickPaste.title", default: "Quick Paste"))
             } footer: {
-                Text(L10n.tr("quickPaste.help", default: "Convert the current system clipboard to plain text and paste it. Default: ⇧⌘V. Open clipboard history separately with ⇧⌘C."))
-                Text(L10n.tr("quickPaste.scopeHelp", default: "Only selected types are converted. Images follow the OCR settings on the OCR page. Without Accessibility, plain text is prepared for manual ⌘V. Automatic pasting restores the original clipboard unless you copy something newer."))
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(L10n.tr("quickPaste.behavior", default: "Quick paste removes formatting from copied text and turns images into plain text via OCR, then pastes it straight into the input field. The result depends on the selected content types, OCR settings, and Accessibility permission."))
+                    Text(L10n.tr("quickPaste.scopeHelp", default: "Only selected types are converted. Images follow the OCR settings on the OCR page. Without Accessibility, plain text is prepared for manual ⌘V. Automatic pasting restores the original clipboard unless you copy something newer."))
+                        .foregroundStyle(.tertiary)
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
             }
 
             Section {

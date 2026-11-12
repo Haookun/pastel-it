@@ -181,8 +181,8 @@ final class HistoryStore: ObservableObject {
     private let visualCache = ClipVisualCache.shared
     private var enrichingIDs = Set<UUID>()
     private var contentHashIndex: [String: UUID] = [:]
-    private var foldedSearchByID: [UUID: String] = [:]
-    private var searchDocumentsByID: [UUID: ClipSearchDocument] = [:]
+    private var foldedSearchByID = CostBoundedCache<UUID, String>(countLimit: 512, costLimit: 4 * 1024 * 1024)
+    private var searchDocumentsByID = CostBoundedCache<UUID, ClipSearchDocument>(countLimit: 512, costLimit: 4 * 1024 * 1024)
     private var addsSinceLastPrune = 0
     private let pruneEveryNAdds = 25
     private var pendingBlobPruneTask: Task<Void, Never>?
@@ -310,23 +310,24 @@ final class HistoryStore: ObservableObject {
     }
 
     func foldedSearchText(for item: ClipItem) -> String {
-        if let cached = foldedSearchByID[item.id] {
+        if let cached = foldedSearchByID.value(for: item.id) {
             return cached
         }
         let folded = item.foldedSearchHaystack
-        foldedSearchByID[item.id] = folded
+        foldedSearchByID.insert(folded, for: item.id, cost: folded.utf8.count)
         return folded
     }
 
     func searchDocuments(for items: [ClipItem]) -> [ClipSearchDocument] {
         items.map { item in
-            if let cached = searchDocumentsByID[item.id], cached.revision == item.updatedAt { return cached }
+            if let cached = searchDocumentsByID.value(for: item.id), cached.revision == item.updatedAt { return cached }
             let document = ClipSearchDocument(
                 id: item.id, revision: item.updatedAt, type: item.primaryTypeRaw,
                 plainText: item.plainText, searchText: item.searchableText,
                 sourceApp: item.sourceAppName, createdAt: item.createdAt
             )
-            searchDocumentsByID[item.id] = document
+            searchDocumentsByID.insert(document, for: item.id,
+                cost: document.plainText.utf8.count + document.searchText.utf8.count)
             return document
         }
     }

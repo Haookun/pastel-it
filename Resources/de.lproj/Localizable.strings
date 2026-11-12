@@ -29,11 +29,17 @@
 "candidateBar.footer" = "1–5 auswählen · Tab auf-/zuklappen";
 "candidateBar.list" = "Zwischenablage-Einträge";
 "candidateBar.locationFallback" = "Cursorposition nicht verfügbar. Anzeige am Mauszeiger; Bedienungshilfen prüfen.";
+"candidateBar.menu.copyPlain" = "Copy as Plain Text";
+"candidateBar.menu.paste" = "Paste";
+"candidateBar.menu.pastePlain" = "Paste as Plain Text";
 "candidateBar.moreFiles" = "+%lld weitere";
 "candidateBar.nextPage" = "Nächste Seite";
+"candidateBar.noPlainText" = "Kein Text erkannt oder Inhalt nicht verfügbar.";
 "candidateBar.noPreview" = "Keine Vorschau";
+"candidateBar.ocrCancelled" = "Erkennung unterbrochen; die Zwischenablage wurde nicht geändert.";
 "candidateBar.page" = "%lld/%lld";
 "candidateBar.previousPage" = "Vorherige Seite";
+"candidateBar.recognizingImage" = "Text im Bild wird erkannt…";
 "candidatePlacement.granted" = "Erlaubt";
 "candidatePlacement.help" = "Mit Bedienungshilfen erscheint die Liste am Textcursor, andernfalls am Mauszeiger.";
 "candidatePlacement.notGranted" = "Nicht erlaubt";
@@ -183,6 +189,7 @@
 "privacy.protectedFooter" = "Ignorierte Apps überspringen alles von einer App. Geschützter Inhalt nur markierte sensible Daten, von jeder App.";
 "privacy.removeApp" = "App entfernen";
 "privacy.search" = "Suchen";
+"quickPaste.behavior" = "Quick paste removes formatting from copied text and turns images into plain text via OCR, then pastes it straight into the input field. The result depends on the selected content types, OCR settings, and Accessibility permission.";
 "quickPaste.changed" = "Clipboard or destination changed; quick paste cancelled";
 "quickPaste.done" = "Pasted as plain text";
 "quickPaste.emptyScope" = "Select at least one content type to use quick paste.";

@@ -26,11 +26,15 @@ struct ClipboardPanelContent: View {
                              pageIndex: controller.candidatePageIndex, pageCount: controller.candidatePageCount,
                              onPreviousPage: controller.previousCandidatePage,
                              onNextPage: controller.nextCandidatePage,
-                             onActivate: controller.activateCandidate,
+                             onActivate: { controller.activateCandidate($0) },
                              onClose: { controller.hide() },
                              statusText: controller.candidateMessage,
                              placementNotice: controller.candidatePlacementNotice,
-                             dismissPreviewRequest: controller.candidatePreviewDismissRequest)
+                             dismissPreviewRequest: controller.candidatePreviewDismissRequest,
+                             onPaste: { controller.activateCandidate($0, action: .paste) },
+                             onPastePlainText: { controller.activateCandidate($0, action: .pastePlainText) },
+                             onCopyPlainText: { controller.activateCandidate($0, action: .copyPlainText) },
+                             onContextMenuVisibilityChange: { controller.candidateContextMenuOpen = $0 })
         }
     }
 }

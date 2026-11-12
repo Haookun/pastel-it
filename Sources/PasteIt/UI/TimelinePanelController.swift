@@ -16,6 +16,20 @@ private enum PanelAnimation {
     case hiding
 }
 
+/// How a candidate row is activated. The single-click / keyboard path keeps
+/// using `.primary` (which honors the "click copies only" setting); the row
+/// context menu uses the explicit actions below.
+enum CandidateActivation {
+    /// Default click/Return behavior: follows `timelinePrimaryAction`.
+    case primary
+    /// Always paste the original content directly into the destination.
+    case paste
+    /// Paste plain text only (images use their recognized OCR text).
+    case pastePlainText
+    /// Copy plain text to the clipboard without pasting.
+    case copyPlainText
+}
+
 @MainActor
 final class TimelinePanelController: NSObject, NSWindowDelegate, ObservableObject {
     @Published private var requestedCandidatePage = 0
@@ -38,6 +52,9 @@ final class TimelinePanelController: NSObject, NSWindowDelegate, ObservableObjec
     private lazy var removalToastController = RemovalToastPanelController(appState: appState)
     private var globalOutsideClickMonitor: Any?
     private var localOutsideClickMonitor: Any?
+    /// True while a candidate row context menu is tracking; outside-click
+    /// monitors must not tear down the panel from underneath the menu.
+    var candidateContextMenuOpen = false
     /// Slide-in / slide-out are distinct so hide can interrupt an in-flight show
     /// instead of no-oping and firing callers' completions immediately.
     private var panelAnimation: PanelAnimation = .none
@@ -433,20 +450,86 @@ final class TimelinePanelController: NSObject, NSWindowDelegate, ObservableObjec
         return true
     }
 
-    func activateCandidate(_ item: ClipItem) {
+    func activateCandidate(_ item: ClipItem, action: CandidateActivation = .primary) {
         guard candidateActivationTask == nil else { return }
         candidateSelectedID = item.id
         appState.selectOnly(item.id)
         candidateMessage = nil
+
+        let mode: PasteController.PasteMode
+        let shouldPaste: Bool
+        switch action {
+        case .primary:
+            // Default click/keyboard path: honors the "click copies only" setting.
+            mode = .normal
+            shouldPaste = appState.settings.timelinePrimaryAction.shouldPaste
+        case .paste:
+            // Explicit menu "Paste" always auto-pastes, even when a plain
+            // click is configured to copy only.
+            mode = .normal
+            shouldPaste = true
+        case .pastePlainText:
+            mode = .plainText
+            shouldPaste = true
+        case .copyPlainText:
+            mode = .plainText
+            shouldPaste = false
+        }
+
+        let isImage = item.primaryType == .image
+        if mode == .plainText {
+            // Explicit plain-text actions always (re)recognize images on demand —
+            // even with no stored OCR text and automatic OCR switched off.
+            if isImage {
+                candidateMessage = L10n.tr("candidateBar.recognizingImage", default: "Recognizing text in the image…")
+                resizeForPresentation()
+            }
+        }
+
+        let requestID = showRequestID
+        let startChangeCount = pasteController.pasteboardChangeCount
+        let startFrontmostPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
+        let ocrConfiguration = appState.settings.ocrConfiguration
         let target = candidateDestination ?? NSWorkspace.shared.frontmostApplication
-        let shouldPaste = appState.settings.timelinePrimaryAction.shouldPaste
         candidateActivationTask = Task { @MainActor [weak self] in
             guard let self else { return }
             defer { self.candidateActivationTask = nil }
-            guard await self.pasteController.copyToPasteboardAsync(item) else {
-                self.candidateMessage = L10n.tr("action.writeFailed", default: "Could not copy this clip. Its content or attachment may be unavailable. Restore the file, then retry.")
+            if mode == .plainText {
+                let plain = await self.pasteController.candidatePlainText(for: item, configuration: ocrConfiguration)
+                // Recognition is async; bail out without touching the clipboard
+                // whenever the surrounding context moved on meanwhile.
+                let contextChanged = Task.isCancelled
+                    || self.showRequestID != requestID
+                    || !self.appState.historyStore.clips.contains(where: { $0.id == item.id })
+                    || self.pasteController.pasteboardChangeCount != startChangeCount
+                    || (isImage && self.appState.settings.ocrConfiguration != ocrConfiguration)
+                    || (shouldPaste && NSWorkspace.shared.frontmostApplication?.processIdentifier != startFrontmostPID)
+                guard !contextChanged else {
+                    // A hide/reopen invalidated the request: leave the new session
+                    // (and the closed panel) untouched instead of resizing it.
+                    guard self.showRequestID == requestID, self.panel?.isVisible == true else { return }
+                    self.candidateMessage = L10n.tr("candidateBar.ocrCancelled", default: "Recognition was interrupted; the clipboard was left unchanged.")
+                    self.resizeForPresentation()
+                    return
+                }
+                guard let plain else {
+                    self.candidateMessage = L10n.tr("candidateBar.noPlainText", default: "No text recognized, or the content is unavailable.")
+                    self.resizeForPresentation()
+                    return
+                }
+                self.candidateMessage = nil
                 self.resizeForPresentation()
-                return
+                guard self.pasteController.writePlainTextToGeneralPasteboard(plain, markTransient: false) else {
+                    self.candidateMessage = L10n.tr("action.writeFailed", default: "Could not copy this clip. Its content or attachment may be unavailable. Restore the file, then retry.")
+                    self.resizeForPresentation()
+                    return
+                }
+            } else {
+                guard await self.pasteController.copyToPasteboardAsync(item, mode: mode) else {
+                    self.candidateMessage = L10n.tr("action.writeFailed", default: "Could not copy this clip. Its content or attachment may be unavailable. Restore the file, then retry.")
+                    self.resizeForPresentation()
+                    return
+                }
             }
             let writtenCount = self.pasteController.pasteboardChangeCount
             if shouldPaste && !SystemPasteSynthesizer.isAccessibilityTrusted {
@@ -506,6 +589,12 @@ final class TimelinePanelController: NSObject, NSWindowDelegate, ObservableObjec
         localOutsideClickMonitor = NSEvent.addLocalMonitorForEvents(matching: mask) { [weak self] event in
             guard let self else { return event }
 
+            // A click tracked by the candidate row context menu must not be
+            // mistaken for an outside click on the panel.
+            if self.candidateContextMenuOpen {
+                return event
+            }
+
             if self.shouldIgnoreOutsideClick(for: event) {
                 return event
             }
@@ -555,6 +644,9 @@ final class TimelinePanelController: NSObject, NSWindowDelegate, ObservableObjec
 
     private func hideIfMouseIsOutsidePanel() {
         guard let panel, panel.isVisible else { return }
+        // While the candidate context menu tracks, clicks land on the menu
+        // window (or nowhere) — the panel must stay put.
+        if candidateContextMenuOpen { return }
         let mouse = NSEvent.mouseLocation
         if panel.frame.contains(mouse) { return }
         if removalToastController.visibleFrame?.contains(mouse) == true { return }

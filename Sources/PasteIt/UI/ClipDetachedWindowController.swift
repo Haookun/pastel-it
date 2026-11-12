@@ -83,8 +83,10 @@ final class ClipDetachedWindowController: NSObject, NSWindowDelegate {
     }
 
     private func closePreviewWindow() {
-        guard let window = previewWindow, window.isVisible else { return }
+        guard let window = previewWindow else { return }
         window.orderOut(nil)
+        // Release decoded preview images and SwiftUI state while the bubble is hidden.
+        window.contentViewController = nil
         timelinePanelController?.restoreKeyFocus()
     }
 

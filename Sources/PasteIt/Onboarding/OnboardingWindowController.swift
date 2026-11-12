@@ -91,6 +91,11 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
     }
 
     func windowWillClose(_ notification: Notification) {
+        // Closing a retained window does not unmount SwiftUI's repeating demo tasks.
+        if let closingWindow = notification.object as? NSWindow {
+            closingWindow.contentViewController = nil
+        }
+        window = nil
         if let settings {
             switch flow {
             case .install:

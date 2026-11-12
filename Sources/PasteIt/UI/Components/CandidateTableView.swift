@@ -51,6 +51,11 @@ struct CandidateTableView: NSViewRepresentable {
     let pageIndex: Int
     let dismissPreviewRequest: UUID?
     let onActivate: (ClipItem) -> Void
+    /// Native right-click menu actions; nil disables the row context menu.
+    var onPaste: ((ClipItem) -> Void)? = nil
+    var onPastePlainText: ((ClipItem) -> Void)? = nil
+    var onCopyPlainText: ((ClipItem) -> Void)? = nil
+    var onContextMenuVisibilityChange: ((Bool) -> Void)? = nil
 
     func makeCoordinator() -> Coordinator {
         Coordinator(onActivate: onActivate, blobStore: blobStore)
@@ -97,6 +102,10 @@ struct CandidateTableView: NSViewRepresentable {
 
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
         context.coordinator.onActivate = onActivate
+        context.coordinator.onPaste = onPaste
+        context.coordinator.onPastePlainText = onPastePlainText
+        context.coordinator.onCopyPlainText = onCopyPlainText
+        context.coordinator.onContextMenuVisibilityChange = onContextMenuVisibilityChange
         context.coordinator.blobStore = blobStore
         context.coordinator.update(items: items, selectedID: selectedID, pageIndex: pageIndex, dismissPreviewRequest: dismissPreviewRequest)
     }
@@ -108,8 +117,12 @@ struct CandidateTableView: NSViewRepresentable {
     // MARK: - Coordinator
 
     @MainActor
-    final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
+    final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate, NSMenuDelegate {
         var onActivate: (ClipItem) -> Void
+        var onPaste: ((ClipItem) -> Void)?
+        var onPastePlainText: ((ClipItem) -> Void)?
+        var onCopyPlainText: ((ClipItem) -> Void)?
+        var onContextMenuVisibilityChange: ((Bool) -> Void)?
         var blobStore: BlobStore
 
         private weak var tableView: NSTableView?
@@ -124,6 +137,9 @@ struct CandidateTableView: NSViewRepresentable {
         private var popoverHovered = false
         private var hoveredRow: Int = -1
         private var hideWorkItem: DispatchWorkItem?
+        /// True while the row context menu tracks: hover preview stays closed
+        /// and no new popover may open underneath the menu.
+        private var contextMenuOpen = false
 
         init(onActivate: @escaping (ClipItem) -> Void, blobStore: BlobStore) {
             self.onActivate = onActivate
@@ -132,6 +148,11 @@ struct CandidateTableView: NSViewRepresentable {
 
         func attach(tableView: NSTableView) {
             self.tableView = tableView
+            if let tableView = tableView as? CandidateNativeTableView {
+                tableView.contextMenuProvider = { [weak self] row in
+                    self?.contextMenu(forRow: row)
+                }
+            }
             let tracking = NSTrackingArea(
                 rect: tableView.bounds,
                 options: [.mouseMoved, .mouseEnteredAndExited, .activeInKeyWindow, .inVisibleRect],
@@ -185,6 +206,10 @@ struct CandidateTableView: NSViewRepresentable {
         func teardown() {
             cancelScheduledHide()
             closePopover()
+            if contextMenuOpen {
+                contextMenuOpen = false
+                onContextMenuVisibilityChange?(false)
+            }
             tableView?.dataSource = nil
             tableView?.delegate = nil
             tableView?.target = nil
@@ -217,12 +242,79 @@ struct CandidateTableView: NSViewRepresentable {
             onActivate(items[row])
         }
 
+        // MARK: Row context menu
+
+        /// Builds the native right-click menu for a row. The right-clicked row
+        /// becomes the selection; the menu never routes through the single-click
+        /// activation path.
+        func contextMenu(forRow row: Int) -> NSMenu? {
+            guard items.indices.contains(row),
+                  onPaste != nil || onPastePlainText != nil || onCopyPlainText != nil else { return nil }
+            let item = items[row]
+            // Pause hover preview while the menu is up.
+            cancelScheduledHide()
+            closePopover()
+
+            func entry(_ title: String, action: Selector, handler: ((ClipItem) -> Void)?) -> NSMenuItem {
+                let menuItem = NSMenuItem(title: title, action: handler == nil ? nil : action, keyEquivalent: "")
+                menuItem.target = self
+                // Resolve by id at fire time so a mid-menu refresh can't act on
+                // the wrong row.
+                menuItem.representedObject = item.id
+                menuItem.isEnabled = handler != nil
+                return menuItem
+            }
+
+            let menu = NSMenu()
+            menu.delegate = self
+            menu.addItem(entry(L10n.tr("candidateBar.menu.paste", default: "Paste"),
+                               action: #selector(contextMenuPaste(_:)), handler: onPaste))
+            menu.addItem(entry(L10n.tr("candidateBar.menu.pastePlain", default: "Paste as Plain Text"),
+                               action: #selector(contextMenuPastePlainText(_:)), handler: onPastePlainText))
+            menu.addItem(entry(L10n.tr("candidateBar.menu.copyPlain", default: "Copy as Plain Text"),
+                               action: #selector(contextMenuCopyPlainText(_:)), handler: onCopyPlainText))
+            return menu
+        }
+
+        private func item(for menuItem: NSMenuItem) -> ClipItem? {
+            guard let id = menuItem.representedObject as? UUID,
+                  let row = itemIDs.firstIndex(of: id), items.indices.contains(row) else { return nil }
+            return items[row]
+        }
+
+        @objc private func contextMenuPaste(_ sender: NSMenuItem) {
+            guard let item = item(for: sender) else { return }
+            onPaste?(item)
+        }
+
+        @objc private func contextMenuPastePlainText(_ sender: NSMenuItem) {
+            guard let item = item(for: sender) else { return }
+            onPastePlainText?(item)
+        }
+
+        @objc private func contextMenuCopyPlainText(_ sender: NSMenuItem) {
+            guard let item = item(for: sender) else { return }
+            onCopyPlainText?(item)
+        }
+
+        // MARK: NSMenuDelegate
+
+        func menuWillOpen(_ menu: NSMenu) {
+            contextMenuOpen = true
+            onContextMenuVisibilityChange?(true)
+        }
+
+        func menuDidClose(_ menu: NSMenu) {
+            contextMenuOpen = false
+            onContextMenuVisibilityChange?(false)
+        }
+
         // MARK: Hover tracking + preview popover
 
         // NSTrackingArea delivers these to the owner object directly; the
         // coordinator is an NSObject (not NSResponder), so no `override`.
         @objc(mouseMoved:) func mouseMoved(with event: NSEvent) {
-            guard let tableView else { return }
+            guard let tableView, !contextMenuOpen else { return }
             let point = tableView.convert(event.locationInWindow, from: nil)
             let row = tableView.row(at: point)
             guard row != hoveredRow else { return }
@@ -257,6 +349,7 @@ struct CandidateTableView: NSViewRepresentable {
         }
 
         private func showPopover(for row: Int) {
+            guard !contextMenuOpen else { return }
             guard let tableView, items.indices.contains(row) else { return }
             let item = items[row]
 
@@ -455,6 +548,47 @@ private final class CandidateCellView: NSTableCellView {
 }
 
 /// A candidate click is deliberate even while another application owns focus.
-private final class CandidateNativeTableView: NSTableView {
+final class CandidateNativeTableView: NSTableView {
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+
+    /// Row resolver for right-click menus, supplied by the coordinator.
+    var contextMenuProvider: ((Int) -> NSMenu?)?
+
+    /// How a built context menu is actually presented. Injectable so tests can
+    /// drive the real `rightMouseDown`/`mouseDown` routing without tracking an
+    /// on-screen menu; defaults to the system presentation.
+    var menuPresenter: (NSMenu, NSEvent, NSView) -> Void = { menu, event, view in
+        NSMenu.popUpContextMenu(menu, with: event, for: view)
+    }
+
+    override func menu(for event: NSEvent) -> NSMenu? {
+        let point = convert(event.locationInWindow, from: nil)
+        let row = self.row(at: point)
+        guard row >= 0, let menu = contextMenuProvider?(row) else { return nil }
+        // Reflect the right-clicked row as the selection; the table action is
+        // left-click only, so this never triggers activation/paste.
+        selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
+        return menu
+    }
+
+    override func rightMouseDown(with event: NSEvent) {
+        if presentContextMenu(for: event) { return }
+        super.rightMouseDown(with: event)
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        // Ctrl-left-click is the classic context-menu gesture; route it to the
+        // same path instead of the single-click activation.
+        if event.modifierFlags.contains(.control), presentContextMenu(for: event) { return }
+        super.mouseDown(with: event)
+    }
+
+    /// Builds and presents the row menu once. Returns false (without any
+    /// popup) when the event misses every row or no menu can be built.
+    @discardableResult
+    private func presentContextMenu(for event: NSEvent) -> Bool {
+        guard let menu = menu(for: event) else { return false }
+        menuPresenter(menu, event, self)
+        return true
+    }
 }

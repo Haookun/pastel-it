@@ -15,10 +15,40 @@ final class PasteController {
 
     private let blobStore: BlobStore
     private let pasteboard: NSPasteboard
+    private let recognizeImageText: @Sendable (Data, OCRConfiguration) async -> String?
 
-    init(blobStore: BlobStore, pasteboard: NSPasteboard = .general) {
+    init(blobStore: BlobStore, pasteboard: NSPasteboard = .general,
+         recognizeImageText: @escaping @Sendable (Data, OCRConfiguration) async -> String? = {
+             await OCRService.recognizeText(in: $0, configuration: $1)
+         }) {
         self.blobStore = blobStore
         self.pasteboard = pasteboard
+        self.recognizeImageText = recognizeImageText
+    }
+
+    /// An explicit candidate action recognizes the stored original image now,
+    /// independently of background OCR and the current system clipboard.
+    /// Preparation never writes the clipboard; the caller validates its context
+    /// after awaiting recognition and before committing the result.
+    func candidatePlainText(for item: ClipItem, configuration: OCRConfiguration) async -> String? {
+        let text: String?
+        if item.primaryType == .image {
+            let path = item.blobRelativePath
+            let store = blobStore
+            guard let data = await Task.detached(priority: .userInitiated, operation: {
+                store.data(for: path)
+            }).value, !Task.isCancelled else { return nil }
+            var configuration = configuration.normalized
+            // The switch controls automatic OCR. Clicking this action is an
+            // explicit request to recognize text, using the same language/options.
+            configuration.enabled = true
+            text = await recognizeImageText(data, configuration)
+        } else {
+            text = item.previewText
+        }
+        guard !Task.isCancelled, let text,
+              !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
+        return text
     }
 
     /// Stages a clip onto the system pasteboard, replacing the previous clipboard contents.

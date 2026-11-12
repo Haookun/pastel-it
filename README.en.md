@@ -38,7 +38,7 @@ This screenshot contains synthetic data from an isolated review, not a user’s 
 - Candidate selection: **1–9 and 0** for the current page.
 - Paging: **Tab / Shift-Tab**; paging stops at either end.
 
-Choose Timeline or Candidate Bar under Settings → Clipboard → Display Style. Candidate selection retains the original item type and follows Copy/Direct Paste settings. Image-to-text conversion belongs to Quick Paste. Global shortcuts can be changed or cleared independently, with conflict checks.
+Choose Timeline or Candidate Bar under Settings → Clipboard → Display Style. Candidate selection retains the original item type and follows Copy/Direct Paste settings. Right-click a candidate for Paste, Quick Paste as Plain Text, or Copy Plain Text. Image plain-text actions recognize the stored original image on demand, including when automatic OCR is off, and report failure if no text is recognized or the image is unavailable. Global shortcuts can be changed or cleared independently, with conflict checks.
 
 ## Added in this derivative
 

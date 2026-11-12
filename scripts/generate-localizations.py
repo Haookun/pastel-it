@@ -1231,6 +1231,45 @@ STRINGS.update({
 
 STRINGS["candidateBar.list"] = {"en": "Clipboard candidates", "zh-Hans": "剪贴板候选列表", "zh-Hant": "剪貼簿候選清單", "ja": "クリップボード候補", "ko": "클립보드 후보", "fr": "Éléments du presse-papiers", "de": "Zwischenablage-Einträge", "es": "Candidatos del portapapeles", "pl": "Pozycje schowka"}
 
+# Candidate row context menu and quick-paste explanation.
+STRINGS.update({
+    "candidateBar.menu.paste": {
+        "en": "Paste",
+        "zh-Hans": "粘贴",
+        "ja": "ペースト",
+    },
+    "candidateBar.menu.pastePlain": {
+        "en": "Paste as Plain Text",
+        "zh-Hans": "快捷粘贴纯文本",
+        "ja": "プレーンテキストでペースト",
+    },
+    "candidateBar.menu.copyPlain": {
+        "en": "Copy as Plain Text",
+        "zh-Hans": "复制纯文本",
+        "ja": "プレーンテキストでコピー",
+    },
+    "candidateBar.noPlainText": {
+        "en": "No text recognized, or the content is unavailable.",
+        "zh-Hans": "未识别到文字，或内容不可用。",
+        "ja": "テキストを認識できませんでした。コンテンツが利用できない可能性があります。",
+    },
+    "candidateBar.recognizingImage": {
+        "en": "Recognizing text in the image…",
+        "zh-Hans": "正在识别图片中的文字…",
+        "ja": "画像内のテキストを認識しています…",
+    },
+    "candidateBar.ocrCancelled": {
+        "en": "Recognition was interrupted; the clipboard was left unchanged.",
+        "zh-Hans": "识别已中断，剪贴板未更改。",
+        "ja": "認識が中断されました。クリップボードは変更されていません。",
+    },
+    "quickPaste.behavior": {
+        "en": "Quick paste removes formatting from copied text and turns images into plain text via OCR, then pastes it straight into the input field. The result depends on the selected content types, OCR settings, and Accessibility permission.",
+        "zh-Hans": "快捷粘贴会将复制的文字去除格式、图片经 OCR 转换为纯文本，并直接粘贴到输入框。效果受已选内容类型、OCR 设置与辅助功能权限约束。",
+        "ja": "クイックペーストはコピーしたテキストの書式を取り除き、画像はOCRでプレーンテキストに変換して、入力欄へ直接ペーストします。結果は選択した種類・OCR設定・アクセシビリティ権限に依存します。",
+    }
+})
+
 
 
 # Local diagnostics only; no product analytics.

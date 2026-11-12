@@ -25,6 +25,18 @@ public struct CostBoundedCache<Key: Hashable & Sendable, Value: Sendable>: Senda
         return entry.value
     }
 
+    @discardableResult
+    public mutating func removeValue(forKey key: Key) -> Value? {
+        guard let entry = entries.removeValue(forKey: key) else { return nil }
+        totalCost -= entry.cost
+        return entry.value
+    }
+
+    public mutating func removeAll(keepingCapacity: Bool = false) {
+        entries.removeAll(keepingCapacity: keepingCapacity)
+        totalCost = 0
+    }
+
     public mutating func insert(_ value: Value, for key: Key, cost: Int) {
         if let previous = entries.removeValue(forKey: key) { totalCost -= previous.cost }
         let cost = max(0, cost)

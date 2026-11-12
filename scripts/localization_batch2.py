@@ -1041,6 +1041,32 @@ BATCH2.update({
 
 BATCH2["candidateBar.list"] = {"fr": "Éléments du presse-papiers", "de": "Zwischenablage-Einträge", "es": "Candidatos del portapapeles", "pl": "Pozycje schowka"}
 
+# Candidate row context menu and quick-paste explanation (English fallback).
+BATCH2.update({
+    "candidateBar.menu.paste": {},
+    "candidateBar.menu.pastePlain": {},
+    "candidateBar.menu.copyPlain": {},
+    "candidateBar.noPlainText": {
+        "fr": "Aucun texte reconnu, ou contenu indisponible.",
+        "de": "Kein Text erkannt oder Inhalt nicht verfügbar.",
+        "es": "No se reconoció texto o el contenido no está disponible.",
+        "pl": "Nie rozpoznano tekstu lub zawartość jest niedostępna."
+    },
+    "candidateBar.recognizingImage": {
+        "fr": "Reconnaissance du texte de l’image…",
+        "de": "Text im Bild wird erkannt…",
+        "es": "Reconociendo texto en la imagen…",
+        "pl": "Rozpoznawanie tekstu na obrazie…"
+    },
+    "candidateBar.ocrCancelled": {
+        "fr": "Reconnaissance interrompue ; le presse-papiers n’a pas été modifié.",
+        "de": "Erkennung unterbrochen; die Zwischenablage wurde nicht geändert.",
+        "es": "Reconocimiento interrumpido; el portapapeles no se modificó.",
+        "pl": "Rozpoznawanie przerwane; schowek nie został zmieniony."
+    },
+    "quickPaste.behavior": {}
+})
+
 
 # Local diagnostics only; no product analytics.
 BATCH2.update({

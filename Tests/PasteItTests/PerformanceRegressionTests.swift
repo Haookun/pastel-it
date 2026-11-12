@@ -69,6 +69,40 @@ struct PerformanceRegressionTests {
         #expect(cache.count == 1)
     }
 
+    @Test func pollingRejectsBusyLoopAndNonFinitePreferences() {
+        #expect(ClipboardPollingPolicy.interval(0) == 0.2)
+        #expect(ClipboardPollingPolicy.interval(-100) == 0.2)
+        #expect(ClipboardPollingPolicy.interval(.nan) == 0.35)
+        #expect(ClipboardPollingPolicy.interval(.infinity) == 0.35)
+        #expect(ClipboardPollingPolicy.interval(100) == 2)
+        #expect(ClipboardPollingPolicy.interval(0.35) == 0.35)
+    }
+
+    @Test func searchBudgetEvictionPreservesResultsAndEdits() async throws {
+        let index = ClipSearchIndex(textCostLimit: 16)
+        let docs = [document("café"), document("synthetic oversized record"), document("123")]
+        for _ in 0..<3 {
+            #expect(try await index.search(docs, query: "synthetic", filter: .all, sourceApp: nil) == [docs[1].id])
+            #expect(await index.cachedTextBytes <= 16)
+        }
+        let edited = document("oversized replacement café", id: docs[0].id, revision: .distantFuture)
+        #expect(try await index.search([edited], query: "cafe", filter: .text, sourceApp: nil) == [docs[0].id])
+        #expect(await index.cachedTextBytes <= 16)
+    }
+
+    @Test func cacheRemovalReleasesBudget() {
+        var cache = CostBoundedCache<Int, String>(countLimit: 2, costLimit: 8)
+        cache.insert("first", for: 1, cost: 8)
+        #expect(cache.removeValue(forKey: 1) == "first")
+        #expect(cache.totalCost == 0)
+        cache.insert("second", for: 2, cost: 8)
+        cache.removeAll(keepingCapacity: true)
+        #expect(cache.totalCost == 0)
+        #expect(cache.count == 0)
+        cache.insert("third", for: 3, cost: 8)
+        #expect(cache.value(for: 3) == "third")
+    }
+
     @Test func imageDecodeBoundsPixelsAndPreservesAspectRatio() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".png")
         defer { try? FileManager.default.removeItem(at: url) }

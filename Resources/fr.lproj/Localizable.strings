@@ -29,11 +29,17 @@
 "candidateBar.footer" = "1–5 : sélectionner · Tab : développer/réduire";
 "candidateBar.list" = "Éléments du presse-papiers";
 "candidateBar.locationFallback" = "Position du curseur indisponible. Affichage près du pointeur ; vérifiez l’accessibilité.";
+"candidateBar.menu.copyPlain" = "Copy as Plain Text";
+"candidateBar.menu.paste" = "Paste";
+"candidateBar.menu.pastePlain" = "Paste as Plain Text";
 "candidateBar.moreFiles" = "+%lld autres";
 "candidateBar.nextPage" = "Page suivante";
+"candidateBar.noPlainText" = "Aucun texte reconnu, ou contenu indisponible.";
 "candidateBar.noPreview" = "Aucun aperçu";
+"candidateBar.ocrCancelled" = "Reconnaissance interrompue ; le presse-papiers n’a pas été modifié.";
 "candidateBar.page" = "%lld/%lld";
 "candidateBar.previousPage" = "Page précédente";
+"candidateBar.recognizingImage" = "Reconnaissance du texte de l’image…";
 "candidatePlacement.granted" = "Autorisé";
 "candidatePlacement.help" = "L’accessibilité permet un affichage près du curseur de texte, sinon près du pointeur.";
 "candidatePlacement.notGranted" = "Non autorisé";
@@ -183,6 +189,7 @@
 "privacy.protectedFooter" = "Apps ignorées excluent toute une app. Contenu protégé exclut uniquement les données sensibles marquées, de toute app.";
 "privacy.removeApp" = "Retirer l'app";
 "privacy.search" = "Rechercher";
+"quickPaste.behavior" = "Quick paste removes formatting from copied text and turns images into plain text via OCR, then pastes it straight into the input field. The result depends on the selected content types, OCR settings, and Accessibility permission.";
 "quickPaste.changed" = "Clipboard or destination changed; quick paste cancelled";
 "quickPaste.done" = "Pasted as plain text";
 "quickPaste.emptyScope" = "Select at least one content type to use quick paste.";

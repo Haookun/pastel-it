@@ -2,6 +2,8 @@
 
 macOS 클립보드 기록 및 로컬 OCR 도구입니다. 기본 화면은 입력 커서 옆의 세로 후보 목록(10개)이며 타임라인으로 전환할 수 있습니다.
 
+후보를 오른쪽 클릭하면 붙여넣기, 일반 텍스트로 바로 붙여넣기, 일반 텍스트 복사를 선택할 수 있습니다. 이미지의 텍스트 작업은 클릭할 때 원본 이미지를 OCR로 인식합니다. 자동 OCR이 꺼져 있어도 실행됩니다.
+
 [中文完整说明](README.md) · [Full English guide](README.en.md) · [Download v0.3.0](https://github.com/Haookun/pastel-it/releases/latest)
 
 - Apple Silicon (arm64) DMG; macOS14+ deployment target, modern OCR15+, table OCR26+.

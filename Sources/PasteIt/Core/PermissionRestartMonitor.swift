@@ -19,9 +19,10 @@ final class PermissionRestartMonitor: ObservableObject {
         ) { [weak self] _ in
             Task { @MainActor in self?.check() }
         }
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
             Task { @MainActor in self?.check() }
         }
+        timer?.tolerance = 1
     }
 
     func stop() {

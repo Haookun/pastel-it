@@ -29,11 +29,17 @@
 "candidateBar.footer" = "1–5 to select · Tab to expand or collapse";
 "candidateBar.list" = "Clipboard candidates";
 "candidateBar.locationFallback" = "Caret position unavailable. Showing near the pointer; Accessibility may be required.";
+"candidateBar.menu.copyPlain" = "Copy as Plain Text";
+"candidateBar.menu.paste" = "Paste";
+"candidateBar.menu.pastePlain" = "Paste as Plain Text";
 "candidateBar.moreFiles" = "+%lld more";
 "candidateBar.nextPage" = "Next page";
+"candidateBar.noPlainText" = "No text recognized, or the content is unavailable.";
 "candidateBar.noPreview" = "No Preview";
+"candidateBar.ocrCancelled" = "Recognition was interrupted; the clipboard was left unchanged.";
 "candidateBar.page" = "%lld/%lld";
 "candidateBar.previousPage" = "Previous page";
+"candidateBar.recognizingImage" = "Recognizing text in the image…";
 "candidatePlacement.granted" = "Granted";
 "candidatePlacement.help" = "Accessibility lets Pastel it！ place the candidate bar next to your text cursor. Without it, the bar appears near the mouse pointer instead.";
 "candidatePlacement.notGranted" = "Not granted";
@@ -183,6 +189,7 @@
 "privacy.protectedFooter" = "Ignored Apps skip everything from a whole app. Protected Content skips only marked sensitive pasteboard data, from any app.";
 "privacy.removeApp" = "Remove App";
 "privacy.search" = "Search";
+"quickPaste.behavior" = "Quick paste removes formatting from copied text and turns images into plain text via OCR, then pastes it straight into the input field. The result depends on the selected content types, OCR settings, and Accessibility permission.";
 "quickPaste.changed" = "Clipboard or destination changed; quick paste cancelled";
 "quickPaste.done" = "Pasted as plain text";
 "quickPaste.emptyScope" = "Select at least one content type to use quick paste.";
